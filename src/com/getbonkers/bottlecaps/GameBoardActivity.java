@@ -132,7 +132,15 @@ public class GameBoardActivity extends Activity
 
             public void setDefaultState()
             {
+                Random rand=new Random();
+                int max=7;   // between 2 and 7 seconds
+                int min=2;   //
 
+                int time=rand.nextInt((max+1) - min) + min;
+                this.remainingLife=time*1000;
+                this.state=PIECE_STATE_NORMAL;
+                this.terminalState=false;
+                this.opacity=255;
             }
 
             public void setTappedState()
@@ -254,6 +262,8 @@ public class GameBoardActivity extends Activity
             {
                 GamePiece newPiece=new GamePiece();
                 newPiece.cap=capManager.getNextCap();
+                newPiece.setDefaultState();
+                newPiece.cap.putCapInPlay(getApplicationContext());
                 gamePieces.add(newPiece);
             }
 
@@ -289,12 +299,10 @@ public class GameBoardActivity extends Activity
                                 for(int i=0; i<currentCombo.size(); i++)
                                 {
                                     //currentCombo.get(i).setTerminalFadingState();
+                                    currentCombo.get(i).cap.removeCapFromPlay();
                                     currentCombo.get(i).cap=capManager.getNextCap();
-                                    currentCombo.get(i).state=PIECE_STATE_NORMAL;
-                                    currentCombo.get(i).terminalState=false;
-                                    Random rand=new Random();
-                                    currentCombo.get(i).remainingLife=rand.nextInt(6000);
-                                    currentCombo.get(i).opacity=255;
+                                    currentCombo.get(i).cap.putCapInPlay(getApplicationContext());
+                                    currentCombo.get(i).setDefaultState();
                                 }
 
                                 int deltaScore=0;
@@ -423,21 +431,16 @@ public class GameBoardActivity extends Activity
                             currentCombo.remove(gamePieces.get(i));
 
                             // replace the piece with a new piece
+                            gamePieces.get(i).cap.removeCapFromPlay();
                             gamePieces.get(i).cap=capManager.getNextCap();
-                            gamePieces.get(i).state=PIECE_STATE_NORMAL;
-                            gamePieces.get(i).terminalState=false;
-                            Random rand=new Random();
-
-                            double max=81*(1-currentMomentum/100);
-                            double min=30*(1-currentMomentum/100);
-                            gamePieces.get(i).remainingLife=((rand.nextInt((int)max)+min)/10)*1000;
-                            gamePieces.get(i).opacity=255;
+                            gamePieces.get(i).cap.putCapInPlay(getApplicationContext());
+                            gamePieces.get(i).setDefaultState();
                             //Log.d("GameBoard", "Piece state change: PIECE_STATE_NORMAL");
                         }
                         else
                         {
                             double newOpacity1=gamePieces.get(i).remainingLife/PIECE_FADEOUT_ANIM_SPEED;
-                            double newOpacity2=(150*newOpacity1)+105;
+                            double newOpacity2=(150*newOpacity1)+75;
                             gamePieces.get(i).opacity=(int)newOpacity2;
                         }
                         break;
@@ -445,7 +448,7 @@ public class GameBoardActivity extends Activity
                         if(gamePieces.get(i).remainingLife<=0)
                         {
                             gamePieces.get(i).state=PIECE_STATE_FADING;
-                            gamePieces.get(i).remainingLife=PIECE_FADEOUT_ANIM_SPEED;
+                            gamePieces.get(i).remainingLife=1000*(1-currentMomentum/100);
                             //Log.d("GameBoard", "Piece state change: PIECE_STATE_FADING");
 
                         }
@@ -476,43 +479,36 @@ public class GameBoardActivity extends Activity
             Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
             int height = display.getHeight();
 
-            canvas.drawText("Score: "+currentScore, 5, height-30, tp);
+            //canvas.drawText("Score: "+currentScore, 5, height-30, tp);
 
             for(int i=0; i<gamePieces.size(); i++)
             {
-                //cap=new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), gamePieces.get(i).cap.resourceId));
-                //cap=gamePieces.get(i).cap.image;
-                cap=new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), gamePieces.get(i).cap.resourceId));
-                x=(pieceWidth)*(i%itemsPerRow);//+(pieceWidth/2);
-                y=(pieceWidth)*curRow;
-
-                if(gamePieces.get(i).state==PIECE_STATE_NORMAL)
-                    cap.setColorFilter(null);
-                else if(gamePieces.get(i).state==PIECE_STATE_FADING)
-                    cap.setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
-                else if(gamePieces.get(i).state==PIECE_STATE_TAPPED)
-                    cap.setColorFilter(Color.BLUE, PorterDuff.Mode.MULTIPLY);
-
-                //p.setAlpha(gamePieces.get(i).opacity);
-                cap.setAlpha(gamePieces.get(i).opacity);
-
-                cap.setBounds(x, y, x+pieceWidth, y+pieceWidth);
-                cap.draw(canvas);
-
-                //canvas.drawBitmap(_scratch, gamePieces.get(i).x, gamePieces.get(i).y, p);
-                //canvas.drawCircle(x, y, pieceWidth/2, p);
-                String capIndex=String.valueOf(gamePieces.get(i).cap.index);
-                //canvas.drawText(capIndex, x, y, tp);
-
-                //gamePieces.get(i).opacity-=1;
-                //if(gamePieces.get(i).opacity<0)
-                //    gamePieces.get(i).opacity=100;
-
-                itemsThisRow++;
-                if(itemsThisRow==itemsPerRow)
+                if(gamePieces.get(i).cap.isCurrentlyDrawable())
                 {
-                    curRow++;
-                    itemsThisRow=0;
+                    cap=gamePieces.get(i).cap.image;
+                    x=(pieceWidth)*(i%itemsPerRow);//+(pieceWidth/2);
+                    y=(pieceWidth)*curRow;
+
+                    /*if(gamePieces.get(i).state==PIECE_STATE_NORMAL)
+                        cap.setColorFilter(null);
+                    else if(gamePieces.get(i).state==PIECE_STATE_FADING)
+                        cap.setColorFilter(null);
+                    else*/ if(gamePieces.get(i).state==PIECE_STATE_TAPPED)
+                        canvas.drawRect(x, y, x+pieceWidth, y+pieceWidth, tp);
+                        //cap.setColorFilter(null);
+                        //cap.setColorFilter(Color.BLUE, PorterDuff.Mode.MULTIPLY);
+
+                    cap.setAlpha(gamePieces.get(i).opacity);
+
+                    cap.setBounds(x, y, x+pieceWidth, y+pieceWidth);
+                    cap.draw(canvas);
+
+                    itemsThisRow++;
+                    if(itemsThisRow==itemsPerRow)
+                    {
+                        curRow++;
+                        itemsThisRow=0;
+                    }
                 }
             }
         }

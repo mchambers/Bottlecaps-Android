@@ -32,7 +32,38 @@ public class CapManager {
 
         public int rarityClass;
 
+        public int numberInPlay;
+
         public BitmapDrawable image;
+
+        public boolean isCurrentlyDrawable()
+        {
+            if(image!=null && image.getBitmap()!=null && !image.getBitmap().isRecycled()) return true;
+            return false;
+        }
+
+        public void putCapInPlay(Context context)
+        {
+            if(numberInPlay<=0)
+            {
+                this.numberInPlay++;
+                BitmapFactory.Options options=new BitmapFactory.Options();
+                options.inSampleSize=4;
+                this.image=new BitmapDrawable(context.getResources(), BitmapFactory.decodeResource(context.getResources(), this.resourceId, options));
+            }
+        }
+
+        public void removeCapFromPlay()
+        {
+            if(image!=null)
+            {
+                if(numberInPlay<=0)
+                {
+                    image.getBitmap().recycle();
+                    image=null;
+                }
+            }
+        }
     }
 
     public class CapTotalAvailableComparator implements Comparator<Cap> {
@@ -103,7 +134,7 @@ public class CapManager {
             cap.index=i+1;
 
             cap.resourceId=_context.getResources().getIdentifier("set"+cap.setNumber+"_"+cap.index, "drawable", "com.getbonkers.bottlecaps");
-            cap.image=new BitmapDrawable(_context.getResources(), BitmapFactory.decodeResource(_context.getResources(), cap.resourceId));
+            //cap.image=new BitmapDrawable(_context.getResources(), BitmapFactory.decodeResource(_context.getResources(), cap.resourceId));
 
             cap.issued=(i+1)*(i+1);
             cap.available=cap.issued;
@@ -237,7 +268,7 @@ public class CapManager {
         {
             if(capsBuffer.size()<5)
                 this.fillCapsBuffer();
-            return capsBuffer.pop();
+            cap=capsBuffer.pop();
         }
 
         return cap;

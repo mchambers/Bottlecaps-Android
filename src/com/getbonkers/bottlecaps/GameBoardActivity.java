@@ -16,6 +16,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
+import java.util.Stack;
 
 public class GameBoardActivity extends Activity
 {
@@ -24,7 +25,7 @@ public class GameBoardActivity extends Activity
         private GameBoard _board;
         private boolean _run = false;
 
-        private final static int    MAX_FPS = 50;
+        private final static int    MAX_FPS = 60;
         private final static int    MAX_FRAME_SKIPS = 5;
         private final static int    FRAME_PERIOD = 1000 / MAX_FPS;
 
@@ -160,7 +161,7 @@ public class GameBoardActivity extends Activity
 
             public void setTerminalFadingState()
             {
-                this.remainingLife=PIECE_FADEOUT_ANIM_SPEED;
+                this.remainingLife=COMBO_FADEOUT_ANIM_SPEED;
                 this.state=PIECE_STATE_FADING;
                 this.terminalState=true;
             }
@@ -190,6 +191,7 @@ public class GameBoardActivity extends Activity
         public CapManager capManager;
 
         private static final int PIECE_FADEOUT_ANIM_SPEED=1000;
+        private static final int COMBO_FADEOUT_ANIM_SPEED=500;
 
         public GameBoard(Context context, CapManager capMgr)
         {
@@ -199,10 +201,12 @@ public class GameBoardActivity extends Activity
             setFocusable(true);
 
             capManager=capMgr;
+            inputEvents=new Stack<MotionEvent>();
         }
 
         private SoundPool soundPool;
         private HashMap<Integer, Integer> soundPoolMap;
+        private Stack<MotionEvent> inputEvents;
 
         public static final int SOUND_GOOD = 1;
         public static final int SOUND_BAD = 2;
@@ -272,77 +276,76 @@ public class GameBoardActivity extends Activity
 
         public boolean onTouchEvent(MotionEvent event) {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                //if (event.getY() > getHeight() - 50) {
-                //    //_thread.setRunning(false);
-                //    //((Activity)getContext()).finish();
-                //} else {
-                    float whichPiece=event.getX()/pieceWidth;
-                    float whichRow=event.getY()/pieceWidth;
+                float whichPiece=event.getX()/pieceWidth;
+                float whichRow=event.getY()/pieceWidth;
 
-                    whichPiece=(float)Math.ceil(whichPiece);
-                    whichRow=(float)Math.ceil(whichRow);
+                whichPiece=(float)Math.ceil(whichPiece);
+                whichRow=(float)Math.ceil(whichRow);
 
-                    //Log.d("GameBoard", "Piece "+whichPiece+" in row "+whichRow+" at coords: x=" + event.getX() + ",y=" + event.getY());
-                    int pieceIndex=(int)whichRow*itemsPerRow;
-                    pieceIndex-=itemsPerRow-whichPiece;
-                    pieceIndex--;
+                //Log.d("GameBoard", "Piece "+whichPiece+" in row "+whichRow+" at coords: x=" + event.getX() + ",y=" + event.getY());
+                int pieceIndex=(int)whichRow*itemsPerRow;
+                pieceIndex-=itemsPerRow-whichPiece;
+                pieceIndex--;
 
-                    if(pieceIndex<gamePieces.size() && !gamePieces.get(pieceIndex).terminalState)
+                if(pieceIndex<gamePieces.size() && !gamePieces.get(pieceIndex).terminalState)
+                {
+                    playSound(SOUND_TAP);
+                    gamePieces.get(pieceIndex).setTappedState();
+
+                    synchronized (currentCombo)
                     {
-                        playSound(SOUND_TAP);
-                        gamePieces.get(pieceIndex).setTappedState();
-
-                        synchronized (currentCombo)
+                        if(currentCombo.isEmpty() || currentCombo.get(0).cap.resourceId!=gamePieces.get(pieceIndex).cap.resourceId)
                         {
-                            if(currentCombo.isEmpty() || currentCombo.get(0).cap.resourceId!=gamePieces.get(pieceIndex).cap.resourceId)
+                            for(int i=0; i<currentCombo.size(); i++)
                             {
-                                for(int i=0; i<currentCombo.size(); i++)
-                                {
-                                    //currentCombo.get(i).setTerminalFadingState();
-                                    currentCombo.get(i).cap.removeCapFromPlay();
-                                    currentCombo.get(i).cap=capManager.getNextCap();
-                                    currentCombo.get(i).cap.putCapInPlay(getApplicationContext());
-                                    currentCombo.get(i).setDefaultState();
-                                }
+                                currentCombo.get(i).setTerminalFadingState();
+                                //currentCombo.get(i).cap.removeCapFromPlay();
+                                //currentCombo.get(i).cap=capManager.getNextCap();
+                                //currentCombo.get(i).cap.putCapInPlay(getApplicationContext());
+                                //currentCombo.get(i).setDefaultState();
+                            }
 
-                                int deltaScore=0;
+                            int deltaScore=0;
 
-                                if(currentCombo.size()>1)
-                                {
-                                    Toast toast=Toast.makeText(getApplicationContext(), String.valueOf(currentCombo.size())+" combo!", Toast.LENGTH_SHORT);
-                                    toast.show();
+                            if(currentCombo.size()>1)
+                            {
+                                Toast toast=Toast.makeText(getApplicationContext(), String.valueOf(currentCombo.size())+" combo!", Toast.LENGTH_SHORT);
+                                toast.show();
 
-                                    if(currentMomentum<=0) currentMomentum=1;
+                                if(currentMomentum<=0) currentMomentum=1;
 
-                                    deltaScore=(int)(Math.pow(currentCombo.size(), 2)+Math.pow(currentCombo.get(0).cap.rarityClass, 2) * currentMomentum);// * (currentLevel/2));
-                                    currentMomentum+=1/Math.log10(deltaScore)*10;
-                                    highestMomentum=Math.max(currentMomentum, highestMomentum);
-                                    currentScore+=deltaScore;
+                                deltaScore=(int)(Math.pow(currentCombo.size(), 2)+Math.pow(currentCombo.get(0).cap.rarityClass, 2) * currentMomentum);// * (currentLevel/2));
+                                currentMomentum+=1/Math.log10(deltaScore)*10;
+                                highestMomentum=Math.max(currentMomentum, highestMomentum);
+                                currentScore+=deltaScore;
 
-                                    highestComboScore=Math.max(highestComboScore, deltaScore);
+                                highestComboScore=Math.max(highestComboScore, deltaScore);
 
-                                    playSound(SOUND_GOOD);
-                                    Log.d("GameBoard", "Score up by "+deltaScore+" (rarity "+currentCombo.get(0).cap.rarityClass+"), New score: "+currentScore+" at momentum "+currentMomentum);
-                                }
-                                else
-                                {
-                                    playSound(SOUND_BAD);
-                                    currentMomentum*=(1-currentMomentum/100);
-                                }
-
-                                comboAmounts[currentCombo.size()]++;
-
-                                currentCombo.clear();
-                                currentCombo.add(gamePieces.get(pieceIndex));
-                                //Log.d("GameBoard", "Started a new combo");
+                                playSound(SOUND_GOOD);
+                                Log.d("GameBoard", "Score up by "+deltaScore+" (rarity "+currentCombo.get(0).cap.rarityClass+"), New score: "+currentScore+" at momentum "+currentMomentum);
                             }
                             else
                             {
-                                currentCombo.add(gamePieces.get(pieceIndex));
-                                //Log.d("GameBoard", "Added a piece to the current combo");
+                                //playSound(SOUND_BAD);
+                                currentMomentum*=(1-currentMomentum/100);
                             }
+
+                            comboAmounts[currentCombo.size()]++;
+
+                            currentCombo.clear();
+                            currentCombo.add(gamePieces.get(pieceIndex));
+                            //Log.d("GameBoard", "Started a new combo");
+                        }
+                        else
+                        {
+                            currentCombo.add(gamePieces.get(pieceIndex));
+
+                            for(int i=0; i<currentCombo.size(); i++)
+                                currentCombo.get(i).remainingLife+=1000;
+                            //Log.d("GameBoard", "Added a piece to the current combo");
                         }
                     }
+                }
             }
             return super.onTouchEvent(event);
         }
@@ -372,6 +375,9 @@ public class GameBoardActivity extends Activity
 
         private void updateGameState()
         {
+            //if(inputEvents.size()>0)
+            //    handleTouchEvent(inputEvents.pop());
+
             long deltaTick;
             if(lastTick==0) lastTick=System.currentTimeMillis();
 

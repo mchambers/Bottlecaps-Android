@@ -48,7 +48,7 @@ public class CapManager {
             {
                 this.numberInPlay++;
                 BitmapFactory.Options options=new BitmapFactory.Options();
-                options.inSampleSize=4;
+                //options.inSampleSize=4;
                 this.image=new BitmapDrawable(context.getResources(), BitmapFactory.decodeResource(context.getResources(), this.resourceId, options));
             }
         }

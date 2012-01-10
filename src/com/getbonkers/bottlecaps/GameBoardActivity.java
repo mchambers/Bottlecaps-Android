@@ -131,15 +131,21 @@ public class GameBoardActivity extends Activity
                 this.terminalState=false;
             }
 
-            public void setDefaultState()
+            public void setDefaultState(int difficulty)
             {
                 Random rand=new Random();
-                int max=7;   // between 2 and 7 seconds
+                int max=8;   // between 2 and 7 seconds
                 int min=2;   //
 
-                int time=rand.nextInt((max+1) - min) + min;
+                double time=rand.nextInt((max+1) - min) + min;
+
+                if(difficulty==GAME_DIFFICULTY_EASY)
+                    time=time*1.5;
+
                 this.remainingLife=time*1000;
                 this.state=PIECE_STATE_NORMAL;
+
+
                 this.terminalState=false;
                 this.opacity=255;
             }
@@ -191,7 +197,7 @@ public class GameBoardActivity extends Activity
         public CapManager capManager;
 
         private static final int PIECE_FADEOUT_ANIM_SPEED=1000;
-        private static final int COMBO_FADEOUT_ANIM_SPEED=500;
+        private static final int COMBO_FADEOUT_ANIM_SPEED=100;
 
         public GameBoard(Context context, CapManager capMgr)
         {
@@ -201,12 +207,10 @@ public class GameBoardActivity extends Activity
             setFocusable(true);
 
             capManager=capMgr;
-            inputEvents=new Stack<MotionEvent>();
         }
 
         private SoundPool soundPool;
         private HashMap<Integer, Integer> soundPoolMap;
-        private Stack<MotionEvent> inputEvents;
 
         public static final int SOUND_GOOD = 1;
         public static final int SOUND_BAD = 2;
@@ -266,7 +270,7 @@ public class GameBoardActivity extends Activity
             {
                 GamePiece newPiece=new GamePiece();
                 newPiece.cap=capManager.getNextCap();
-                newPiece.setDefaultState();
+                newPiece.setDefaultState(currentLevel);
                 newPiece.cap.putCapInPlay(getApplicationContext());
                 gamePieces.add(newPiece);
             }
@@ -309,8 +313,8 @@ public class GameBoardActivity extends Activity
 
                             if(currentCombo.size()>1)
                             {
-                                Toast toast=Toast.makeText(getApplicationContext(), String.valueOf(currentCombo.size())+" combo!", Toast.LENGTH_SHORT);
-                                toast.show();
+                                //Toast toast=Toast.makeText(getApplicationContext(), String.valueOf(currentCombo.size())+" combo!", Toast.LENGTH_SHORT);
+                                //toast.show();
 
                                 if(currentMomentum<=0) currentMomentum=1;
 
@@ -321,7 +325,7 @@ public class GameBoardActivity extends Activity
 
                                 highestComboScore=Math.max(highestComboScore, deltaScore);
 
-                                playSound(SOUND_GOOD);
+                                //playSound(SOUND_GOOD);
                                 Log.d("GameBoard", "Score up by "+deltaScore+" (rarity "+currentCombo.get(0).cap.rarityClass+"), New score: "+currentScore+" at momentum "+currentMomentum);
                             }
                             else
@@ -378,6 +382,15 @@ public class GameBoardActivity extends Activity
             //if(inputEvents.size()>0)
             //    handleTouchEvent(inputEvents.pop());
 
+
+            /*
+
+            runTimers();
+            updateTimerIntervals();
+            updateGameBoard();
+
+             */
+
             long deltaTick;
             if(lastTick==0) lastTick=System.currentTimeMillis();
 
@@ -413,7 +426,7 @@ public class GameBoardActivity extends Activity
 
             if(nextCombo<=0)
             {
-                capManager.prepNextCombo();
+                capManager.prepNextCombo(currentMomentum);
                 nextCombo=GAME_COMBO_DELAY;
             }
 
@@ -434,13 +447,16 @@ public class GameBoardActivity extends Activity
                     case PIECE_STATE_FADING:
                         if(gamePieces.get(i).remainingLife<=0)
                         {
-                            currentCombo.remove(gamePieces.get(i));
+                            synchronized (currentCombo)
+                            {
+                                currentCombo.remove(gamePieces.get(i));
+                            }
 
                             // replace the piece with a new piece
                             gamePieces.get(i).cap.removeCapFromPlay();
                             gamePieces.get(i).cap=capManager.getNextCap();
                             gamePieces.get(i).cap.putCapInPlay(getApplicationContext());
-                            gamePieces.get(i).setDefaultState();
+                            gamePieces.get(i).setDefaultState(currentLevel);
                             //Log.d("GameBoard", "Piece state change: PIECE_STATE_NORMAL");
                         }
                         else
@@ -454,7 +470,7 @@ public class GameBoardActivity extends Activity
                         if(gamePieces.get(i).remainingLife<=0)
                         {
                             gamePieces.get(i).state=PIECE_STATE_FADING;
-                            gamePieces.get(i).remainingLife=1000*(1-currentMomentum/100);
+                            gamePieces.get(i).remainingLife=PIECE_FADEOUT_ANIM_SPEED;//1000*(1-currentMomentum/100);
                             //Log.d("GameBoard", "Piece state change: PIECE_STATE_FADING");
 
                         }
@@ -468,13 +484,13 @@ public class GameBoardActivity extends Activity
         public void drawGameState(Canvas canvas)
         {
             //Bitmap _scratch = BitmapFactory.decodeResource(getResources(), R.drawable.set1_1);
-            canvas.drawColor(Color.BLACK);
+            canvas.drawColor(Color.WHITE);
 
             BitmapDrawable cap;//=new BitmapDrawable(getResources(), _scratch);
 
             Paint tp=new Paint();
 
-            tp.setColor(Color.WHITE);
+            tp.setColor(Color.GRAY);
             tp.setTextAlign(Paint.Align.LEFT);
 
             int x=0;
@@ -526,10 +542,11 @@ public class GameBoardActivity extends Activity
     {
         super.onCreate(savedInstanceState);
 
-        CapManager capMgr=new CapManager(getApplicationContext());
+        int difficulty=getIntent().getExtras().getInt("GAME_DIFFICULTY", 1);
+
+        CapManager capMgr=new CapManager(getApplicationContext(), difficulty);
         GameBoard board=new GameBoard(this, capMgr);
 
-        int difficulty=getIntent().getExtras().getInt("GAME_DIFFICULTY", 1);
         board.startNewGame(difficulty);
         //requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(board);

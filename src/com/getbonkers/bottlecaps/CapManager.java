@@ -9,14 +9,6 @@ import java.util.*;
 
 import static ch.lambdaj.Lambda.*;
 
-/**
- * Created by IntelliJ IDEA.
- * User: marc
- * Date: 12/27/11
- * Time: 3:14 PM
- * To change this template use File | Settings | File Templates.
- */
-
 public class CapManager {
     public class Cap {
         public String filePath;
@@ -99,12 +91,16 @@ public class CapManager {
     private ArrayList<Set> sets;
     private ArrayList<Cap> allCaps;
 
+    private int level;
+
     public int[] combosDelivered;
 
-    public CapManager(Context context)
+    public CapManager(Context context, int difficulty)
     {
         _context=context;
         this.loadCaps();
+
+        level = difficulty;
 
         comboCaps=new ArrayList<Cap>();
 
@@ -197,12 +193,28 @@ public class CapManager {
         Collections.sort(allCaps, new CapMaxProbabilityComparator());
     }
 
-    public void prepNextCombo()
+    public void prepNextCombo(double momentum)
     {
         Random random=new Random();
 
-        int nextComboLength=random.nextInt(4);
-        if(nextComboLength==0)nextComboLength++;
+        int nextComboLength;
+        int[] sizeArray;
+
+        if(level==0)
+        {
+            sizeArray=new int[] { 2, 2, 2, 2, 2, 2, 2, 3, 3, 4 };
+        }
+        else
+        {
+            sizeArray=new int[] { 2, 2, 2, 3, 3, 3, 4, 4, 4, 5 };
+        }
+
+        nextComboLength=sizeArray[random.nextInt(10)];
+
+        if(nextComboLength<0)
+            nextComboLength=0;
+        if(nextComboLength>5)
+            nextComboLength=5;
 
         Cap nextCap=this.getNextCap();
 

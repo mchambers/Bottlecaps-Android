@@ -14,22 +14,10 @@
             android:layout_marginTop="40dp"
             android:id="@+id/splashTitle"/>
 
-     <Button android:id="@+id/splashPlayButton"
-             android:onClick="onPlayButtonClick"
-             android:text="Play BottleCaps"
-             android:layout_width="fill_parent"
-             android:layout_height="60dp"
-             android:gravity="center"
-             android:textSize="20sp"
-             android:layout_marginTop="50dp"
-             android:layout_marginLeft="10dp"
-             android:layout_marginRight="10dp"
-             android:layout_below="@id/splashTitle"/>
-
     <Button android:id="@+id/splashPlayKidsMode"
             android:onClick="onKidsModeClick"
-            android:text="Play in Kids Mode"
-            android:layout_below="@id/splashPlayButton"
+            android:text="Play on Normal"
+            android:layout_below="@id/splashTitle"
             android:layout_marginTop="10dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
@@ -38,12 +26,24 @@
             android:layout_width="fill_parent"
             />
 
+     <Button android:id="@+id/splashPlayButton"
+             android:onClick="onPlayButtonClick"
+             android:text="Play on Hard"
+             android:layout_width="fill_parent"
+             android:layout_height="60dp"
+             android:gravity="center"
+             android:textSize="20sp"
+             android:layout_marginTop="50dp"
+             android:layout_marginLeft="10dp"
+             android:layout_marginRight="10dp"
+             android:layout_below="@id/splashPlayKidsMode"/>
+
     <Button android:id="@+id/splashMenuButton"
             android:text="Menu"
             android:layout_width="wrap_content"
             android:gravity="center"
             android:textSize="15sp"
-            android:layout_below="@id/splashPlayKidsMode"
+            android:layout_below="@id/splashPlayButton"
             android:layout_marginTop="55dp"
             android:layout_height="45dp"
             android:layout_centerHorizontal="true"/>

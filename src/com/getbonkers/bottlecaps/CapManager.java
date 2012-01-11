@@ -3,13 +3,62 @@ package com.getbonkers.bottlecaps;
 import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.util.Log;
 
 import java.lang.reflect.Array;
 import java.util.*;
 
 import static ch.lambdaj.Lambda.*;
 
+/*
+
+Add time
+Joker
+Hi-lite
+Freeze
+Momentum boost
+
+ */
 public class CapManager {
+    public class Boost extends Cap {
+        public void performBoostEffects(GameBoardActivity.GameBoard board)
+        {
+        }
+
+        public long getStandardDuration()
+        {
+            return 0;
+        }
+    }
+
+    public class JokerBoost extends Boost {
+        public boolean equals(Cap o)
+        {
+            return true;
+        }
+    }
+
+    public class MomentumBoost extends Boost {
+        public void performBoostEffects(GameBoardActivity.GameBoard board)
+        {
+            board.currentMomentum+=(board.currentMomentum*.25);
+        }
+    }
+
+    public class TimeBoost extends Boost {
+        public void performBoostEffects(GameBoardActivity.GameBoard board)
+        {
+            board.gameTimers[GameBoardActivity.GameBoard.GAME_TIMER_REMAINING]+=(10*1000); // add 10 seconds
+        }
+    }
+
+    public class HighlightCombosBoost extends Boost {
+        public void performBoostEffects(GameBoardActivity.GameBoard board)
+        {
+
+        }
+    }
+
     public class Cap {
         public String filePath;
         public int index;
@@ -27,6 +76,11 @@ public class CapManager {
         public int numberInPlay;
 
         public BitmapDrawable image;
+
+        public boolean equals(Cap o)
+        {
+            return (o.resourceId==this.resourceId);
+        }
 
         public boolean isCurrentlyDrawable()
         {
@@ -90,6 +144,7 @@ public class CapManager {
     private ArrayList<Cap> comboCaps;
     private ArrayList<Set> sets;
     private ArrayList<Cap> allCaps;
+    private Stack<Boost> boostsAvailable;
 
     private int level;
 
@@ -193,6 +248,12 @@ public class CapManager {
         Collections.sort(allCaps, new CapMaxProbabilityComparator());
     }
 
+    public void prepNextBoost()
+    {
+        Boost newBoost=new JokerBoost();
+        boostsAvailable.push(newBoost);
+    }
+
     public void prepNextCombo(double momentum)
     {
         Random random=new Random();
@@ -215,6 +276,8 @@ public class CapManager {
             nextComboLength=0;
         if(nextComboLength>5)
             nextComboLength=5;
+
+        Log.d("CapManager", "Prepping combo of size " + nextComboLength + " with momentum " + momentum);
 
         Cap nextCap=this.getNextCap();
 

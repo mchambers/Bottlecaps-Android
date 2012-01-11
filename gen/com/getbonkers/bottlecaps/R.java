@@ -156,8 +156,8 @@ public final class R {
         public static final int resultsScore=0x7f060001;
         public static final int resultsTitle=0x7f060000;
         public static final int splashMenuButton=0x7f060008;
-        public static final int splashPlayButton=0x7f060006;
-        public static final int splashPlayKidsMode=0x7f060007;
+        public static final int splashPlayButton=0x7f060007;
+        public static final int splashPlayKidsMode=0x7f060006;
         public static final int splashTitle=0x7f060005;
     }
     public static final class layout {

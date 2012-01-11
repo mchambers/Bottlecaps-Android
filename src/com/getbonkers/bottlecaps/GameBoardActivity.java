@@ -115,6 +115,24 @@ public class GameBoardActivity extends Activity
         public static final int GAME_LENGTH=60000;
         public static final int GAME_COMBO_DELAY=2000;
 
+        public static final int GAME_TIMER_REMAINING=0;
+        public static final int GAME_TIMER_COMBO=1;
+        public static final int GAME_TIMER_BOOST=2;
+        public static final int GAME_TIMER_BOMB=3;
+
+        class GameOngoingEffect
+        {
+            public double remainingLife;
+            public int state;
+
+            public CapManager.Boost boost;
+
+            public GameOngoingEffect()
+            {
+
+            }
+        }
+
         class GamePiece
         {
             public int state;
@@ -175,6 +193,7 @@ public class GameBoardActivity extends Activity
 
         private BrainThread _thread;
         private ArrayList<GamePiece> gamePieces;
+        private ArrayList<GamePiece> gameEffects;
         private final ArrayList<GamePiece> currentCombo=new ArrayList<GamePiece>();
         private int boardSize;
         private int itemsPerRow;
@@ -184,15 +203,22 @@ public class GameBoardActivity extends Activity
         private long lastTick;
 
         private int[] comboAmounts;
-        private int currentScore;
-        private double currentMomentum=1;
-        private double highestMomentum=0;
-        private int highestComboScore;
-        private int currentLevel;
+        public int currentScore;
+        public double currentMomentum=1;
+        public double highestMomentum=0;
+        public int highestComboScore;
+        public int currentLevel;
 
-        private long timeRemaining;
-        private long nextCombo;
-        private long currentComboInterval;
+        /*public long timeRemaining;
+        public long nextCombo;           */
+        public long[] gameTimers;
+        public long[] timerIntervals;
+
+        /*public long currentComboInterval;
+        public long currentBoostInterval; */
+        public int boostsDisplayed;
+        public int maxBoosts;
+        long deltaTick;
 
         public CapManager capManager;
 
@@ -207,6 +233,9 @@ public class GameBoardActivity extends Activity
             setFocusable(true);
 
             capManager=capMgr;
+
+            gameTimers=new long[] { 0, 0, 0 };
+            timerIntervals=new long[] {0, 0, 0 };
         }
 
         private SoundPool soundPool;
@@ -239,9 +268,12 @@ public class GameBoardActivity extends Activity
         {
             currentLevel=difficulty;
 
-            timeRemaining=GAME_LENGTH;
-            currentComboInterval=GAME_COMBO_DELAY;
-            nextCombo=GAME_COMBO_DELAY;
+            //timeRemaining=GAME_LENGTH;
+            gameTimers[GAME_TIMER_REMAINING]=GAME_LENGTH;
+            gameTimers[GAME_TIMER_COMBO]=GAME_COMBO_DELAY;
+            timerIntervals[GAME_TIMER_COMBO]=GAME_COMBO_DELAY;
+
+            //currentComboInterval=GAME_COMBO_DELAY;
 
             gamePieces=new ArrayList<GamePiece>();
             //currentCombo=new ArrayList<GamePiece>();
@@ -298,7 +330,7 @@ public class GameBoardActivity extends Activity
 
                     synchronized (currentCombo)
                     {
-                        if(currentCombo.isEmpty() || currentCombo.get(0).cap.resourceId!=gamePieces.get(pieceIndex).cap.resourceId)
+                        if(currentCombo.isEmpty() || !currentCombo.get(0).cap.equals(gamePieces.get(pieceIndex).cap) /*currentCombo.get(0).cap.resourceId!=gamePieces.get(pieceIndex).cap.resourceId*/)
                         {
                             for(int i=0; i<currentCombo.size(); i++)
                             {
@@ -313,9 +345,6 @@ public class GameBoardActivity extends Activity
 
                             if(currentCombo.size()>1)
                             {
-                                //Toast toast=Toast.makeText(getApplicationContext(), String.valueOf(currentCombo.size())+" combo!", Toast.LENGTH_SHORT);
-                                //toast.show();
-
                                 if(currentMomentum<=0) currentMomentum=1;
 
                                 deltaScore=(int)(Math.pow(currentCombo.size(), 2)+Math.pow(currentCombo.get(0).cap.rarityClass, 2) * currentMomentum);// * (currentLevel/2));
@@ -377,24 +406,19 @@ public class GameBoardActivity extends Activity
             }
         }
 
-        private void updateGameState()
+        private void runTimers()
         {
-            //if(inputEvents.size()>0)
-            //    handleTouchEvent(inputEvents.pop());
-
-
-            /*
-
-            runTimers();
-            updateTimerIntervals();
-            updateGameBoard();
-
-             */
-
-            long deltaTick;
             if(lastTick==0) lastTick=System.currentTimeMillis();
 
             deltaTick=System.currentTimeMillis()-lastTick;
+
+            //
+            // if we need to change the speed at which things are happening
+            // we can just play with deltaTick.
+            //
+            // for this reason we should never use deltaTick to update
+            // "actual time" timers, only timers that are counting down
+            //
 
             currentMomentum-=Math.log10(currentMomentum)/60;
             //Log.d("GameBoard", "Dropping momentum to "+currentMomentum);
@@ -402,12 +426,15 @@ public class GameBoardActivity extends Activity
             if(currentMomentum<=0) currentMomentum=1;
             if(currentMomentum>100) currentMomentum=100;
 
-            currentComboInterval=(long)Math.max(1000, (currentComboInterval*(1-currentMomentum/100))*1000);
+            timerIntervals[GAME_TIMER_COMBO]=(long)Math.max(1000, (GAME_COMBO_DELAY*(1-currentMomentum/100)));
 
-            timeRemaining-=deltaTick;
-            nextCombo-=deltaTick;
+            gameTimers[GAME_TIMER_REMAINING]-=deltaTick;
+            gameTimers[GAME_TIMER_COMBO]-=deltaTick;
+        }
 
-            if(timeRemaining<=0)
+        private void updateGameBoard()
+        {
+            if(gameTimers[GAME_TIMER_REMAINING]<=0)
             {
                 Intent resultsIntent=new Intent(getBaseContext(), GameResultsActivity.class);
 
@@ -419,15 +446,15 @@ public class GameBoardActivity extends Activity
                 boolean retry=true;
                 _thread.setRunning(false);
 
-                timeRemaining=999999;
+                gameTimers[GAME_TIMER_REMAINING]=999999;
 
                 finish();
             }
 
-            if(nextCombo<=0)
+            if(gameTimers[GAME_TIMER_COMBO]<=0)
             {
                 capManager.prepNextCombo(currentMomentum);
-                nextCombo=GAME_COMBO_DELAY;
+                gameTimers[GAME_TIMER_COMBO]=GAME_COMBO_DELAY;//timerIntervals[GAME_TIMER_COMBO];
             }
 
             for(int i=0; i<gamePieces.size(); i++)
@@ -477,6 +504,12 @@ public class GameBoardActivity extends Activity
                         break;
                 }
             }
+        }
+
+        private void updateGameState()
+        {
+            this.runTimers();
+            this.updateGameBoard();
 
             lastTick=System.currentTimeMillis();
         }

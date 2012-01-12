@@ -266,11 +266,14 @@ public class GameBoardActivity extends Activity
 
         public void startNewGame(int difficulty)
         {
+            Random rand=new Random();
+
             currentLevel=difficulty;
 
             //timeRemaining=GAME_LENGTH;
             gameTimers[GAME_TIMER_REMAINING]=GAME_LENGTH;
             gameTimers[GAME_TIMER_COMBO]=GAME_COMBO_DELAY;
+            gameTimers[GAME_TIMER_BOOST]=(Math.max(rand.nextInt(11)+3, 11)) * 1000;
             timerIntervals[GAME_TIMER_COMBO]=GAME_COMBO_DELAY;
 
             //currentComboInterval=GAME_COMBO_DELAY;
@@ -301,9 +304,9 @@ public class GameBoardActivity extends Activity
             for(int i=0; i<boardSize; i++)
             {
                 GamePiece newPiece=new GamePiece();
-                newPiece.cap=capManager.getNextCap();
+                newPiece.cap=capManager.getNextCap(false);
                 newPiece.setDefaultState(currentLevel);
-                newPiece.cap.putCapInPlay(getApplicationContext());
+                capManager.putCapInPlay(getApplicationContext(), newPiece.cap);
                 gamePieces.add(newPiece);
             }
 
@@ -328,7 +331,15 @@ public class GameBoardActivity extends Activity
                     playSound(SOUND_TAP);
                     gamePieces.get(pieceIndex).setTappedState();
 
-                    synchronized (currentCombo)
+                    if(gamePieces.get(pieceIndex).cap instanceof CapManager.Boost)
+                    {
+                        Log.d("GameBoard", "Boost tapped");
+                        ((CapManager.Boost)gamePieces.get(pieceIndex).cap).performBoostEffects(this);
+                        gamePieces.get(pieceIndex).setTerminalFadingState();
+                    }
+                    else
+                    {
+                       synchronized (currentCombo)
                     {
                         if(currentCombo.isEmpty() || !currentCombo.get(0).cap.equals(gamePieces.get(pieceIndex).cap) /*currentCombo.get(0).cap.resourceId!=gamePieces.get(pieceIndex).cap.resourceId*/)
                         {
@@ -378,6 +389,9 @@ public class GameBoardActivity extends Activity
                             //Log.d("GameBoard", "Added a piece to the current combo");
                         }
                     }
+                    }
+
+
                 }
             }
             return super.onTouchEvent(event);
@@ -430,10 +444,13 @@ public class GameBoardActivity extends Activity
 
             gameTimers[GAME_TIMER_REMAINING]-=deltaTick;
             gameTimers[GAME_TIMER_COMBO]-=deltaTick;
+            gameTimers[GAME_TIMER_BOOST]-=deltaTick;
         }
 
         private void updateGameBoard()
         {
+            Random rand=new Random();
+
             if(gameTimers[GAME_TIMER_REMAINING]<=0)
             {
                 Intent resultsIntent=new Intent(getBaseContext(), GameResultsActivity.class);
@@ -449,6 +466,12 @@ public class GameBoardActivity extends Activity
                 gameTimers[GAME_TIMER_REMAINING]=999999;
 
                 finish();
+            }
+
+            if(gameTimers[GAME_TIMER_BOOST]<=0)
+            {
+                capManager.prepNextBoost();
+                gameTimers[GAME_TIMER_BOOST]=(Math.max(rand.nextInt(11)+3, 11)) * 1000;
             }
 
             if(gameTimers[GAME_TIMER_COMBO]<=0)
@@ -481,8 +504,8 @@ public class GameBoardActivity extends Activity
 
                             // replace the piece with a new piece
                             gamePieces.get(i).cap.removeCapFromPlay();
-                            gamePieces.get(i).cap=capManager.getNextCap();
-                            gamePieces.get(i).cap.putCapInPlay(getApplicationContext());
+                            gamePieces.get(i).cap=capManager.getNextCap(false);
+                            capManager.putCapInPlay(getApplicationContext(), gamePieces.get(i).cap);
                             gamePieces.get(i).setDefaultState(currentLevel);
                             //Log.d("GameBoard", "Piece state change: PIECE_STATE_NORMAL");
                         }

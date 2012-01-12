@@ -32,6 +32,12 @@ public class CapManager {
     }
 
     public class JokerBoost extends Boost {
+        public void putCapInPlay(Context context)
+        {
+            this.resourceId=context.getResources().getIdentifier("boostjoker", "drawable", "com.getbonkers.bottlecaps");
+            super.putCapInPlay(context);
+        }
+
         public boolean equals(Cap o)
         {
             return true;
@@ -39,13 +45,25 @@ public class CapManager {
     }
 
     public class MomentumBoost extends Boost {
+        public void putCapInPlay(Context context)
+        {
+            this.resourceId=context.getResources().getIdentifier("boostnitro", "drawable", "com.getbonkers.bottlecaps");
+            super.putCapInPlay(context);
+        }
+
         public void performBoostEffects(GameBoardActivity.GameBoard board)
         {
-            board.currentMomentum+=(board.currentMomentum*.25);
+            board.currentMomentum+=(100-board.currentMomentum)/2;
         }
     }
 
     public class TimeBoost extends Boost {
+        public void putCapInPlay(Context context)
+        {
+            this.resourceId=context.getResources().getIdentifier("boostincreasetime", "drawable", "com.getbonkers.bottlecaps");
+            super.putCapInPlay(context);
+        }
+
         public void performBoostEffects(GameBoardActivity.GameBoard board)
         {
             board.gameTimers[GameBoardActivity.GameBoard.GAME_TIMER_REMAINING]+=(10*1000); // add 10 seconds
@@ -53,6 +71,12 @@ public class CapManager {
     }
 
     public class HighlightCombosBoost extends Boost {
+        public void putCapInPlay(Context context)
+        {
+            this.resourceId=context.getResources().getIdentifier("boosthighlight", "drawable", "com.getbonkers.bottlecaps");
+            super.putCapInPlay(context);
+        }
+
         public void performBoostEffects(GameBoardActivity.GameBoard board)
         {
 
@@ -141,12 +165,15 @@ public class CapManager {
     Context _context;
     public long circulation;
     private Stack<Cap> capsBuffer;
+    private Stack<Boost> boostsBuffer;
     private ArrayList<Cap> comboCaps;
     private ArrayList<Set> sets;
     private ArrayList<Cap> allCaps;
-    private Stack<Boost> boostsAvailable;
+    private ArrayList<Boost> boostsAvailable;
 
     private int level;
+
+    private Cap currentMostPlayedCap;
 
     public int[] combosDelivered;
 
@@ -162,8 +189,22 @@ public class CapManager {
         combosDelivered=new int[10];
 
         capsBuffer=new Stack<Cap>();
-
+        boostsAvailable=new ArrayList<Boost>();
+        boostsBuffer=new Stack<Boost>();
         this.fillCapsBuffer();
+        this.fillBoostsBuffer();
+    }
+
+    public void putCapInPlay(Context context, Cap cap)
+    {
+        cap.putCapInPlay(context);
+        if(currentMostPlayedCap!=null && cap.numberInPlay>currentMostPlayedCap.numberInPlay)
+            currentMostPlayedCap=cap;
+    }
+
+    public void removeCapFromPlay(Context context, Cap cap)
+    {
+        cap.removeCapFromPlay();
     }
 
     public int capsBufferRemaining()
@@ -176,49 +217,29 @@ public class CapManager {
         sets=new ArrayList<Set>();
         allCaps=new ArrayList<Cap>();
 
-        Set set1=new Set();
+        int sets[] = new int[] { 9, 24, 7, 15 };
 
-        for(int i=0; i<9; i++)
+        for(int j=0; j<sets.length; j++)
         {
-            Cap cap=new Cap();
-            cap.setNumber=1;
-            cap.index=i+1;
+            //Set set=new Set();
 
-            cap.resourceId=_context.getResources().getIdentifier("set"+cap.setNumber+"_"+cap.index, "drawable", "com.getbonkers.bottlecaps");
-            //cap.image=new BitmapDrawable(_context.getResources(), BitmapFactory.decodeResource(_context.getResources(), cap.resourceId));
+            for(int i=0; i<sets[j]; i++)
+            {
+                Cap cap=new Cap();
+                cap.setNumber=j+1;
+                cap.index=i+1;
 
-            cap.issued=(i+1)*(i+1);
-            cap.available=cap.issued;
+                cap.resourceId=_context.getResources().getIdentifier("set"+cap.setNumber+"_"+cap.index, "drawable", "com.getbonkers.bottlecaps");
 
-            this.circulation+=cap.issued;
+                cap.issued=(i+1)*(i+1);
+                cap.available=cap.issued;
 
-            set1.capsInSet.add(cap);
-            allCaps.add(cap);
+                this.circulation+=cap.issued;
+
+                //set.capsInSet.add(cap);
+                allCaps.add(cap);
+            }
         }
-
-        sets.add(set1);
-
-        Set set2=new Set();
-
-        for(int i=0; i<24; i++)
-        {
-            Cap cap=new Cap();
-            cap.setNumber=2;
-            cap.index=i+1;
-
-            cap.resourceId=_context.getResources().getIdentifier("set"+cap.setNumber+"_"+cap.index, "drawable", "com.getbonkers.bottlecaps");
-            //cap.image=new BitmapDrawable(_context.getResources(), BitmapFactory.decodeResource(_context.getResources(), cap.resourceId));
-
-            cap.issued=(long)Math.pow(i, 2); //(i+1)*(i+1);
-            cap.available=cap.issued;
-
-            this.circulation+=cap.issued;
-
-            set2.capsInSet.add(cap);
-            allCaps.add(cap);
-        }
-
-        sets.add(set2);
 
         Collections.sort(allCaps, new CapTotalAvailableComparator());
 
@@ -250,8 +271,13 @@ public class CapManager {
 
     public void prepNextBoost()
     {
-        Boost newBoost=new JokerBoost();
-        boostsAvailable.push(newBoost);
+        if(boostsAvailable.size()>0)
+            boostsBuffer.push(boostsAvailable.get(0));
+    }
+
+    public void removeBoostFromAvailability(Boost boost)
+    {
+        boostsAvailable.remove(boost);
     }
 
     public void prepNextCombo(double momentum)
@@ -277,15 +303,21 @@ public class CapManager {
         if(nextComboLength>5)
             nextComboLength=5;
 
-        Log.d("CapManager", "Prepping combo of size " + nextComboLength + " with momentum " + momentum);
+        Cap nextCap=this.getNextCap(true);
 
-        Cap nextCap=this.getNextCap();
+        Log.d("CapManager", "Prepping combo of cap "+nextCap.index+" (set "+nextCap.setNumber+"), size " + nextComboLength + " with momentum " + momentum);
 
         for(int i=0; i<nextComboLength; i++)
         {
             comboCaps.add(nextCap);
         }
         combosDelivered[nextComboLength]++;
+    }
+
+    public void fillBoostsBuffer()
+    {
+        boostsAvailable=new ArrayList<Boost>();
+        boostsAvailable.add(new MomentumBoost());
     }
 
     public void fillCapsBuffer()
@@ -300,7 +332,7 @@ public class CapManager {
         //    bufferLength=50;
         //else
         //    bufferLength=allCaps.size();
-        bufferLength=20;
+        bufferLength=30;
 
         ArrayList<Cap> usedCaps=new ArrayList<Cap>();
 
@@ -325,16 +357,22 @@ public class CapManager {
                 }
             }
 
+            Log.d("CapManager", "Adding cap to buffer: "+allCaps.get(cutStartIdx).index+" (set "+allCaps.get(cutStartIdx).setNumber+")");
+
             capsBuffer.push(allCaps.get(cutStartIdx));
             usedCaps.add(allCaps.get(cutStartIdx));
         }
     }
 
-    public Cap getNextCap()
+    public synchronized Cap getNextCap(boolean forCombo)
     {
         Cap cap;
 
-        if(comboCaps.size()>0)
+        if(boostsBuffer.size()>0 && !forCombo)
+        {
+            cap=boostsBuffer.pop();
+        }
+        else if(comboCaps.size()>0)
         {
             cap=comboCaps.get(0);
             comboCaps.remove(cap);

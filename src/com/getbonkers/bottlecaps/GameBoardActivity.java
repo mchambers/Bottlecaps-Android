@@ -601,6 +601,8 @@ public class GameBoardActivity extends Activity
         int difficulty=getIntent().getExtras().getInt("GAME_DIFFICULTY", 1);
 
         CapManager capMgr=new CapManager(getApplicationContext(), difficulty);
+        capMgr.fillCapsBuffer();
+
         GameBoard board=new GameBoard(this, capMgr);
 
         board.startNewGame(difficulty);

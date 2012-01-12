@@ -166,7 +166,7 @@ public class CapManager {
     public long circulation;
     private Stack<Cap> capsBuffer;
     private Stack<Boost> boostsBuffer;
-    private ArrayList<Cap> comboCaps;
+    private Stack<Cap> comboCaps;
     private ArrayList<Set> sets;
     private ArrayList<Cap> allCaps;
     private ArrayList<Boost> boostsAvailable;
@@ -180,17 +180,18 @@ public class CapManager {
     public CapManager(Context context, int difficulty)
     {
         _context=context;
-        this.loadCaps();
 
         level = difficulty;
-
-        comboCaps=new ArrayList<Cap>();
 
         combosDelivered=new int[10];
 
         capsBuffer=new Stack<Cap>();
+        comboCaps=new Stack<Cap>();
         boostsAvailable=new ArrayList<Boost>();
         boostsBuffer=new Stack<Boost>();
+
+        this.loadCaps();
+
         this.fillCapsBuffer();
         this.fillBoostsBuffer();
     }
@@ -280,7 +281,7 @@ public class CapManager {
         boostsAvailable.remove(boost);
     }
 
-    public void prepNextCombo(double momentum)
+    public synchronized void prepNextCombo(double momentum)
     {
         Random random=new Random();
 
@@ -309,7 +310,7 @@ public class CapManager {
 
         for(int i=0; i<nextComboLength; i++)
         {
-            comboCaps.add(nextCap);
+            comboCaps.push(nextCap);
         }
         combosDelivered[nextComboLength]++;
     }
@@ -372,17 +373,19 @@ public class CapManager {
         {
             cap=boostsBuffer.pop();
         }
-        else if(comboCaps.size()>0)
+        else if(comboCaps.size()>0 && !forCombo)
         {
-            cap=comboCaps.get(0);
-            comboCaps.remove(cap);
+            cap=comboCaps.pop();
         }
         else
         {
-            if(capsBuffer.size()<5)
-                this.fillCapsBuffer();
             cap=capsBuffer.pop();
+
+            if(capsBuffer.size()==0)
+                this.fillCapsBuffer();
         }
+
+        Log.d("CapManager", "Next cap is: "+cap.index+" (set "+cap.setNumber+") forCombo: "+String.valueOf(forCombo) );
 
         return cap;
     }

@@ -64,9 +64,9 @@ public class GameBoardActivity extends Activity
 
                             if (sleepTime > 0) {
                                 // if sleepTime > 0 we're OK
-                                try {
+                                /* try {
                                     Thread.sleep(sleepTime);
-                                } catch (InterruptedException e) {}
+                                } catch (InterruptedException e) {}    */
                             }
 
                             while (sleepTime < 0 && framesSkipped < MAX_FRAME_SKIPS) {
@@ -223,7 +223,7 @@ public class GameBoardActivity extends Activity
         public CapManager capManager;
 
         private static final int PIECE_FADEOUT_ANIM_SPEED=1000;
-        private static final int COMBO_FADEOUT_ANIM_SPEED=100;
+        private static final int COMBO_FADEOUT_ANIM_SPEED=250;
 
         public GameBoard(Context context, CapManager capMgr)
         {
@@ -335,6 +335,7 @@ public class GameBoardActivity extends Activity
                     {
                         Log.d("GameBoard", "Boost tapped");
                         ((CapManager.Boost)gamePieces.get(pieceIndex).cap).performBoostEffects(this);
+                        capManager.removeBoostFromAvailability((CapManager.Boost)gamePieces.get(pieceIndex).cap);
                         gamePieces.get(pieceIndex).setTerminalFadingState();
                     }
                     else
@@ -512,7 +513,7 @@ public class GameBoardActivity extends Activity
                         else
                         {
                             double newOpacity1=gamePieces.get(i).remainingLife/PIECE_FADEOUT_ANIM_SPEED;
-                            double newOpacity2=(150*newOpacity1)+75;
+                            double newOpacity2=(175*newOpacity1)+80;
                             gamePieces.get(i).opacity=(int)newOpacity2;
                         }
                         break;

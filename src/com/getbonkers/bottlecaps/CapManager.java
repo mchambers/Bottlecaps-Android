@@ -6,6 +6,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.util.Log;
 
 import java.lang.reflect.Array;
+import java.sql.Time;
 import java.util.*;
 
 import static ch.lambdaj.Lambda.*;
@@ -273,7 +274,10 @@ public class CapManager {
     public void prepNextBoost()
     {
         if(boostsAvailable.size()>0)
-            boostsBuffer.push(boostsAvailable.get(0));
+        {
+            Random rand=new Random();
+            boostsBuffer.push(boostsAvailable.get(rand.nextInt(boostsAvailable.size())));
+        }
     }
 
     public void removeBoostFromAvailability(Boost boost)
@@ -319,6 +323,9 @@ public class CapManager {
     {
         boostsAvailable=new ArrayList<Boost>();
         boostsAvailable.add(new MomentumBoost());
+        boostsAvailable.add(new TimeBoost());
+        boostsAvailable.add(new MomentumBoost());
+        // BOOM!
     }
 
     public void fillCapsBuffer()

@@ -7,8 +7,11 @@ import android.graphics.*;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.AudioManager;
 import android.media.SoundPool;
+import android.view.MotionEvent;
 import android.os.Bundle;
 import android.view.*;
+import android.view.MotionEvent.PointerCoords;
+
 import android.util.Log;
 import android.widget.Toast;
 
@@ -108,6 +111,7 @@ public class GameBoardActivity extends Activity
         public static final int PIECE_STATE_NORMAL=0;
         public static final int PIECE_STATE_FADING=1;
         public static final int PIECE_STATE_TAPPED=2;
+        public static final int PIECE_STATE_HIGHLIGHTED=3;
 
         public static final int GAME_DIFFICULTY_EASY=0;
         public static final int GAME_DIFFICULTY_NORMAL=1;
@@ -119,6 +123,7 @@ public class GameBoardActivity extends Activity
         public static final int GAME_TIMER_COMBO=1;
         public static final int GAME_TIMER_BOOST=2;
         public static final int GAME_TIMER_BOMB=3;
+        public static final int GAME_TIMER_PAUSE=4;
 
         class GameOngoingEffect
         {
@@ -162,8 +167,6 @@ public class GameBoardActivity extends Activity
 
                 this.remainingLife=time*1000;
                 this.state=PIECE_STATE_NORMAL;
-
-
                 this.terminalState=false;
                 this.opacity=255;
             }
@@ -174,6 +177,12 @@ public class GameBoardActivity extends Activity
                 this.opacity=255;
                 this.remainingLife=5000;
                 this.terminalState=false;
+            }
+
+            public void setHighlightedState()
+            {
+                this.state=PIECE_STATE_HIGHLIGHTED;
+                // don't change any other properties, just highlight the piece
             }
 
             public void setFadingState()
@@ -192,7 +201,7 @@ public class GameBoardActivity extends Activity
         }
 
         private BrainThread _thread;
-        private ArrayList<GamePiece> gamePieces;
+        public ArrayList<GamePiece> gamePieces;
         private ArrayList<GamePiece> gameEffects;
         private final ArrayList<GamePiece> currentCombo=new ArrayList<GamePiece>();
         private int boardSize;
@@ -231,11 +240,27 @@ public class GameBoardActivity extends Activity
             getHolder().addCallback(this);
             _thread=new BrainThread(getHolder(), this);
             setFocusable(true);
-
             capManager=capMgr;
 
-            gameTimers=new long[] { 0, 0, 0 };
-            timerIntervals=new long[] {0, 0, 0 };
+            gameTimers=new long[] { 0, 0, 0, 0, 0 };
+            timerIntervals=new long[] {0, 0, 0, 0, 0 };
+
+            setOnTouchListener(new OnTouchListener() {
+                public boolean onTouch(View view, MotionEvent event) {
+                    dumpEvent(event);
+
+                    switch(event.getActionMasked())
+                    {
+                        case MotionEvent.ACTION_DOWN:
+                            handleTouch(event.getX(), event.getY());
+                            break;
+                        case MotionEvent.ACTION_POINTER_DOWN :
+                            handleTouch(event.getX(event.getActionIndex()), event.getY(event.getActionIndex()));
+                            break;
+                    }
+                    return true;  //To change body of implemented methods use File | Settings | File Templates.
+                }
+            });
         }
 
         private SoundPool soundPool;
@@ -313,34 +338,34 @@ public class GameBoardActivity extends Activity
             comboAmounts=new int[10];
         }
 
-        public boolean onTouchEvent(MotionEvent event) {
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                float whichPiece=event.getX()/pieceWidth;
-                float whichRow=event.getY()/pieceWidth;
+        private void handleTouch(float x, float y)
+        {
+            float whichPiece=x/pieceWidth;//event.getX()/pieceWidth;
+            float whichRow=y/pieceWidth;//event.getY()/pieceWidth;
 
-                whichPiece=(float)Math.ceil(whichPiece);
-                whichRow=(float)Math.ceil(whichRow);
+            whichPiece=(float)Math.ceil(whichPiece);
+            whichRow=(float)Math.ceil(whichRow);
 
-                //Log.d("GameBoard", "Piece "+whichPiece+" in row "+whichRow+" at coords: x=" + event.getX() + ",y=" + event.getY());
-                int pieceIndex=(int)whichRow*itemsPerRow;
-                pieceIndex-=itemsPerRow-whichPiece;
-                pieceIndex--;
+            //Log.d("GameBoard", "Piece "+whichPiece+" in row "+whichRow+" at coords: x=" + event.getX() + ",y=" + event.getY());
+            int pieceIndex=(int)whichRow*itemsPerRow;
+            pieceIndex-=itemsPerRow-whichPiece;
+            pieceIndex--;
 
-                if(pieceIndex<gamePieces.size() && !gamePieces.get(pieceIndex).terminalState)
+            if(pieceIndex<gamePieces.size() && !gamePieces.get(pieceIndex).terminalState)
+            {
+                playSound(SOUND_TAP);
+                gamePieces.get(pieceIndex).setTappedState();
+
+                if(gamePieces.get(pieceIndex).cap instanceof CapManager.Boost)
                 {
-                    playSound(SOUND_TAP);
-                    gamePieces.get(pieceIndex).setTappedState();
-
-                    if(gamePieces.get(pieceIndex).cap instanceof CapManager.Boost)
-                    {
-                        Log.d("GameBoard", "Boost tapped");
-                        ((CapManager.Boost)gamePieces.get(pieceIndex).cap).performBoostEffects(this);
-                        capManager.removeBoostFromAvailability((CapManager.Boost)gamePieces.get(pieceIndex).cap);
-                        gamePieces.get(pieceIndex).setTerminalFadingState();
-                    }
-                    else
-                    {
-                       synchronized (currentCombo)
+                    Log.d("GameBoard", "Boost tapped");
+                    ((CapManager.Boost)gamePieces.get(pieceIndex).cap).performBoostEffects(this);
+                    capManager.removeBoostFromAvailability((CapManager.Boost)gamePieces.get(pieceIndex).cap);
+                    gamePieces.get(pieceIndex).setTerminalFadingState();
+                }
+                else
+                {
+                   synchronized (currentCombo)
                     {
                         if(currentCombo.isEmpty() || !currentCombo.get(0).cap.equals(gamePieces.get(pieceIndex).cap) /*currentCombo.get(0).cap.resourceId!=gamePieces.get(pieceIndex).cap.resourceId*/)
                         {
@@ -390,11 +415,39 @@ public class GameBoardActivity extends Activity
                             //Log.d("GameBoard", "Added a piece to the current combo");
                         }
                     }
-                    }
-
-
                 }
             }
+        }
+
+        private void dumpEvent(MotionEvent event) {
+   String names[] = { "DOWN" , "UP" , "MOVE" , "CANCEL" , "OUTSIDE" ,
+      "POINTER_DOWN" , "POINTER_UP" , "7?" , "8?" , "9?" };
+   StringBuilder sb = new StringBuilder();
+   int action = event.getAction();
+   int actionCode = action & MotionEvent.ACTION_MASK;
+   sb.append("event ACTION_" ).append(names[actionCode]);
+   if (actionCode == MotionEvent.ACTION_POINTER_DOWN
+         || actionCode == MotionEvent.ACTION_POINTER_UP) {
+      sb.append("(pid " ).append(
+      action >> MotionEvent.ACTION_POINTER_ID_SHIFT);
+      sb.append(")" );
+   }
+   sb.append("[" );
+   for (int i = 0; i < event.getPointerCount(); i++) {
+      sb.append("#" ).append(i);
+      sb.append("(pid " ).append(event.getPointerId(i));
+      sb.append(")=" ).append((int) event.getX(i));
+      sb.append("," ).append((int) event.getY(i));
+      if (i + 1 < event.getPointerCount())
+         sb.append(";" );
+   }
+   sb.append("]" );
+   Log.d("GameBoard", sb.toString());
+}
+
+        public boolean onTouchEvent(MotionEvent event) {
+
+
             return super.onTouchEvent(event);
         }
 
@@ -435,17 +488,24 @@ public class GameBoardActivity extends Activity
             // "actual time" timers, only timers that are counting down
             //
 
-            currentMomentum-=Math.log10(currentMomentum)/60;
-            //Log.d("GameBoard", "Dropping momentum to "+currentMomentum);
+            if(gameTimers[GAME_TIMER_PAUSE]>0)
+            {
+                gameTimers[GAME_TIMER_PAUSE]-=deltaTick;
+            }
+            else
+            {
+                currentMomentum-=Math.log10(currentMomentum)/60;
+                //Log.d("GameBoard", "Dropping momentum to "+currentMomentum);
 
-            if(currentMomentum<=0) currentMomentum=1;
-            if(currentMomentum>100) currentMomentum=100;
+                if(currentMomentum<=0) currentMomentum=1;
+                if(currentMomentum>100) currentMomentum=100;
 
-            timerIntervals[GAME_TIMER_COMBO]=(long)Math.max(1000, (GAME_COMBO_DELAY*(1-currentMomentum/100)));
+                timerIntervals[GAME_TIMER_COMBO]=(long)Math.max(1000, (GAME_COMBO_DELAY*(1-currentMomentum/100)));
 
-            gameTimers[GAME_TIMER_REMAINING]-=deltaTick;
-            gameTimers[GAME_TIMER_COMBO]-=deltaTick;
-            gameTimers[GAME_TIMER_BOOST]-=deltaTick;
+                gameTimers[GAME_TIMER_REMAINING]-=deltaTick;
+                gameTimers[GAME_TIMER_COMBO]-=deltaTick;
+                gameTimers[GAME_TIMER_BOOST]-=deltaTick;
+            }
         }
 
         private void updateGameBoard()
@@ -488,6 +548,7 @@ public class GameBoardActivity extends Activity
                 switch(gamePieces.get(i).state)
                 {
                     case PIECE_STATE_NORMAL:
+                    case PIECE_STATE_HIGHLIGHTED:
                         if(gamePieces.get(i).remainingLife<=0)
                         {
                             gamePieces.get(i).state=PIECE_STATE_FADING;
@@ -523,7 +584,6 @@ public class GameBoardActivity extends Activity
                             gamePieces.get(i).state=PIECE_STATE_FADING;
                             gamePieces.get(i).remainingLife=PIECE_FADEOUT_ANIM_SPEED;//1000*(1-currentMomentum/100);
                             //Log.d("GameBoard", "Piece state change: PIECE_STATE_FADING");
-
                         }
                         break;
                 }
@@ -572,8 +632,12 @@ public class GameBoardActivity extends Activity
                         cap.setColorFilter(null);
                     else if(gamePieces.get(i).state==PIECE_STATE_FADING)
                         cap.setColorFilter(null);
-                    else*/ if(gamePieces.get(i).state==PIECE_STATE_TAPPED)
+                    else*/
+                    if(gamePieces.get(i).state==PIECE_STATE_TAPPED)
                         canvas.drawRect(x, y, x+pieceWidth, y+pieceWidth, tp);
+                    else if(gamePieces.get(i).state==PIECE_STATE_HIGHLIGHTED)
+                        cap.setColorFilter(Color.BLUE, PorterDuff.Mode.MULTIPLY);
+
                         //cap.setColorFilter(null);
                         //cap.setColorFilter(Color.BLUE, PorterDuff.Mode.MULTIPLY);
 

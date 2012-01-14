@@ -45,6 +45,18 @@ public class CapManager {
         }
     }
 
+    public class FreezeBoost extends Boost {
+        public void putCapInPlay(Context context)
+        {
+
+        }
+
+        public void performBoostEffects(GameBoardActivity.GameBoard board)
+        {
+
+        }
+    }
+
     public class MomentumBoost extends Boost {
         public void putCapInPlay(Context context)
         {
@@ -80,7 +92,13 @@ public class CapManager {
 
         public void performBoostEffects(GameBoardActivity.GameBoard board)
         {
-
+            // highlight the caps in the biggest combo on the board
+            // only if they're not already tapped.
+            for(int i=0; i<board.gamePieces.size(); i++)
+            {
+                if(board.gamePieces.get(i).cap.numberInPlay>1)
+                    board.gamePieces.get(i).setHighlightedState();
+            }
         }
     }
 
@@ -104,6 +122,7 @@ public class CapManager {
 
         public boolean equals(Cap o)
         {
+            if(o==null) return false;
             return (o.resourceId==this.resourceId);
         }
 
@@ -117,15 +136,16 @@ public class CapManager {
         {
             if(numberInPlay<=0)
             {
-                this.numberInPlay++;
                 BitmapFactory.Options options=new BitmapFactory.Options();
                 //options.inSampleSize=4;
                 this.image=new BitmapDrawable(context.getResources(), BitmapFactory.decodeResource(context.getResources(), this.resourceId, options));
             }
+            this.numberInPlay++;
         }
 
         public void removeCapFromPlay()
         {
+            this.numberInPlay--;
             if(image!=null)
             {
                 if(numberInPlay<=0)
@@ -200,7 +220,7 @@ public class CapManager {
     public void putCapInPlay(Context context, Cap cap)
     {
         cap.putCapInPlay(context);
-        if(currentMostPlayedCap!=null && cap.numberInPlay>currentMostPlayedCap.numberInPlay)
+        if(currentMostPlayedCap==null || cap.numberInPlay>currentMostPlayedCap.numberInPlay)
             currentMostPlayedCap=cap;
     }
 
@@ -325,6 +345,8 @@ public class CapManager {
         boostsAvailable.add(new MomentumBoost());
         boostsAvailable.add(new TimeBoost());
         boostsAvailable.add(new MomentumBoost());
+        boostsAvailable.add(new HighlightCombosBoost());
+        boostsAvailable.add(new HighlightCombosBoost());
         // BOOM!
     }
 

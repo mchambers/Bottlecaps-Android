@@ -328,6 +328,8 @@ public class CapManager {
         if(nextComboLength>5)
             nextComboLength=5;
 
+        nextComboLength+=((int)momentum)/100;
+
         Cap nextCap=this.getNextCap(true);
 
         Log.d("CapManager", "Prepping combo of cap "+nextCap.index+" (set "+nextCap.setNumber+"), size " + nextComboLength + " with momentum " + momentum);

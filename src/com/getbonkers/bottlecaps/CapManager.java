@@ -9,8 +9,6 @@ import java.lang.reflect.Array;
 import java.sql.Time;
 import java.util.*;
 
-import static ch.lambdaj.Lambda.*;
-
 /*
 
 Add time

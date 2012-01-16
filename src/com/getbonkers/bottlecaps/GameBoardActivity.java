@@ -247,7 +247,7 @@ public class GameBoardActivity extends Activity
 
             setOnTouchListener(new OnTouchListener() {
                 public boolean onTouch(View view, MotionEvent event) {
-                    dumpEvent(event);
+                    //dumpEvent(event);
 
                     switch(event.getActionMasked())
                     {
@@ -358,7 +358,7 @@ public class GameBoardActivity extends Activity
 
                 if(gamePieces.get(pieceIndex).cap instanceof CapManager.Boost)
                 {
-                    Log.d("GameBoard", "Boost tapped");
+                    //Log.d("GameBoard", "Boost tapped");
                     ((CapManager.Boost)gamePieces.get(pieceIndex).cap).performBoostEffects(this);
                     capManager.removeBoostFromAvailability((CapManager.Boost)gamePieces.get(pieceIndex).cap);
                     gamePieces.get(pieceIndex).setTerminalFadingState();
@@ -378,7 +378,7 @@ public class GameBoardActivity extends Activity
                                 //currentCombo.get(i).setDefaultState();
                             }
 
-                            int deltaScore=0;
+                            int deltaScore;
 
                             if(currentCombo.size()>1)
                             {
@@ -392,7 +392,7 @@ public class GameBoardActivity extends Activity
                                 highestComboScore=Math.max(highestComboScore, deltaScore);
 
                                 //playSound(SOUND_GOOD);
-                                Log.d("GameBoard", "Score up by "+deltaScore+" (rarity "+currentCombo.get(0).cap.rarityClass+"), New score: "+currentScore+" at momentum "+currentMomentum);
+                                //Log.d("GameBoard", "Score up by "+deltaScore+" (rarity "+currentCombo.get(0).cap.rarityClass+"), New score: "+currentScore+" at momentum "+currentMomentum);
                             }
                             else
                             {
@@ -606,9 +606,15 @@ public class GameBoardActivity extends Activity
             BitmapDrawable cap;//=new BitmapDrawable(getResources(), _scratch);
 
             Paint tp=new Paint();
+            Paint text=new Paint();
 
             tp.setColor(Color.GRAY);
             tp.setTextAlign(Paint.Align.LEFT);
+
+            text.setColor(Color.BLACK);
+            text.setStyle(Paint.Style.FILL);
+            text.setTextAlign(Paint.Align.LEFT);
+            text.setTextSize(12.0f);
 
             int x=0;
             int y=0;
@@ -620,7 +626,9 @@ public class GameBoardActivity extends Activity
 
             //canvas.drawText("Score: "+currentScore, 5, height-30, tp);
 
-            for(int i=0; i<gamePieces.size(); i++)
+            int i;
+
+            for(i=0; i<gamePieces.size(); i++)
             {
                 if(gamePieces.get(i).cap.isCurrentlyDrawable())
                 {
@@ -654,6 +662,10 @@ public class GameBoardActivity extends Activity
                     }
                 }
             }
+
+            x=(pieceWidth)*(i%itemsPerRow);//+(pieceWidth/2);
+            y=(pieceWidth)*curRow;
+            canvas.drawText("Momentum: "+Math.round(currentMomentum)+"  Score: "+currentScore, x+5, y+10, text);
         }
     }
 

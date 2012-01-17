@@ -614,7 +614,7 @@ public class GameBoardActivity extends Activity
             text.setColor(Color.BLACK);
             text.setStyle(Paint.Style.FILL);
             text.setTextAlign(Paint.Align.LEFT);
-            text.setTextSize(12.0f);
+            text.setTextSize(12 * getApplicationContext().getResources().getDisplayMetrics().density);
 
             int x=0;
             int y=0;
@@ -665,7 +665,7 @@ public class GameBoardActivity extends Activity
 
             x=(pieceWidth)*(i%itemsPerRow);//+(pieceWidth/2);
             y=(pieceWidth)*curRow;
-            canvas.drawText("Momentum: "+Math.round(currentMomentum)+"  Score: "+currentScore, x+5, y+10, text);
+            canvas.drawText("Momentum: "+Math.round(currentMomentum)+"  Score: "+currentScore+"   "+gameTimers[GAME_TIMER_REMAINING]/1000, x+5, y+10, text);
         }
     }
 

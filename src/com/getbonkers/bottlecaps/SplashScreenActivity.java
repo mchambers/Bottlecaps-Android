@@ -1,6 +1,7 @@
 package com.getbonkers.bottlecaps;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,7 +23,6 @@ import org.json.JSONObject;
  */
 
 public class SplashScreenActivity extends Activity {
-    boolean readyToGo;
 
     /** Called when the activity is first created. */
     @Override
@@ -43,42 +43,15 @@ public class SplashScreenActivity extends Activity {
             public void onSuccess(String response) {
                 Log.d("SplashScreen", response);
 
-                GetBonkersAPI.get("/sets", new RequestParams(), getApplicationContext(), new AsyncHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(String response) {
-                        Log.d("SplashScreen", response);
-                        try {
-                            JSONArray sets=new JSONArray(response);
-                            for(int i=0; i<sets.length(); i++)
-                            {
-                                JSONObject set=sets.getJSONObject(i).getJSONObject("cap_set");
-                                Log.d("SplashScreen", String.valueOf(set.getInt("cap_count")) + " caps in set "+set.getString("name")+" ("+set.getInt("id")+")");
-                                GetBonkersAPI.get("/sets/"+set.getInt("id"), new RequestParams(), getApplicationContext(), new AsyncHttpResponseHandler() {
-                                    @Override
-                                    public void onSuccess(String response) {
-                                        try {
-                                            Log.d("SplashScreen", response);
-                                            JSONObject set=new JSONObject(response).getJSONObject("cap_set");
-                                            JSONArray caps=set.getJSONArray("cap");
-                                            for(int i=0; i<caps.length(); i++)
-                                            {
-                                                Log.d("SplashScreen", "Cap: "+caps.getJSONObject(i).getString("name"));
-                                            }
 
-                                        } catch(JSONException e)
-                                        {
-
-                                        }
-                                    }
-                                });
-                            }
-                        } catch(JSONException e)
-                        {
-                        }
-                    }
-                });
             }
         });
+    }
+
+    @Override
+    public void onDestroy()
+    {
+        super.onDestroy();
     }
 
     public void onKidsModeClick(View v)

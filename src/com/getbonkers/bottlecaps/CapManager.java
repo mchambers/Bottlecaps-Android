@@ -4,10 +4,19 @@ import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.Log;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.sql.Time;
 import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 /*
 
@@ -19,6 +28,11 @@ Momentum boost
 
  */
 public class CapManager {
+    public interface CapManagerDelegate {
+        public void onCapSetsLoadComplete();
+        public void onCapSetsLoadFailure();
+    }
+
     public class Boost extends Cap {
         public void performBoostEffects(GameBoardActivity.GameBoard board)
         {
@@ -180,7 +194,7 @@ public class CapManager {
         }
     }
 
-    private final boolean capManagerInit=false;
+    private boolean capManagerInit=false;
     Context _context;
     public long circulation;
     private Stack<Cap> capsBuffer;
@@ -192,14 +206,19 @@ public class CapManager {
 
     private int level;
 
+    BottlecapsDatabaseAdapter adapter;
+
     private Cap currentMostPlayedCap;
 
     public int[] combosDelivered;
 
-    public CapManager(Context context, int difficulty)
+    public CapManager(Context context, int difficulty, final CapManagerDelegate delegate)
     {
         _context=context;
 
+        adapter=new BottlecapsDatabaseAdapter(context);
+        adapter.open();
+        
         level = difficulty;
 
         combosDelivered=new int[10];
@@ -208,11 +227,30 @@ public class CapManager {
         comboCaps=new Stack<Cap>();
         boostsAvailable=new ArrayList<Boost>();
         boostsBuffer=new Stack<Boost>();
+        
+        Runnable capLoader=new Runnable() {
+            @Override
+            public void run() {
+                //loadCaps();
+                loadCapSetsFromServer();
 
-        this.loadCaps();
+                fillCapsBuffer();
+                fillBoostsBuffer();
 
-        this.fillCapsBuffer();
-        this.fillBoostsBuffer();
+                while(!capManagerInit) {
+                    try {
+                        Thread.sleep(20);
+
+                    } catch(Exception e)
+                    {
+
+                    }
+                }
+                delegate.onCapSetsLoadComplete();
+            }
+        };
+
+        new Thread(capLoader).start();
     }
 
     public void putCapInPlay(Context context, Cap cap)
@@ -230,6 +268,72 @@ public class CapManager {
     public int capsBufferRemaining()
     {
         return capsBuffer.size();
+    }
+
+    public void capSetExistsOnDisk(int setID)
+    {
+
+    }
+
+    public void loadCapSetFromZip(int setID)
+    {
+        try {
+            ZipInputStream zipF=new ZipInputStream(_context.getAssets().open(setID + ".zip"));
+
+            ZipEntry entry;
+
+            while( (entry=zipF.getNextEntry()) !=null )
+            {
+                Log.d("CapManager", entry.getName());
+            }
+
+        }  catch(IOException e)
+        {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void loadCapSetsFromServer()
+    {
+        GetBonkersAPI.get("/sets", new RequestParams(), _context, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(String response) {
+                Log.d("CapManager", response);
+                try {
+                    JSONArray sets=new JSONArray(response);
+                    for(int i=0; i<sets.length(); i++)
+                    {
+                        JSONObject set=sets.getJSONObject(i).getJSONObject("cap_set");
+                        Log.d("CapManager", String.valueOf(set.getInt("cap_count")) + " caps in set "+set.getString("name")+" ("+set.getInt("id")+")");
+
+                        loadCapSetFromZip(set.getInt("id"));
+
+                        GetBonkersAPI.get("/sets/"+set.getInt("id"), new RequestParams(), _context, new AsyncHttpResponseHandler() {
+                            @Override
+                            public void onSuccess(String response) {
+                                try {
+                                    Log.d("CapManager", response);
+                                    JSONObject set=new JSONObject(response).getJSONObject("cap_set");
+                                    JSONArray caps=set.getJSONArray("cap");
+
+                                    for(int i=0; i<caps.length(); i++)
+                                    {
+                                        Log.d("CapManager", "Cap: "+caps.getJSONObject(i).getString("name"));
+                                    }
+                                } catch(JSONException e)
+                                {
+
+                                }
+                            }
+                        });
+                    }
+                } catch(JSONException e)
+                {
+                }
+                capManagerInit=true;
+            }
+        });
     }
 
     public void loadCaps()

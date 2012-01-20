@@ -1,6 +1,7 @@
 package com.getbonkers.bottlecaps;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.*;
@@ -21,8 +22,32 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.Stack;
 
-public class GameBoardActivity extends Activity
+public class GameBoardActivity extends Activity implements CapManager.CapManagerDelegate
 {
+    ProgressDialog dialog;
+    CapManager capMgr;
+
+    public void onCapSetsLoadComplete() {
+        dialog.dismiss();
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                int difficulty=getIntent().getExtras().getInt("GAME_DIFFICULTY", 1);
+
+                GameBoard board=new GameBoard(getApplicationContext(), capMgr);
+
+                board.startNewGame(difficulty);
+                //requestWindowFeature(Window.FEATURE_NO_TITLE);
+                setContentView(board);
+            }
+        });
+    }
+
+    public void onCapSetsLoadFailure() {
+        dialog.dismiss();
+    }
+
     class BrainThread extends Thread {
         private SurfaceHolder _surfaceHolder;
         private GameBoard _board;
@@ -675,15 +700,13 @@ public class GameBoardActivity extends Activity
     {
         super.onCreate(savedInstanceState);
 
+        dialog = ProgressDialog.show(this, "",
+                "Loading. Please wait...", true);
+
         int difficulty=getIntent().getExtras().getInt("GAME_DIFFICULTY", 1);
 
-        CapManager capMgr=new CapManager(getApplicationContext(), difficulty);
-        capMgr.fillCapsBuffer();
+        capMgr=new CapManager(getApplicationContext(), difficulty, this);
+        //capMgr.fillCapsBuffer();
 
-        GameBoard board=new GameBoard(this, capMgr);
-
-        board.startNewGame(difficulty);
-        //requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(board);
     }
 }

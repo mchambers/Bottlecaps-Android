@@ -1,8 +1,12 @@
 package com.getbonkers.bottlecaps;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteCursor;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Environment;
+import android.os.StatFs;
 import android.util.Log;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -10,13 +14,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Array;
 import java.sql.Time;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
+
+import org.apache.commons.io.IOUtils;
 
 /*
 
@@ -232,10 +238,7 @@ public class CapManager {
             @Override
             public void run() {
                 //loadCaps();
-                loadCapSetsFromServer();
-
-                fillCapsBuffer();
-                fillBoostsBuffer();
+                //loadCapSetsFromServer();
 
                 while(!capManagerInit) {
                     try {
@@ -246,6 +249,10 @@ public class CapManager {
 
                     }
                 }
+
+                //fillCapsBuffer();
+                //fillBoostsBuffer();
+
                 delegate.onCapSetsLoadComplete();
             }
         };
@@ -270,63 +277,147 @@ public class CapManager {
         return capsBuffer.size();
     }
 
-    public void capSetExistsOnDisk(int setID)
+    public boolean capSetExistsOnDisk(int setID)
     {
-
+         // verify we have the png for each cap
+        Cursor capsInSet=adapter.getCapsInSet(setID);
+        while(capsInSet.moveToNext())
+        {
+            File f=new File(Environment.getDataDirectory().getPath()+"/"+capsInSet.getLong(capsInSet.getColumnIndex(BottlecapsDatabaseAdapter.KEY_ROWID))+".png");
+            if(!f.exists()) return false;
+        }
+        return true;
     }
 
-    public void loadCapSetFromZip(int setID)
+    public boolean loadCapSetFromZip(int setID, boolean storedInAssets)
     {
         try {
-            ZipInputStream zipF=new ZipInputStream(_context.getAssets().open(setID + ".zip"));
+            ZipInputStream zipF;
+
+            if(storedInAssets)
+                zipF=new ZipInputStream(_context.getAssets().open(setID + ".zip"));
+            else
+            {
+                zipF=new ZipInputStream(new FileInputStream(Environment.getDownloadCacheDirectory().getPath()+"/"+setID+".zip"));
+            }
 
             ZipEntry entry;
 
             while( (entry=zipF.getNextEntry()) !=null )
             {
                 Log.d("CapManager", entry.getName());
+
+                BufferedInputStream inputStream = new BufferedInputStream(zipF);
+                BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(Environment.getDataDirectory().getPath()+"/"+entry.getName()));
+
+                try {
+                    IOUtils.copy(inputStream, outputStream);
+                } finally {
+                    outputStream.close();
+                    inputStream.close();
+                }
             }
 
         }  catch(IOException e)
         {
             e.printStackTrace();
+            return false;
         }
+        return true;
 
     }
 
-    public void loadCapSetsFromServer()
+    public void addCapSetToLocal(int setID)
+    {
+
+        storeCapSetInDatabase(setID);
+    }
+
+    private void storeCapSetInDatabase(final int setID)
+    {
+        GetBonkersAPI.get("/sets/"+setID, new RequestParams(), _context, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(String response) {
+                try {
+                    Log.d("CapManager", response);
+                   
+                    JSONObject set=new JSONObject(response).getJSONObject("cap_set");
+
+                    adapter.insertSet((long)setID, set.getString("name"), set.getString("artist"), set.getString("description"));
+
+                    JSONArray caps=set.getJSONArray("cap");
+
+                    for(int i=0; i<caps.length(); i++)
+                    {
+                        JSONObject cap=caps.getJSONObject(i);
+                        adapter.insertCapIntoSet((long)setID, cap.getInt("id"), cap.getInt("available"), cap.getInt("issued"), cap.getString("name"), cap.getString("description"), cap.getInt("scarcity"));
+                        Log.d("CapManager", "Cap: "+caps.getJSONObject(i).getString("name"));
+                    }
+                } catch(JSONException e)
+                {
+
+                }
+            }
+        });
+    }
+
+    private void downloadCapSetAssets(int setID)
+    {
+        // check to see if there's enough space on the phone
+        // if not, check if there's enough space on the SD card
+        // if not, show an error to the user and abort.
+
+        /*
+        StatFs stat = new StatFs(Environment.getExternalStorageDirectory().getPath());
+        long sdBytesAvailable = (long)stat.getBlockSize() *(long)stat.getBlockCount();
+        long sdCardSpaceAvailable = sdBytesAvailable / 1048576;
+
+        StatFs phoneStat = new StatFs(Environment.getDataDirectory().getPath());
+        long phoneBytesAvailable = (long)phoneStat.getBlockSize() * (long)phoneStat.getAvailableBlocks();
+        long phoneSpaceAvailable = (long) (phoneBytesAvailable / (1024.f * 1024.f));
+          */
+
+
+    }
+
+    public void buildWorkingSet()
+    {
+
+    }
+
+    private void ensureCapSetAssetsExist()
     {
         GetBonkersAPI.get("/sets", new RequestParams(), _context, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(String response) {
-                Log.d("CapManager", response);
+                Log.d("CapManager", response);                
+                // Do we already have this set in the DB?
                 try {
                     JSONArray sets=new JSONArray(response);
                     for(int i=0; i<sets.length(); i++)
                     {
                         JSONObject set=sets.getJSONObject(i).getJSONObject("cap_set");
-                        Log.d("CapManager", String.valueOf(set.getInt("cap_count")) + " caps in set "+set.getString("name")+" ("+set.getInt("id")+")");
 
-                        loadCapSetFromZip(set.getInt("id"));
-
-                        GetBonkersAPI.get("/sets/"+set.getInt("id"), new RequestParams(), _context, new AsyncHttpResponseHandler() {
-                            @Override
-                            public void onSuccess(String response) {
-                                try {
-                                    Log.d("CapManager", response);
-                                    JSONObject set=new JSONObject(response).getJSONObject("cap_set");
-                                    JSONArray caps=set.getJSONArray("cap");
-
-                                    for(int i=0; i<caps.length(); i++)
-                                    {
-                                        Log.d("CapManager", "Cap: "+caps.getJSONObject(i).getString("name"));
-                                    }
-                                } catch(JSONException e)
-                                {
-
-                                }
+                        int setID=set.getInt("id");
+                        Cursor cursor=adapter.getSet(set.getInt("id"));
+                        if(cursor.getCount()>0)
+                        {
+                            // do we have the assets already?
+                            if(!capSetExistsOnDisk(setID))
+                            {
+                                // download the cap set
+                                downloadCapSetAssets(setID);
+                                storeCapSetInDatabase(setID);
                             }
-                        });
+                        } else
+                        {
+                            // if we have the assets, we need to add this set
+                            // to the DB.
+                            if(capSetExistsOnDisk(setID))
+                                storeCapSetInDatabase(setID);
+                        }
+
+                        //Log.d("CapManager", String.valueOf(set.getInt("cap_count")) + " caps in set "+set.getString("name")+" ("+set.getInt("id")+")");
                     }
                 } catch(JSONException e)
                 {

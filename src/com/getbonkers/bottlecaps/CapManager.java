@@ -233,12 +233,14 @@ public class CapManager {
         comboCaps=new Stack<Cap>();
         boostsAvailable=new ArrayList<Boost>();
         boostsBuffer=new Stack<Boost>();
-        
+
+        capManagerInit=false;
+
         Runnable capLoader=new Runnable() {
             @Override
             public void run() {
-                //loadCaps();
-                //loadCapSetsFromServer();
+                ensureCapSetAssetsExist();
+                buildWorkingSet();
 
                 while(!capManagerInit) {
                     try {
@@ -283,14 +285,44 @@ public class CapManager {
         Cursor capsInSet=adapter.getCapsInSet(setID);
         while(capsInSet.moveToNext())
         {
-            File f=new File(Environment.getDataDirectory().getPath()+"/"+capsInSet.getLong(capsInSet.getColumnIndex(BottlecapsDatabaseAdapter.KEY_ROWID))+".png");
-            if(!f.exists()) return false;
+            File f=new File(_context.getFilesDir().getPath()+"/"+capsInSet.getLong(capsInSet.getColumnIndex(BottlecapsDatabaseAdapter.KEY_ROWID))+".png");
+            if(f.exists())
+            {
+                Log.d("CapLoader", "Cap set "+setID+" exists on disk");
+                return true;
+            }
         }
+
+        //if(capSetExistsInAssets(setID))
+           // return true;
+        Log.d("CapLoader", "Cap set "+setID+" doesn't exist on disk");
+        return false;
+    }
+    
+    public boolean capSetExistsInAssets(int setID)
+    {
+        InputStream i=null;
+        try {
+            i=_context.getAssets().open(setID+".zip");
+            
+        } catch (Exception e) {
+            return false;
+        } finally {
+            try {
+                if(i!=null) i.close();
+            } catch(Exception e) {
+
+            }
+
+        }
+
+        Log.d("CapLoader", "Cap set "+setID+" exists in assets");
         return true;
     }
 
     public boolean loadCapSetFromZip(int setID, boolean storedInAssets)
     {
+        Log.d("CapLoader", "Loading cap set "+setID+" from ZIP");
         try {
             ZipInputStream zipF;
 
@@ -308,7 +340,7 @@ public class CapManager {
                 Log.d("CapManager", entry.getName());
 
                 BufferedInputStream inputStream = new BufferedInputStream(zipF);
-                BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(Environment.getDataDirectory().getPath()+"/"+entry.getName()));
+                BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(_context.getFilesDir().getPath()+"/"+entry.getName()));
 
                 try {
                     IOUtils.copy(inputStream, outputStream);
@@ -317,9 +349,9 @@ public class CapManager {
                     inputStream.close();
                 }
             }
-
         }  catch(IOException e)
         {
+            Log.d("CapLoader", "Caught exception "+e.getMessage()+" while loading cap set "+setID+" from ZIP");
             e.printStackTrace();
             return false;
         }
@@ -327,14 +359,10 @@ public class CapManager {
 
     }
 
-    public void addCapSetToLocal(int setID)
-    {
-
-        storeCapSetInDatabase(setID);
-    }
-
     private void storeCapSetInDatabase(final int setID)
     {
+        Log.d("CapLoader", "Storing cap set "+setID+" into database");
+
         GetBonkersAPI.get("/sets/"+setID, new RequestParams(), _context, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(String response) {
@@ -356,6 +384,9 @@ public class CapManager {
                 } catch(JSONException e)
                 {
 
+                } 
+                catch (Exception e) {
+
                 }
             }
         });
@@ -363,9 +394,19 @@ public class CapManager {
 
     private void downloadCapSetAssets(int setID)
     {
+        Log.d("CapLoader", "Downloading cap set "+setID);
         // check to see if there's enough space on the phone
         // if not, check if there's enough space on the SD card
         // if not, show an error to the user and abort.
+
+        if(capSetExistsInAssets(setID))
+        {
+            loadCapSetFromZip(setID, true);
+        }
+        else
+        {
+            // download it from the server.
+        }
 
         /*
         StatFs stat = new StatFs(Environment.getExternalStorageDirectory().getPath());
@@ -382,11 +423,19 @@ public class CapManager {
 
     public void buildWorkingSet()
     {
+        int numberOfSets=4;
+        long setID;
 
+        for(int i=0; i<numberOfSets; i++)
+        {
+            setID=adapter.getRandomSetID();
+
+        }
     }
 
     private void ensureCapSetAssetsExist()
     {
+        Log.d("CapLoader", "Running ensureCapSetAssetsExist()");
         GetBonkersAPI.get("/sets", new RequestParams(), _context, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(String response) {
@@ -402,6 +451,8 @@ public class CapManager {
                         Cursor cursor=adapter.getSet(set.getInt("id"));
                         if(cursor.getCount()>0)
                         {
+                            Log.d("CapLoader", "Cap set "+setID+" exists in the database");
+
                             // do we have the assets already?
                             if(!capSetExistsOnDisk(setID))
                             {
@@ -411,10 +462,15 @@ public class CapManager {
                             }
                         } else
                         {
+                            Log.d("CapLoader", "Cap set "+setID+" doesn't exist in the database");
+
                             // if we have the assets, we need to add this set
                             // to the DB.
-                            if(capSetExistsOnDisk(setID))
+                            if(capSetExistsOnDisk(setID) || capSetExistsInAssets(setID))
+                            {
+                                if(!capSetExistsOnDisk(setID)) loadCapSetFromZip(setID, true);
                                 storeCapSetInDatabase(setID);
+                            }
                         }
 
                         //Log.d("CapManager", String.valueOf(set.getInt("cap_count")) + " caps in set "+set.getString("name")+" ("+set.getInt("id")+")");
@@ -422,9 +478,11 @@ public class CapManager {
                 } catch(JSONException e)
                 {
                 }
-                capManagerInit=true;
+
             }
         });
+
+        capManagerInit=true;
     }
 
     public void loadCaps()

@@ -42,13 +42,12 @@ public class BottlecapsDatabaseAdapter {
     private static final int DATABASE_VERSION = 1;
 
     private static final String DATABASE_SETS_CREATE =
-            "create table sets (_id integer primary key, "
-                    + "name text not null, artist text not null, "
-                    + "description text not null, lastPlayed datetime);";
+            "create table sets (_id integer unique primary key, "
+                    + "name text, artist text, "
+                    + "description text, lastPlayed datetime);";
     private static final String DATABASE_CAPS_CREATE =
-            "create table caps (_id integer primary key, "
-                    + "available integer, issued integer, description text not null, name text not null, setID integer, scarcity integer);";
-
+            "create table caps (_id integer unique primary key, "
+                    + "available integer, issued integer, description text, name text, setID integer, scarcity integer);";
 
     private final Context context;
 
@@ -101,18 +100,6 @@ public class BottlecapsDatabaseAdapter {
         DBHelper.close();
     }
 
-    public long insertCap(long capID, int available, int issued, String name, String description, int scarcity)
-    {
-        ContentValues values=new ContentValues();
-        values.put(KEY_ROWID, capID);
-        values.put(KEY_CAPS_AVAILABLE, available);
-        values.put(KEY_CAPS_ISSUED, issued);
-        values.put(KEY_CAPS_NAME, name);
-        values.put(KEY_CAPS_DESCRIPTION, description);
-        values.put(KEY_CAPS_SCARCITY, scarcity);
-        return db.insert(DATABASE_CAPS_TABLE, null, values);
-    }
-
     public boolean updateSetLastPlayed(long setID, Date newDate)
     {
         ContentValues values=new ContentValues();
@@ -127,7 +114,24 @@ public class BottlecapsDatabaseAdapter {
         values.put(KEY_SETS_ARTIST, artist);
         values.put(KEY_SETS_NAME, setName);
         values.put(KEY_SETS_DESCRIPTION, description);
-        return db.insert(DATABASE_SETS_TABLE, null, values);
+        return db.insertWithOnConflict(DATABASE_SETS_TABLE, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+    }
+
+    public long[] getNextPlayableSetsTotalingNumberOfCaps(int numberOfCaps)
+    {
+        /*
+        order the sets by most recently played ascending (oldest first)
+        include a set and get another set if we still need more caps
+         */
+
+        return new long[]{0};
+    }
+
+    public long getRandomSetID()
+    {
+        Cursor ret=db.query(DATABASE_SETS_TABLE, new String[] { KEY_ROWID }, null, null, null, null, "RANDOM()", "1");
+        ret.moveToFirst();
+        return ret.getLong(ret.getColumnIndex(KEY_ROWID));
     }
     
     public long insertCapIntoSet(long setID, long capID, int available, int issued, String name, String description, int scarcity)
@@ -140,7 +144,7 @@ public class BottlecapsDatabaseAdapter {
         values.put(KEY_CAPS_NAME, name);
         values.put(KEY_CAPS_DESCRIPTION, description);
         values.put(KEY_CAPS_SCARCITY, scarcity);
-        return db.insert(DATABASE_SETS_TABLE, null, values);
+        return db.insertWithOnConflict(DATABASE_CAPS_TABLE, null, values, SQLiteDatabase.CONFLICT_REPLACE);
     }
     
     public Cursor getSet(int setID)

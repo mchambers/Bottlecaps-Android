@@ -21,6 +21,7 @@
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <uses-sdk android:minSdkVersion="8" android:maxSdkVersion="12" android:targetSdkVersion="12" />
-</manifest> 
+</manifest>

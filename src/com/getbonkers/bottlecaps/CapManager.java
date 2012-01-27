@@ -33,10 +33,19 @@ Freeze
 Momentum boost
 
  */
-public class CapManager {
+
+public class CapManager implements CapManagerLoadingDelegate {
     public interface CapManagerDelegate {
-        public void onCapSetsLoadComplete();
-        public void onCapSetsLoadFailure();
+        public static final int CM_STATUS_NONE=0;
+        public static final int CM_STATUS_LOADING_NET=1;
+        public static final int CM_STATUS_LOADING_DISK=2;
+        public static final int CM_STATUS_BUILDING=3;
+        public static final int CM_STATUS_COMPLETE=4;
+        
+        public void onCapManagerReady();
+        public void onCapManagerLoadFailure(int error);
+        public void capManagerProgressUpdate(int code);
+        
     }
 
     public class Boost extends Cap {
@@ -156,7 +165,9 @@ public class CapManager {
             {
                 BitmapFactory.Options options=new BitmapFactory.Options();
                 //options.inSampleSize=4;
-                this.image=new BitmapDrawable(context.getResources(), BitmapFactory.decodeResource(context.getResources(), this.resourceId, options));
+                //this.image=new BitmapDrawable(context.getResources(), BitmapFactory.decodeResource(context.getResources(), this.resourceId, options));
+                String file=_context.getFilesDir().getPath()+"/"+this.index+".png";
+                this.image=new BitmapDrawable(file);
             }
             this.numberInPlay++;
         }
@@ -218,6 +229,8 @@ public class CapManager {
 
     public int[] combosDelivered;
 
+    private CapManagerDelegate _delegate;
+
     public CapManager(Context context, int difficulty, final CapManagerDelegate delegate)
     {
         _context=context;
@@ -234,32 +247,32 @@ public class CapManager {
         boostsAvailable=new ArrayList<Boost>();
         boostsBuffer=new Stack<Boost>();
 
-        capManagerInit=false;
+        _delegate=delegate;
 
         Runnable capLoader=new Runnable() {
             @Override
             public void run() {
                 ensureCapSetAssetsExist();
-                buildWorkingSet();
-
-                while(!capManagerInit) {
-                    try {
-                        Thread.sleep(20);
-
-                    } catch(Exception e)
-                    {
-
-                    }
-                }
-
-                //fillCapsBuffer();
-                //fillBoostsBuffer();
-
-                delegate.onCapSetsLoadComplete();
             }
         };
 
         new Thread(capLoader).start();
+    }
+
+    public void onCapSetLoadComplete()
+    {
+        // we're not in the main thread here
+        _delegate.capManagerProgressUpdate(CapManagerDelegate.CM_STATUS_BUILDING);
+        buildWorkingSet();
+    }
+
+    public void onWorkingCapSetAvailable()
+    {
+        // not in the main thread here either
+        //_delegate.capManagerProgressUpdate(CapManagerDelegate.CM_STATUS_COMPLETE);
+        fillBoostsBuffer();
+        fillCapsBuffer();
+        _delegate.onCapManagerReady();
     }
 
     public void putCapInPlay(Context context, Cap cap)
@@ -423,14 +436,52 @@ public class CapManager {
 
     public void buildWorkingSet()
     {
-        int numberOfSets=4;
         long setID;
+        int targetCapAmount=125;
+        int maxNumberOfSets=7;
+        int actualSetAmount=0;
+        int actualCapAmount=0;
+        boolean getAnotherSet=true;
 
-        for(int i=0; i<numberOfSets; i++)
+        allCaps=new ArrayList<Cap>();
+
+        while(getAnotherSet)
         {
             setID=adapter.getRandomSetID();
+            Cursor set=adapter.getCapsInSet(setID);
+            actualCapAmount+=set.getCount();
 
+            while(set.moveToNext())
+            {
+                Cap c=new Cap();
+                c.available=set.getInt(set.getColumnIndex(BottlecapsDatabaseAdapter.KEY_CAPS_AVAILABLE));
+                c.issued=set.getInt(set.getColumnIndex(BottlecapsDatabaseAdapter.KEY_CAPS_ISSUED));
+                this.circulation+=c.issued;
+                c.rarityClass=set.getInt(set.getColumnIndex(BottlecapsDatabaseAdapter.KEY_CAPS_SCARCITY));
+                c.index=set.getInt(set.getColumnIndex(BottlecapsDatabaseAdapter.KEY_ROWID));
+                c.resourceId=0;
+            }
+
+            actualSetAmount++;
+            if(actualCapAmount>=targetCapAmount || actualSetAmount>=maxNumberOfSets) getAnotherSet=false;
         }
+
+        Collections.sort(allCaps, new CapTotalAvailableComparator());
+
+        long min=0;
+        double rarityClassD=0;
+
+        for(int x=0; x<allCaps.size(); x++)
+        {
+            allCaps.get(x).probabilityMax=min+allCaps.get(x).available-1;
+            allCaps.get(x).probabilityMin=min;
+
+            min=allCaps.get(x).probabilityMax+1;
+        }
+
+        Collections.sort(allCaps, new CapMaxProbabilityComparator());
+
+        this.onWorkingCapSetAvailable();
     }
 
     private void ensureCapSetAssetsExist()
@@ -479,10 +530,12 @@ public class CapManager {
                 {
                 }
 
+                onCapSetLoadComplete();
             }
+
         });
 
-        capManagerInit=true;
+
     }
 
     public void loadCaps()

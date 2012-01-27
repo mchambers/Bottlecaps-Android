@@ -27,7 +27,17 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
     ProgressDialog dialog;
     CapManager capMgr;
 
-    public void onCapSetsLoadComplete() {
+    public void onCapManagerLoadFailure(int error)
+    {
+
+    }
+
+    public void capManagerProgressUpdate(int code)
+    {
+
+    }
+
+    public void onCapManagerReady() {
         dialog.dismiss();
 
         runOnUiThread(new Runnable() {
@@ -43,6 +53,8 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
             }
         });
     }
+
+
 
     public void onCapSetsLoadFailure() {
         dialog.dismiss();

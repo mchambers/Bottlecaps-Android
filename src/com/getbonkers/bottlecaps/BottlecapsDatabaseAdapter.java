@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -146,18 +147,19 @@ public class BottlecapsDatabaseAdapter {
         values.put(KEY_CAPS_SCARCITY, scarcity);
         return db.insertWithOnConflict(DATABASE_CAPS_TABLE, null, values, SQLiteDatabase.CONFLICT_REPLACE);
     }
-    
-    public Cursor getSet(int setID)
+
+    public Cursor getSet(long setID)
     {
         return db.query(DATABASE_SETS_TABLE, new String[] { KEY_ROWID, KEY_SETS_DESCRIPTION, KEY_SETS_NAME, KEY_SETS_ARTIST }, KEY_ROWID+"="+setID, null, null, null, null);
     }
     
-    public Cursor getCapsInSet(int setID)
+    public Cursor getCapsInSet(long setID)
     {
         return db.query(DATABASE_CAPS_TABLE, new String[] { KEY_ROWID, KEY_CAPS_SCARCITY, KEY_CAPS_AVAILABLE, KEY_CAPS_DESCRIPTION, KEY_CAPS_ISSUED, KEY_CAPS_NAME, KEY_CAPS_SETID}, KEY_CAPS_SETID+"="+setID, null, null, null, null);
+
     }
 
-    public boolean deleteSet(int setID)
+    public boolean deleteSet(long setID)
     {
         return db.delete(DATABASE_SETS_TABLE, KEY_ROWID+"="+setID, null) > 0;
     }

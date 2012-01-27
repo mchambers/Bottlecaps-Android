@@ -203,6 +203,7 @@ public class CapManager implements CapManagerLoadingDelegate {
     }
 
     public class Set {
+        int id;
         ArrayList<Cap> capsInSet;
 
         public Set()
@@ -220,6 +221,9 @@ public class CapManager implements CapManagerLoadingDelegate {
     private ArrayList<Set> sets;
     private ArrayList<Cap> allCaps;
     private ArrayList<Boost> boostsAvailable;
+    
+    private Stack<Set> capSetsToDownload;
+    private int capSetsDownloading;
 
     private int level;
 
@@ -255,6 +259,8 @@ public class CapManager implements CapManagerLoadingDelegate {
                 ensureCapSetAssetsExist();
             }
         };
+        
+        capSetsToDownload=new Stack<Set>();
 
         new Thread(capLoader).start();
     }
@@ -296,20 +302,23 @@ public class CapManager implements CapManagerLoadingDelegate {
     {
          // verify we have the png for each cap
         Cursor capsInSet=adapter.getCapsInSet(setID);
+
+        if(capsInSet.isLast()) return false;
+
         while(capsInSet.moveToNext())
         {
             File f=new File(_context.getFilesDir().getPath()+"/"+capsInSet.getLong(capsInSet.getColumnIndex(BottlecapsDatabaseAdapter.KEY_ROWID))+".png");
-            if(f.exists())
+            if(!f.exists())
             {
-                Log.d("CapLoader", "Cap set "+setID+" exists on disk");
-                return true;
+                Log.d("CapLoader", "Cap set "+setID+" doesn't exist on disk");
+                return false;
             }
         }
 
         //if(capSetExistsInAssets(setID))
            // return true;
-        Log.d("CapLoader", "Cap set "+setID+" doesn't exist on disk");
-        return false;
+        Log.d("CapLoader", "Cap set "+setID+" exists on disk");
+        return true;
     }
     
     public boolean capSetExistsInAssets(int setID)
@@ -359,7 +368,7 @@ public class CapManager implements CapManagerLoadingDelegate {
                     IOUtils.copy(inputStream, outputStream);
                 } finally {
                     outputStream.close();
-                    inputStream.close();
+                    //inputStream.close();
                 }
             }
         }  catch(IOException e)
@@ -412,13 +421,17 @@ public class CapManager implements CapManagerLoadingDelegate {
         // if not, check if there's enough space on the SD card
         // if not, show an error to the user and abort.
 
+        capSetsDownloading++;
+
         if(capSetExistsInAssets(setID))
         {
             loadCapSetFromZip(setID, true);
+            capSetsDownloading--;
         }
         else
         {
             // download it from the server.
+            capSetsDownloading--;
         }
 
         /*
@@ -460,6 +473,8 @@ public class CapManager implements CapManagerLoadingDelegate {
                 c.rarityClass=set.getInt(set.getColumnIndex(BottlecapsDatabaseAdapter.KEY_CAPS_SCARCITY));
                 c.index=set.getInt(set.getColumnIndex(BottlecapsDatabaseAdapter.KEY_ROWID));
                 c.resourceId=0;
+                
+                allCaps.add(c);
             }
 
             actualSetAmount++;
@@ -484,6 +499,14 @@ public class CapManager implements CapManagerLoadingDelegate {
         this.onWorkingCapSetAvailable();
     }
 
+    private void queueCapSetForDownload(int setID)
+    {
+        Set s=new Set();
+        s.id=setID;
+
+        capSetsToDownload.push(s);
+    }
+
     private void ensureCapSetAssetsExist()
     {
         Log.d("CapLoader", "Running ensureCapSetAssetsExist()");
@@ -500,7 +523,7 @@ public class CapManager implements CapManagerLoadingDelegate {
 
                         int setID=set.getInt("id");
                         Cursor cursor=adapter.getSet(set.getInt("id"));
-                        if(cursor.getCount()>0)
+                        if(cursor.getCount()>0 || capSetExistsInAssets(setID))
                         {
                             Log.d("CapLoader", "Cap set "+setID+" exists in the database");
 
@@ -508,18 +531,7 @@ public class CapManager implements CapManagerLoadingDelegate {
                             if(!capSetExistsOnDisk(setID))
                             {
                                 // download the cap set
-                                downloadCapSetAssets(setID);
-                                storeCapSetInDatabase(setID);
-                            }
-                        } else
-                        {
-                            Log.d("CapLoader", "Cap set "+setID+" doesn't exist in the database");
-
-                            // if we have the assets, we need to add this set
-                            // to the DB.
-                            if(capSetExistsOnDisk(setID) || capSetExistsInAssets(setID))
-                            {
-                                if(!capSetExistsOnDisk(setID)) loadCapSetFromZip(setID, true);
+                                queueCapSetForDownload(setID);
                                 storeCapSetInDatabase(setID);
                             }
                         }
@@ -530,12 +542,34 @@ public class CapManager implements CapManagerLoadingDelegate {
                 {
                 }
 
-                onCapSetLoadComplete();
+                // run the download queue to fetch all the cap assets we need
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(capSetsToDownload.size()>0)
+                        {
+                            while(capSetsToDownload.size()>0)
+                            {
+                                Set s=capSetsToDownload.pop();
+                                downloadCapSetAssets(s.id);
+                            }
+
+                            while(capSetsDownloading>0)
+                            {
+                                try {
+                                    Thread.sleep(30);
+                                } catch(InterruptedException e)
+                                {
+                                    break;
+                                }
+                            }
+
+                            onCapSetLoadComplete();
+                        }
+                    }
+                }).start();
             }
-
         });
-
-
     }
 
     public void loadCaps()

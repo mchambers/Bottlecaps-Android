@@ -54,8 +54,6 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
         });
     }
 
-
-
     public void onCapSetsLoadFailure() {
         dialog.dismiss();
     }
@@ -383,7 +381,6 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
             whichPiece=(float)Math.ceil(whichPiece);
             whichRow=(float)Math.ceil(whichRow);
 
-            //Log.d("GameBoard", "Piece "+whichPiece+" in row "+whichRow+" at coords: x=" + event.getX() + ",y=" + event.getY());
             int pieceIndex=(int)whichRow*itemsPerRow;
             pieceIndex-=itemsPerRow-whichPiece;
             pieceIndex--;
@@ -421,7 +418,7 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
                             {
                                 if(currentMomentum<=0) currentMomentum=1;
 
-                                deltaScore=(int)(Math.pow(currentCombo.size(), 2)+Math.pow(currentCombo.get(0).cap.rarityClass, 2) * currentMomentum);// * (currentLevel/2));
+                                deltaScore=(int)(Math.pow(currentCombo.size(), 2)+Math.pow(currentCombo.get(0).cap.rarityClass, 2) * currentMomentum) * 10;// * (currentLevel/2));
                                 currentMomentum+=1/Math.log10(deltaScore)*10;
                                 highestMomentum=Math.max(currentMomentum, highestMomentum);
                                 currentScore+=deltaScore;
@@ -441,7 +438,6 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
 
                             currentCombo.clear();
                             currentCombo.add(gamePieces.get(pieceIndex));
-                            //Log.d("GameBoard", "Started a new combo");
                         }
                         else
                         {
@@ -449,7 +445,6 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
 
                             for(int i=0; i<currentCombo.size(); i++)
                                 currentCombo.get(i).remainingLife+=1000;
-                            //Log.d("GameBoard", "Added a piece to the current combo");
                         }
                     }
                 }

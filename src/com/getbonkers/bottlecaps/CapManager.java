@@ -35,6 +35,201 @@ Momentum boost
  */
 
 public class CapManager implements CapManagerLoadingDelegate {
+
+    public class CapDownloadManager implements Runnable {
+        public class CapDownloadManagerQueueItem {
+            public long setID;
+            public boolean getAssets;
+            public boolean getData;
+        }
+        
+        private int requestsOutstanding=0;
+        
+        public final Stack<CapDownloadManagerQueueItem> queue=new Stack<CapDownloadManagerQueueItem>();
+        public CapManagerLoadingDelegate delegate;
+
+        public CapDownloadManager(CapManagerLoadingDelegate dg) {
+            delegate=dg;
+        }
+
+        private boolean loadCapSetFromZip(long setID, boolean storedInAssets)
+        {
+            Log.d("CapLoader", "Loading cap set "+setID+" from ZIP");
+            try {
+                ZipInputStream zipF;
+
+                if(storedInAssets)
+                    zipF=new ZipInputStream(_context.getAssets().open(setID + ".zip"));
+                else
+                {
+                    zipF=new ZipInputStream(new FileInputStream(Environment.getDownloadCacheDirectory().getPath()+"/"+setID+".zip"));
+                }
+
+                ZipEntry entry;
+
+                BufferedOutputStream outputStream=null;
+                BufferedInputStream inputStream=null;
+
+                while( (entry=zipF.getNextEntry()) !=null )
+                {
+                    Log.d("CapManager", entry.getName());
+
+                    inputStream = new BufferedInputStream(zipF);
+                    try {
+                        outputStream = new BufferedOutputStream(new FileOutputStream(_context.getFilesDir().getPath()+"/"+entry.getName()));
+                    } catch (FileNotFoundException e) {
+                        // yeah;
+                    }
+
+                    if(outputStream!=null)
+                    {
+                        try {
+                            IOUtils.copy(inputStream, outputStream);
+
+                        } catch (IOException e)
+                        {
+                            // blah?
+                        }
+                        finally {
+                            outputStream.close();
+                            //inputStream.close();
+                        }
+                    }
+                }
+            }  catch(IOException e)
+            {
+                Log.d("CapLoader", "Caught exception "+e.getMessage()+" while loading cap set "+setID+" from ZIP");
+                e.printStackTrace();
+                return false;
+            }
+            return true;
+
+        }
+
+        private void storeCapSetInDatabase(final long setID)
+        {
+            requestsOutstanding++;
+
+            Log.d("CapLoader", "Storing cap set "+setID+" into database");
+
+            GetBonkersAPI.get("/sets/"+setID, new RequestParams(), _context, new AsyncHttpResponseHandler() {
+                @Override
+                public void onSuccess(String response) {
+                    try {
+                        Log.d("CapManager", response);
+
+                        JSONObject set=new JSONObject(response).getJSONObject("cap_set");
+
+                        adapter.insertSet((long)setID, set.getString("name"), set.getString("artist"), set.getString("description"));
+
+                        JSONArray caps=set.getJSONArray("cap");
+
+                        for(int i=0; i<caps.length(); i++)
+                        {
+                            JSONObject cap=caps.getJSONObject(i);
+                            adapter.insertCapIntoSet((long)setID, cap.getInt("id"), cap.getInt("available"), cap.getInt("issued"), cap.getString("name"), cap.getString("description"), cap.getInt("scarcity"));
+                            Log.d("CapManager", "Cap: "+caps.getJSONObject(i).getString("name"));
+                        }
+                    } catch(JSONException e)
+                    {
+
+                    }
+                    catch (Exception e) {
+
+                    }
+
+                    requestsOutstanding--;
+                }
+            });
+        }
+
+        private void downloadCapSetAssets(long setID)
+        {
+            Log.d("CapLoader", "Downloading cap set "+setID);
+            // check to see if there's enough space on the phone
+            // if not, check if there's enough space on the SD card
+            // if not, show an error to the user and abort.
+
+            requestsOutstanding++;
+
+            if(capSetExistsInAssets(setID))
+            {
+                loadCapSetFromZip(setID, true);
+                requestsOutstanding--;
+            }
+            else
+            {
+                // download it from the server.
+                requestsOutstanding--;
+            }
+
+            /*
+          StatFs stat = new StatFs(Environment.getExternalStorageDirectory().getPath());
+          long sdBytesAvailable = (long)stat.getBlockSize() *(long)stat.getBlockCount();
+          long sdCardSpaceAvailable = sdBytesAvailable / 1048576;
+
+          StatFs phoneStat = new StatFs(Environment.getDataDirectory().getPath());
+          long phoneBytesAvailable = (long)phoneStat.getBlockSize() * (long)phoneStat.getAvailableBlocks();
+          long phoneSpaceAvailable = (long) (phoneBytesAvailable / (1024.f * 1024.f));
+            */
+
+
+        }
+        
+        public void queueSetAssetsForDownload(long setID)
+        {
+            synchronized (queue) {
+                CapDownloadManagerQueueItem item=new CapDownloadManagerQueueItem();
+                item.setID=setID;
+                item.getAssets=true;
+                item.getData=false;
+                queue.push(item);
+            }
+        }
+
+        public void queueSetDataForDownload(long setID)
+        {
+            synchronized (queue) {
+                CapDownloadManagerQueueItem item=new CapDownloadManagerQueueItem();
+                item.setID=setID;
+                item.getAssets=false;
+                item.getData=true;
+                queue.push(item);
+            }
+        }
+
+        public void run() {
+            synchronized (queue) {
+                if(queue.size()>0)
+                {
+                    while(queue.size()>0)
+                    {
+                        CapDownloadManagerQueueItem s=queue.pop();
+                        if(s.getAssets)
+                        {
+                            downloadCapSetAssets(s.setID);
+                        }
+
+                        if(s.getData)
+                        {
+                            storeCapSetInDatabase(s.setID);
+                        }
+                    }
+
+                    while(requestsOutstanding>0)
+                    {
+                        try {
+                            Thread.sleep(500);
+                        } catch(InterruptedException e) {
+
+                        }
+                    }
+                }
+                delegate.onCapSetLoadComplete();
+            }
+        }
+    }
+
     public interface CapManagerDelegate {
         public static final int CM_STATUS_NONE=0;
         public static final int CM_STATUS_LOADING_NET=1;
@@ -60,10 +255,12 @@ public class CapManager implements CapManagerLoadingDelegate {
     }
 
     public class JokerBoost extends Boost {
-        public void putCapInPlay(Context context)
+        @Override
+        public void putCapInPlay(Context context, boolean lowMemoryMode)
         {
             this.resourceId=context.getResources().getIdentifier("boostjoker", "drawable", "com.getbonkers.bottlecaps");
-            super.putCapInPlay(context);
+            this.index=0;
+            super.putCapInPlay(context, lowMemoryMode);
         }
 
         public boolean equals(Cap o)
@@ -73,7 +270,9 @@ public class CapManager implements CapManagerLoadingDelegate {
     }
 
     public class FreezeBoost extends Boost {
-        public void putCapInPlay(Context context)
+
+        @Override
+        public void putCapInPlay(Context context, boolean lowMemoryMode)
         {
 
         }
@@ -85,10 +284,13 @@ public class CapManager implements CapManagerLoadingDelegate {
     }
 
     public class MomentumBoost extends Boost {
-        public void putCapInPlay(Context context)
+
+        @Override
+        public void putCapInPlay(Context context, boolean lowMemoryMode)
         {
             this.resourceId=context.getResources().getIdentifier("boostnitro", "drawable", "com.getbonkers.bottlecaps");
-            super.putCapInPlay(context);
+            this.index=0;
+            super.putCapInPlay(context, lowMemoryMode);
         }
 
         public void performBoostEffects(GameBoardActivity.GameBoard board)
@@ -98,10 +300,12 @@ public class CapManager implements CapManagerLoadingDelegate {
     }
 
     public class TimeBoost extends Boost {
-        public void putCapInPlay(Context context)
+        @Override
+        public void putCapInPlay(Context context, boolean lowMemoryMode)
         {
             this.resourceId=context.getResources().getIdentifier("boostincreasetime", "drawable", "com.getbonkers.bottlecaps");
-            super.putCapInPlay(context);
+            this.index=0;
+            super.putCapInPlay(context, lowMemoryMode);
         }
 
         public void performBoostEffects(GameBoardActivity.GameBoard board)
@@ -111,10 +315,12 @@ public class CapManager implements CapManagerLoadingDelegate {
     }
 
     public class HighlightCombosBoost extends Boost {
-        public void putCapInPlay(Context context)
+        @Override
+        public void putCapInPlay(Context context, boolean lowMemoryMode)
         {
             this.resourceId=context.getResources().getIdentifier("boosthighlight", "drawable", "com.getbonkers.bottlecaps");
-            super.putCapInPlay(context);
+            this.index=0;
+            super.putCapInPlay(context, lowMemoryMode);
         }
 
         public void performBoostEffects(GameBoardActivity.GameBoard board)
@@ -150,7 +356,7 @@ public class CapManager implements CapManagerLoadingDelegate {
         public boolean equals(Cap o)
         {
             if(o==null) return false;
-            return (o.resourceId==this.resourceId);
+            return (o.index==this.index);
         }
 
         public boolean isCurrentlyDrawable()
@@ -159,15 +365,30 @@ public class CapManager implements CapManagerLoadingDelegate {
             return false;
         }
 
-        public void putCapInPlay(Context context)
+        public void putCapInPlay(Context context, boolean lowMemoryMode)
         {
             if(numberInPlay<=0)
             {
                 BitmapFactory.Options options=new BitmapFactory.Options();
-                //options.inSampleSize=4;
+
+                if(lowMemoryMode)
+                    options.inSampleSize=4;
+
+                if(this.index==0)
+                {
+                    this.image=new BitmapDrawable(context.getResources(), BitmapFactory.decodeResource(context.getResources(), this.resourceId, options));
+                }
+                else
+                {
+                    String file=_context.getFilesDir().getPath()+"/"+this.index+".png";
+
+                    if(lowMemoryMode)
+                        this.image=new BitmapDrawable(BitmapFactory.decodeFile(_context.getFilesDir().getPath()+"/"+this.index+".png", options));
+                    else
+                        this.image=new BitmapDrawable(file);
+                }
+                //                    options.inSampleSize=4;
                 //this.image=new BitmapDrawable(context.getResources(), BitmapFactory.decodeResource(context.getResources(), this.resourceId, options));
-                String file=_context.getFilesDir().getPath()+"/"+this.index+".png";
-                this.image=new BitmapDrawable(file);
             }
             this.numberInPlay++;
         }
@@ -179,7 +400,12 @@ public class CapManager implements CapManagerLoadingDelegate {
             {
                 if(numberInPlay<=0)
                 {
-                    image.getBitmap().recycle();
+                    try {
+                        image.getBitmap().recycle();
+                    } catch (NullPointerException e)
+                    {
+                        // oops;
+                    }
                     image=null;
                 }
             }
@@ -222,7 +448,7 @@ public class CapManager implements CapManagerLoadingDelegate {
     private ArrayList<Cap> allCaps;
     private ArrayList<Boost> boostsAvailable;
     
-    private Stack<Set> capSetsToDownload;
+    private CapDownloadManager downloadManager;
     private int capSetsDownloading;
 
     private int level;
@@ -234,6 +460,7 @@ public class CapManager implements CapManagerLoadingDelegate {
     public int[] combosDelivered;
 
     private CapManagerDelegate _delegate;
+    private boolean lowMemoryMode=false;
 
     public CapManager(Context context, int difficulty, final CapManagerDelegate delegate)
     {
@@ -253,16 +480,8 @@ public class CapManager implements CapManagerLoadingDelegate {
 
         _delegate=delegate;
 
-        Runnable capLoader=new Runnable() {
-            @Override
-            public void run() {
-                ensureCapSetAssetsExist();
-            }
-        };
-        
-        capSetsToDownload=new Stack<Set>();
-
-        new Thread(capLoader).start();
+        downloadManager=new CapDownloadManager(this);
+        ensureCapSetAssetsExist();
     }
 
     public void onCapSetLoadComplete()
@@ -283,7 +502,24 @@ public class CapManager implements CapManagerLoadingDelegate {
 
     public void putCapInPlay(Context context, Cap cap)
     {
-        cap.putCapInPlay(context);
+        double totalMemoryUsed = (Runtime.getRuntime().totalMemory() + android.os.Debug.getNativeHeapAllocatedSize());
+        int percentUsed = (int)(totalMemoryUsed / Runtime.getRuntime().maxMemory() * 100);
+
+        if(percentUsed>85)
+            lowMemoryMode=true;
+
+        try {
+            cap.putCapInPlay(context, lowMemoryMode);
+        } catch(OutOfMemoryError e)
+        {
+            //the VM has requested we stop hemorrhaging resources.
+            lowMemoryMode=true;
+            try {
+                cap.putCapInPlay(context, lowMemoryMode);
+            } catch(OutOfMemoryError e2) {
+                throw e2; // fuck, so much for "low memory mode."
+            }
+        }
         if(currentMostPlayedCap==null || cap.numberInPlay>currentMostPlayedCap.numberInPlay)
             currentMostPlayedCap=cap;
     }
@@ -313,15 +549,18 @@ public class CapManager implements CapManagerLoadingDelegate {
                 Log.d("CapLoader", "Cap set "+setID+" doesn't exist on disk");
                 return false;
             }
+            else
+            {
+                Log.d("CapLoader", "Cap set "+setID+" exists on disk");
+            }
         }
 
         //if(capSetExistsInAssets(setID))
            // return true;
-        Log.d("CapLoader", "Cap set "+setID+" exists on disk");
         return true;
     }
     
-    public boolean capSetExistsInAssets(int setID)
+    public boolean capSetExistsInAssets(long setID)
     {
         InputStream i=null;
         try {
@@ -342,110 +581,7 @@ public class CapManager implements CapManagerLoadingDelegate {
         return true;
     }
 
-    public boolean loadCapSetFromZip(int setID, boolean storedInAssets)
-    {
-        Log.d("CapLoader", "Loading cap set "+setID+" from ZIP");
-        try {
-            ZipInputStream zipF;
 
-            if(storedInAssets)
-                zipF=new ZipInputStream(_context.getAssets().open(setID + ".zip"));
-            else
-            {
-                zipF=new ZipInputStream(new FileInputStream(Environment.getDownloadCacheDirectory().getPath()+"/"+setID+".zip"));
-            }
-
-            ZipEntry entry;
-
-            while( (entry=zipF.getNextEntry()) !=null )
-            {
-                Log.d("CapManager", entry.getName());
-
-                BufferedInputStream inputStream = new BufferedInputStream(zipF);
-                BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(_context.getFilesDir().getPath()+"/"+entry.getName()));
-
-                try {
-                    IOUtils.copy(inputStream, outputStream);
-                } finally {
-                    outputStream.close();
-                    //inputStream.close();
-                }
-            }
-        }  catch(IOException e)
-        {
-            Log.d("CapLoader", "Caught exception "+e.getMessage()+" while loading cap set "+setID+" from ZIP");
-            e.printStackTrace();
-            return false;
-        }
-        return true;
-
-    }
-
-    private void storeCapSetInDatabase(final int setID)
-    {
-        Log.d("CapLoader", "Storing cap set "+setID+" into database");
-
-        GetBonkersAPI.get("/sets/"+setID, new RequestParams(), _context, new AsyncHttpResponseHandler() {
-            @Override
-            public void onSuccess(String response) {
-                try {
-                    Log.d("CapManager", response);
-                   
-                    JSONObject set=new JSONObject(response).getJSONObject("cap_set");
-
-                    adapter.insertSet((long)setID, set.getString("name"), set.getString("artist"), set.getString("description"));
-
-                    JSONArray caps=set.getJSONArray("cap");
-
-                    for(int i=0; i<caps.length(); i++)
-                    {
-                        JSONObject cap=caps.getJSONObject(i);
-                        adapter.insertCapIntoSet((long)setID, cap.getInt("id"), cap.getInt("available"), cap.getInt("issued"), cap.getString("name"), cap.getString("description"), cap.getInt("scarcity"));
-                        Log.d("CapManager", "Cap: "+caps.getJSONObject(i).getString("name"));
-                    }
-                } catch(JSONException e)
-                {
-
-                } 
-                catch (Exception e) {
-
-                }
-            }
-        });
-    }
-
-    private void downloadCapSetAssets(int setID)
-    {
-        Log.d("CapLoader", "Downloading cap set "+setID);
-        // check to see if there's enough space on the phone
-        // if not, check if there's enough space on the SD card
-        // if not, show an error to the user and abort.
-
-        capSetsDownloading++;
-
-        if(capSetExistsInAssets(setID))
-        {
-            loadCapSetFromZip(setID, true);
-            capSetsDownloading--;
-        }
-        else
-        {
-            // download it from the server.
-            capSetsDownloading--;
-        }
-
-        /*
-        StatFs stat = new StatFs(Environment.getExternalStorageDirectory().getPath());
-        long sdBytesAvailable = (long)stat.getBlockSize() *(long)stat.getBlockCount();
-        long sdCardSpaceAvailable = sdBytesAvailable / 1048576;
-
-        StatFs phoneStat = new StatFs(Environment.getDataDirectory().getPath());
-        long phoneBytesAvailable = (long)phoneStat.getBlockSize() * (long)phoneStat.getAvailableBlocks();
-        long phoneSpaceAvailable = (long) (phoneBytesAvailable / (1024.f * 1024.f));
-          */
-
-
-    }
 
     public void buildWorkingSet()
     {
@@ -484,7 +620,6 @@ public class CapManager implements CapManagerLoadingDelegate {
         Collections.sort(allCaps, new CapTotalAvailableComparator());
 
         long min=0;
-        double rarityClassD=0;
 
         for(int x=0; x<allCaps.size(); x++)
         {
@@ -499,14 +634,11 @@ public class CapManager implements CapManagerLoadingDelegate {
         this.onWorkingCapSetAvailable();
     }
 
-    private void queueCapSetForDownload(int setID)
-    {
-        Set s=new Set();
-        s.id=setID;
-
-        capSetsToDownload.push(s);
-    }
-
+    /*
+     * in this function, we sweep through the sets in the database and see what assets we're missing.
+     * we also sweep through the content that comes pre-loaded and make sure there's database
+     * entries for them.
+     */
     private void ensureCapSetAssetsExist()
     {
         Log.d("CapLoader", "Running ensureCapSetAssetsExist()");
@@ -525,49 +657,24 @@ public class CapManager implements CapManagerLoadingDelegate {
                         Cursor cursor=adapter.getSet(set.getInt("id"));
                         if(cursor.getCount()>0 || capSetExistsInAssets(setID))
                         {
-                            Log.d("CapLoader", "Cap set "+setID+" exists in the database");
+                            if(cursor.getCount() <=0)
+                                downloadManager.queueSetDataForDownload(setID);
+                            else
+                                Log.d("CapLoader", "Cap set "+setID+" exists in the database");
 
                             // do we have the assets already?
                             if(!capSetExistsOnDisk(setID))
                             {
-                                // download the cap set
-                                queueCapSetForDownload(setID);
-                                storeCapSetInDatabase(setID);
+                                downloadManager.queueSetAssetsForDownload(setID);
                             }
                         }
-
-                        //Log.d("CapManager", String.valueOf(set.getInt("cap_count")) + " caps in set "+set.getString("name")+" ("+set.getInt("id")+")");
                     }
                 } catch(JSONException e)
                 {
                 }
 
-                // run the download queue to fetch all the cap assets we need
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(capSetsToDownload.size()>0)
-                        {
-                            while(capSetsToDownload.size()>0)
-                            {
-                                Set s=capSetsToDownload.pop();
-                                downloadCapSetAssets(s.id);
-                            }
+                new Thread(downloadManager).start();
 
-                            while(capSetsDownloading>0)
-                            {
-                                try {
-                                    Thread.sleep(30);
-                                } catch(InterruptedException e)
-                                {
-                                    break;
-                                }
-                            }
-
-                            onCapSetLoadComplete();
-                        }
-                    }
-                }).start();
             }
         });
     }

@@ -237,6 +237,8 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
         public ArrayList<GamePiece> gamePieces;
         private ArrayList<GamePiece> gameEffects;
         private final ArrayList<GamePiece> currentCombo=new ArrayList<GamePiece>();
+        private final ArrayList<CapManager.Cap> capsCollected=new ArrayList<CapManager.Cap>();
+
         private int boardSize;
         private int itemsPerRow;
         private int pieceWidth;
@@ -410,6 +412,8 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
 
                             if(currentCombo.size()>1)
                             {
+                                // collect the current combo
+
                                 if(currentMomentum<=0) currentMomentum=1;
 
                                 deltaScore=(int)(Math.pow(currentCombo.size(), 2)+Math.pow(currentCombo.get(0).cap.rarityClass, 2) * currentMomentum) * 10;// * (currentLevel/2));
@@ -418,6 +422,8 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
                                 currentScore+=deltaScore;
 
                                 highestComboScore=Math.max(highestComboScore, deltaScore);
+
+                                capsCollected.add(currentCombo.get(0).cap);
 
                                 //playSound(SOUND_GOOD);
                                 //Log.d("GameBoard", "Score up by "+deltaScore+" (rarity "+currentCombo.get(0).cap.rarityClass+"), New score: "+currentScore+" at momentum "+currentMomentum);

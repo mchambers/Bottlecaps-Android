@@ -34,13 +34,16 @@ public class BottlecapsDatabaseAdapter {
     public static final String KEY_CAPS_SETID="setID";
     public static final String KEY_CAPS_SCARCITY="scarcity";
     
+    public static final String KEY_SETTLEMENTS_CAP="cap";
+    
     private static final String TAG = "DBAdapter";
 
     private static final String DATABASE_NAME = "bottlecaps";
     private static final String DATABASE_CAPS_TABLE = "caps";
     private static final String DATABASE_SETS_TABLE = "sets";
+    private static final String DATABASE_SETTLEMENTS_TABLE = "settlements";
 
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     private static final String DATABASE_SETS_CREATE =
             "create table sets (_id integer unique primary key, "
@@ -49,6 +52,9 @@ public class BottlecapsDatabaseAdapter {
     private static final String DATABASE_CAPS_CREATE =
             "create table caps (_id integer unique primary key, "
                     + "available integer, issued integer, description text, name text, setID integer, scarcity integer);";
+    private static final String DATABASE_SETTLEMENTS_CREATE =
+            "create table settlements (_id integer unique primary key autoincrement, " +
+                    "cap integer);";
 
     private final Context context;
 
@@ -73,6 +79,7 @@ public class BottlecapsDatabaseAdapter {
         {
             db.execSQL(DATABASE_CAPS_CREATE);
             db.execSQL(DATABASE_SETS_CREATE);
+            db.execSQL(DATABASE_SETTLEMENTS_CREATE);
         }
 
         @Override
@@ -84,6 +91,7 @@ public class BottlecapsDatabaseAdapter {
                     + newVersion + ", which will destroy all old data");
             db.execSQL("DROP TABLE IF EXISTS caps");
             db.execSQL("DROP TABLE IF EXISTS sets");
+            db.execSQL("DROP TABLE IF EXISTS settlements");
             onCreate(db);
         }
     }
@@ -116,6 +124,18 @@ public class BottlecapsDatabaseAdapter {
         values.put(KEY_SETS_NAME, setName);
         values.put(KEY_SETS_DESCRIPTION, description);
         return db.insertWithOnConflict(DATABASE_SETS_TABLE, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+    }
+    
+    public long addCapSettlement(long capID)
+    {
+        ContentValues values=new ContentValues();
+        values.put(KEY_SETTLEMENTS_CAP, capID);
+        return db.insertWithOnConflict(DATABASE_SETTLEMENTS_TABLE, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+    }
+    
+    public Cursor getOutstandingCapSettlements()
+    {
+        return db.query(DATABASE_SETTLEMENTS_TABLE, new String[] { KEY_SETTLEMENTS_CAP}, null, null, null, null, null, null);
     }
 
     public long[] getNextPlayableSetsTotalingNumberOfCaps(int numberOfCaps)

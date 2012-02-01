@@ -107,11 +107,11 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
                                 } catch (InterruptedException e) {}    */
                             }
 
-                            while (sleepTime < 0 && framesSkipped < MAX_FRAME_SKIPS) {
+                            /*while (sleepTime < 0 && framesSkipped < MAX_FRAME_SKIPS) {
                                 _board.updateGameState();
                                 sleepTime += FRAME_PERIOD;
                                 framesSkipped++;
-                            }
+                            } */
                         }
                     } finally {
                         if (canvas != null) {
@@ -120,8 +120,6 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
                     }
             }
         }
-
-
 
             /*
             while (_run) {
@@ -406,10 +404,6 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
                             for(int i=0; i<currentCombo.size(); i++)
                             {
                                 currentCombo.get(i).setTerminalFadingState();
-                                //currentCombo.get(i).cap.removeCapFromPlay();
-                                //currentCombo.get(i).cap=capManager.getNextCap();
-                                //currentCombo.get(i).cap.putCapInPlay(getApplicationContext());
-                                //currentCombo.get(i).setDefaultState();
                             }
 
                             int deltaScore;
@@ -489,6 +483,13 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
 
         public void surfaceCreated(SurfaceHolder holder) {
             this.initSounds();
+
+            // set up the static paints
+            text.setColor(Color.BLACK);
+            text.setStyle(Paint.Style.FILL);
+            text.setTextAlign(Paint.Align.LEFT);
+            text.setTextSize(16 * getApplicationContext().getResources().getDisplayMetrics().density);
+
             _thread.setRunning(true);
             _thread.start();
         }
@@ -608,6 +609,7 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
                             double newOpacity1=gamePieces.get(i).remainingLife/PIECE_FADEOUT_ANIM_SPEED;
                             double newOpacity2=(175*newOpacity1)+80;
                             gamePieces.get(i).opacity=(int)newOpacity2;
+                            //gamePieces.get(i).opacity-=1;
                         }
                         break;
                     case PIECE_STATE_TAPPED:
@@ -615,7 +617,6 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
                         {
                             gamePieces.get(i).state=PIECE_STATE_FADING;
                             gamePieces.get(i).remainingLife=PIECE_FADEOUT_ANIM_SPEED;//1000*(1-currentMomentum/100);
-                            //Log.d("GameBoard", "Piece state change: PIECE_STATE_FADING");
                         }
                         break;
                 }
@@ -629,6 +630,11 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
 
             lastTick=System.currentTimeMillis();
         }
+        
+        Paint tp=new Paint();
+        Paint text=new Paint();
+        Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+        int height = display.getHeight();
 
         public void drawGameState(Canvas canvas)
         {
@@ -637,27 +643,13 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
 
             BitmapDrawable cap;//=new BitmapDrawable(getResources(), _scratch);
 
-            Paint tp=new Paint();
-            Paint text=new Paint();
-
             tp.setColor(Color.GRAY);
             tp.setTextAlign(Paint.Align.LEFT);
-
-            text.setColor(Color.BLACK);
-            text.setStyle(Paint.Style.FILL);
-            text.setTextAlign(Paint.Align.LEFT);
-            text.setTextSize(12 * getApplicationContext().getResources().getDisplayMetrics().density);
 
             int x=0;
             int y=0;
             int curRow=0;
             int itemsThisRow=0;
-
-            Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-            int height = display.getHeight();
-
-            //canvas.drawText("Score: "+currentScore, 5, height-30, tp);
-
             int i;
 
             for(i=0; i<gamePieces.size(); i++)
@@ -677,9 +669,6 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
                         canvas.drawRect(x, y, x+pieceWidth, y+pieceWidth, tp);
                     else if(gamePieces.get(i).state==PIECE_STATE_HIGHLIGHTED)
                         cap.setColorFilter(Color.BLUE, PorterDuff.Mode.MULTIPLY);
-
-                        //cap.setColorFilter(null);
-                        //cap.setColorFilter(Color.BLUE, PorterDuff.Mode.MULTIPLY);
 
                     cap.setAlpha(gamePieces.get(i).opacity);
 

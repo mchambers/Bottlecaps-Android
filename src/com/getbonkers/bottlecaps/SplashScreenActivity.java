@@ -43,7 +43,25 @@ public class SplashScreenActivity extends Activity {
             public void onSuccess(String response) {
                 Log.d("SplashScreen", response);
 
-
+                RequestParams playerParams=new RequestParams();
+                if(!GetBonkersAPI.havePlayerUUID(getApplicationContext()))
+                {
+                    final String newUUID=java.util.UUID.randomUUID().toString();
+                    playerParams.put("player[guid]", newUUID);
+                    playerParams.put("format", "json");
+                    GetBonkersAPI.post("/admin/players", playerParams, getApplicationContext(), new AsyncHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(String response) {
+                            Log.d("SplashScreen", response);
+                            GetBonkersAPI.setPlayerUUID(newUUID, getApplicationContext());
+                        }
+                        
+                        @Override
+                        public void onFailure(Throwable t) {
+                            Log.d("SplashScreen", "failure to make player: "+t.getMessage());
+                        }
+                    });
+                }
             }
         });
     }

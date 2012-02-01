@@ -505,7 +505,7 @@ public class CapManager implements CapManagerLoadingDelegate {
         double totalMemoryUsed = (Runtime.getRuntime().totalMemory() + android.os.Debug.getNativeHeapAllocatedSize());
         int percentUsed = (int)(totalMemoryUsed / Runtime.getRuntime().maxMemory() * 100);
 
-        if(percentUsed>85)
+        if(percentUsed>75)
             lowMemoryMode=true;
 
         try {

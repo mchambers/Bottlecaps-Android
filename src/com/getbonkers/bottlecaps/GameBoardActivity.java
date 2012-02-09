@@ -6,6 +6,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.*;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.ArcShape;
+import android.graphics.drawable.shapes.OvalShape;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.view.MotionEvent;
@@ -244,6 +247,8 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
         private int pieceWidth;
         private int pieceHeight;
         private int boardMargins;
+
+        private int boardMarginHeight;
         private long lastTick;
 
         private int[] comboAmounts;
@@ -328,6 +333,10 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
         {
             Random rand=new Random();
 
+            // pick a random background image.
+            int[] bgResources={R.drawable.gamebg1, R.drawable.gamebg2, R.drawable.gamebg3};
+            bg=new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), bgResources[rand.nextInt(2)]));
+            
             currentLevel=difficulty;
 
             //timeRemaining=GAME_LENGTH;
@@ -354,6 +363,7 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
                 case GAME_DIFFICULTY_NORMAL:
                     boardSize=20;
                     itemsPerRow=4;
+                    boardMarginHeight=70;
                     break;
             }
 
@@ -376,7 +386,7 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
         private void handleTouch(float x, float y)
         {
             float whichPiece=x/pieceWidth;//event.getX()/pieceWidth;
-            float whichRow=y/pieceWidth;//event.getY()/pieceWidth;
+            float whichRow=(y-boardMarginHeight)/pieceWidth;//event.getY()/pieceWidth;
 
             whichPiece=(float)Math.ceil(whichPiece);
             whichRow=(float)Math.ceil(whichRow);
@@ -384,71 +394,77 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
             int pieceIndex=(int)whichRow*itemsPerRow;
             pieceIndex-=itemsPerRow-whichPiece;
             pieceIndex--;
-
-            if(pieceIndex<gamePieces.size() && !gamePieces.get(pieceIndex).terminalState)
-            {
-                playSound(SOUND_TAP);
-                gamePieces.get(pieceIndex).setTappedState();
-
-                if(gamePieces.get(pieceIndex).cap instanceof CapManager.Boost)
+            
+            try {
+                if(pieceIndex<gamePieces.size() && !gamePieces.get(pieceIndex).terminalState)
                 {
-                    //Log.d("GameBoard", "Boost tapped");
-                    ((CapManager.Boost)gamePieces.get(pieceIndex).cap).performBoostEffects(this);
-                    capManager.removeBoostFromAvailability((CapManager.Boost)gamePieces.get(pieceIndex).cap);
-                    gamePieces.get(pieceIndex).setTerminalFadingState();
-                }
-                else
-                {
-                   synchronized (currentCombo)
+                    playSound(SOUND_TAP);
+                    gamePieces.get(pieceIndex).setTappedState();
+
+                    if(gamePieces.get(pieceIndex).cap instanceof CapManager.Boost)
                     {
-                        if(currentCombo.isEmpty() || !currentCombo.get(0).cap.equals(gamePieces.get(pieceIndex).cap) /*currentCombo.get(0).cap.resourceId!=gamePieces.get(pieceIndex).cap.resourceId*/)
+                        //Log.d("GameBoard", "Boost tapped");
+                        ((CapManager.Boost)gamePieces.get(pieceIndex).cap).performBoostEffects(this);
+                        capManager.removeBoostFromAvailability((CapManager.Boost)gamePieces.get(pieceIndex).cap);
+                        gamePieces.get(pieceIndex).setTerminalFadingState();
+                    }
+                    else
+                    {
+                        synchronized (currentCombo)
                         {
-                            for(int i=0; i<currentCombo.size(); i++)
+                            if(currentCombo.isEmpty() || !currentCombo.get(0).cap.equals(gamePieces.get(pieceIndex).cap) /*currentCombo.get(0).cap.resourceId!=gamePieces.get(pieceIndex).cap.resourceId*/)
                             {
-                                currentCombo.get(i).setTerminalFadingState();
-                            }
+                                for(int i=0; i<currentCombo.size(); i++)
+                                {
+                                    currentCombo.get(i).setTerminalFadingState();
+                                }
 
-                            int deltaScore;
+                                int deltaScore;
 
-                            if(currentCombo.size()>1)
-                            {
-                                // collect the current combo
+                                if(currentCombo.size()>1)
+                                {
+                                    // collect the current combo
 
-                                if(currentMomentum<=0) currentMomentum=1;
+                                    if(currentMomentum<=0) currentMomentum=1;
 
-                                deltaScore=(int)(Math.pow(currentCombo.size(), 2)+Math.pow(currentCombo.get(0).cap.rarityClass, 2) * currentMomentum) * 10;// * (currentLevel/2));
-                                currentMomentum+=1/Math.log10(deltaScore)*10;
-                                highestMomentum=Math.max(currentMomentum, highestMomentum);
-                                currentScore+=deltaScore;
+                                    deltaScore=(int)(Math.pow(currentCombo.size(), 2)+Math.pow(currentCombo.get(0).cap.rarityClass, 2) * currentMomentum) * 10;// * (currentLevel/2));
+                                    currentMomentum+=1/Math.log10(deltaScore)*10;
+                                    highestMomentum=Math.max(currentMomentum, highestMomentum);
+                                    currentScore+=deltaScore;
 
-                                highestComboScore=Math.max(highestComboScore, deltaScore);
+                                    highestComboScore=Math.max(highestComboScore, deltaScore);
 
-                                capsCollected.add(currentCombo.get(0).cap);
+                                    capsCollected.add(currentCombo.get(0).cap);
 
-                                //playSound(SOUND_GOOD);
-                                //Log.d("GameBoard", "Score up by "+deltaScore+" (rarity "+currentCombo.get(0).cap.rarityClass+"), New score: "+currentScore+" at momentum "+currentMomentum);
+                                    //playSound(SOUND_GOOD);
+                                    //Log.d("GameBoard", "Score up by "+deltaScore+" (rarity "+currentCombo.get(0).cap.rarityClass+"), New score: "+currentScore+" at momentum "+currentMomentum);
+                                }
+                                else
+                                {
+                                    //playSound(SOUND_BAD);
+                                    currentMomentum*=(1-currentMomentum/100);
+                                }
+
+                                comboAmounts[currentCombo.size()]++;
+
+                                currentCombo.clear();
+                                currentCombo.add(gamePieces.get(pieceIndex));
                             }
                             else
                             {
-                                //playSound(SOUND_BAD);
-                                currentMomentum*=(1-currentMomentum/100);
+                                currentCombo.add(gamePieces.get(pieceIndex));
+
+                                for(int i=0; i<currentCombo.size(); i++)
+                                    currentCombo.get(i).remainingLife+=1000;
                             }
-
-                            comboAmounts[currentCombo.size()]++;
-
-                            currentCombo.clear();
-                            currentCombo.add(gamePieces.get(pieceIndex));
-                        }
-                        else
-                        {
-                            currentCombo.add(gamePieces.get(pieceIndex));
-
-                            for(int i=0; i<currentCombo.size(); i++)
-                                currentCombo.get(i).remainingLife+=1000;
                         }
                     }
-                }
+                }  
+            } catch(ArrayIndexOutOfBoundsException e)
+            {
+                Log.d("GameBoard", "TOUCHED IN A NO NO PLACE");
             }
+            
         }
 
         private void dumpEvent(MotionEvent event) {
@@ -478,9 +494,7 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
 }
 
         public boolean onTouchEvent(MotionEvent event) {
-
-
-            return super.onTouchEvent(event);
+              return super.onTouchEvent(event);
         }
 
         public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
@@ -491,9 +505,10 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
             this.initSounds();
 
             // set up the static paints
-            text.setColor(Color.BLACK);
+            text.setColor(Color.WHITE);
             text.setStyle(Paint.Style.FILL);
             text.setTextAlign(Paint.Align.LEFT);
+            text.setShadowLayer((float)0.5, 0, 1, Color.BLACK);
             text.setTextSize(16 * getApplicationContext().getResources().getDisplayMetrics().density);
 
             _thread.setRunning(true);
@@ -640,18 +655,45 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
         Paint tp=new Paint();
         Paint text=new Paint();
         Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-        int height = display.getHeight();
+
+        BitmapDrawable bg;
 
         public void drawGameState(Canvas canvas)
         {
             //Bitmap _scratch = BitmapFactory.decodeResource(getResources(), R.drawable.set1_1);
             canvas.drawColor(Color.WHITE);
 
+            bg.setBounds(new Rect(0, 0, display.getWidth(), display.getHeight()));
+            bg.draw(canvas);
+
             BitmapDrawable cap;//=new BitmapDrawable(getResources(), _scratch);
 
             tp.setColor(Color.GRAY);
             tp.setTextAlign(Paint.Align.LEFT);
 
+            // draw the timer.
+            double timerArc=(double)gameTimers[GAME_TIMER_REMAINING]/60000;
+            timerArc=(1-timerArc)*360;
+            ArcShape timer=new ArcShape(0, (float)timerArc);
+
+            ShapeDrawable timerShape=new ShapeDrawable(timer);
+            ShapeDrawable timerBg=new ShapeDrawable(new ArcShape(0, 360));
+
+            BitmapDrawable pauseButton=new BitmapDrawable(BitmapFactory.decodeResource(getResources(), R.drawable.pause));
+
+            Rect timerRect=new Rect(display.getWidth()-60, 10, display.getWidth()-10, 60);
+            timerBg.setBounds(timerRect);
+            timerShape.setBounds(timerRect);
+            pauseButton.setBounds(timerRect.left+5, timerRect.top+5, timerRect.right-5, timerRect.bottom-5);
+
+            timerBg.getPaint().setColor(Color.CYAN);
+            timerShape.getPaint().setColor(Color.BLACK);
+            timerShape.getPaint().setAntiAlias(true);
+            timerBg.draw(canvas);
+            timerShape.draw(canvas);
+            pauseButton.draw(canvas);
+
+            // draw the game board.
             int x=0;
             int y=0;
             int curRow=0;
@@ -664,7 +706,7 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
                 {
                     cap=gamePieces.get(i).cap.image;
                     x=(pieceWidth)*(i%itemsPerRow);//+(pieceWidth/2);
-                    y=(pieceWidth)*curRow;
+                    y=((pieceWidth)*curRow)+boardMarginHeight;
 
                     /*if(gamePieces.get(i).state==PIECE_STATE_NORMAL)
                         cap.setColorFilter(null);
@@ -678,7 +720,7 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
 
                     cap.setAlpha(gamePieces.get(i).opacity);
 
-                    cap.setBounds(x, y, x+pieceWidth, y+pieceWidth);
+                    cap.setBounds(x+3, y+3, x+pieceWidth-3, y+pieceWidth-3);
                     cap.draw(canvas);
 
                     itemsThisRow++;
@@ -692,7 +734,7 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
 
             x=(pieceWidth)*(i%itemsPerRow);//+(pieceWidth/2);
             y=(pieceWidth)*curRow;
-            canvas.drawText("Momentum: "+Math.round(currentMomentum)+"  Score: "+currentScore+"   "+gameTimers[GAME_TIMER_REMAINING]/1000, x+5, y+10, text);
+            canvas.drawText("Momentum: "+Math.round(currentMomentum)+"  Score: "+currentScore, 10, 40, text);
         }
     }
 

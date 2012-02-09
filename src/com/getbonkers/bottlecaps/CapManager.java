@@ -120,7 +120,7 @@ public class CapManager implements CapManagerLoadingDelegate {
 
                         JSONObject set=new JSONObject(response).getJSONObject("cap_set");
 
-                        adapter.insertSet((long)setID, set.getString("name"), set.getString("artist"), set.getString("description"));
+                        adapter.insertSet(setID, set.getString("name"), set.getString("artist"), set.getString("description"));
 
                         JSONArray caps=set.getJSONArray("cap");
 
@@ -372,7 +372,7 @@ public class CapManager implements CapManagerLoadingDelegate {
                 BitmapFactory.Options options=new BitmapFactory.Options();
 
                 if(lowMemoryMode)
-                    options.inSampleSize=4;
+                    options.inSampleSize=2;
 
                 if(this.index==0)
                 {
@@ -505,8 +505,10 @@ public class CapManager implements CapManagerLoadingDelegate {
         double totalMemoryUsed = (Runtime.getRuntime().totalMemory() + android.os.Debug.getNativeHeapAllocatedSize());
         int percentUsed = (int)(totalMemoryUsed / Runtime.getRuntime().maxMemory() * 100);
 
-        if(percentUsed>75)
+        if(percentUsed>85)
             lowMemoryMode=true;
+        else
+            lowMemoryMode=false;
 
         try {
             cap.putCapInPlay(context, lowMemoryMode);

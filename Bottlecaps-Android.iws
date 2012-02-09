@@ -8,6 +8,7 @@
         <option name="nightMode" value="notnight" />
         <option name="targetHashString" value="android-15" />
         <option name="theme" value="Theme" />
+        <option name="visible" value="false" />
       </GlobalState>
     </option>
   </component>
@@ -16,8 +17,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="992850b8-5c72-4ab5-bba6-f85bfa5e4131" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/AsyncNetworkDelegate.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/Player.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/AndroidManifest.xml" afterPath="$PROJECT_DIR$/AndroidManifest.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Bottlecaps-Android.ipr" afterPath="$PROJECT_DIR$/Bottlecaps-Android.ipr" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Bottlecaps-Android.iws" afterPath="$PROJECT_DIR$/Bottlecaps-Android.iws" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/BottlecapsDatabaseAdapter.java" afterPath="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/BottlecapsDatabaseAdapter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gen/com/getbonkers/bottlecaps/R.java" afterPath="$PROJECT_DIR$/gen/com/getbonkers/bottlecaps/R.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/layout/splashscreen.xml" afterPath="$PROJECT_DIR$/res/layout/splashscreen.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/CapManager.java" afterPath="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/CapManager.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/GameBoardActivity.java" afterPath="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/GameBoardActivity.java" />
     </list>
     <ignored path="Bottlecaps-Android.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -83,7 +91,16 @@
       <file leaf-file-name="SplashScreenActivity.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/getbonkers/bottlecaps/SplashScreenActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="25" column="4" selection-start="665" selection-end="665" vertical-scroll-proportion="0.0">
+            <state line="39" column="9" selection-start="1161" selection-end="1161" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="splashscreen.xml" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/res/layout/splashscreen.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="18" column="40" selection-start="779" selection-end="779" vertical-scroll-proportion="0.4864865">
               <folding />
             </state>
           </provider>
@@ -92,11 +109,8 @@
       <file leaf-file-name="GameBoardActivity.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/getbonkers/bottlecaps/GameBoardActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="331" column="12" selection-start="11288" selection-end="11288" vertical-scroll-proportion="0.0">
-              <folding>
-                <element signature="e#7653#7664#0" expanded="true" />
-                <element signature="e#7743#7759#0" expanded="true" />
-              </folding>
+            <state line="500" column="23" selection-start="18500" selection-end="18500" vertical-scroll-proportion="-12.192307">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -104,7 +118,7 @@
       <file leaf-file-name="GetBonkersAPI.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/getbonkers/bottlecaps/GetBonkersAPI.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="18" column="21" selection-start="566" selection-end="566" vertical-scroll-proportion="0.0">
+            <state line="29" column="4" selection-start="910" selection-end="910" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -113,16 +127,34 @@
       <file leaf-file-name="CapManager.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/getbonkers/bottlecaps/CapManager.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="535" column="3" selection-start="16863" selection-end="16863" vertical-scroll-proportion="0.0">
+            <state line="366" column="8" selection-start="11714" selection-end="11714" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="BottlecapsDatabaseAdapter.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/com/getbonkers/bottlecaps/BottlecapsDatabaseAdapter.java">
+      <file leaf-file-name="Player.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/getbonkers/bottlecaps/Player.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="134" column="4" selection-start="4767" selection-end="4767" vertical-scroll-proportion="0.27745664">
+            <state line="127" column="56" selection-start="3588" selection-end="3588" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AsyncNetworkDelegate.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/getbonkers/bottlecaps/AsyncNetworkDelegate.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="9" column="1" selection-start="187" selection-end="187" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="CapManagerLoadingDelegate.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/getbonkers/bottlecaps/CapManagerLoadingDelegate.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="8" column="12" selection-start="187" selection-end="187" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -144,14 +176,16 @@
     <option name="changedFiles">
       <list>
         <option value="$PROJECT_DIR$/gen/com/getbonkers/bottlecaps/R.java" />
-        <option value="$PROJECT_DIR$/res/layout/splashscreen.xml" />
-        <option value="$PROJECT_DIR$/AndroidManifest.xml" />
         <option value="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/CapManagerLoadingDelegate.java" />
         <option value="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/GetBonkersAPI.java" />
         <option value="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/SplashScreenActivity.java" />
+        <option value="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/BottlecapsDatabaseAdapter.java" />
+        <option value="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/AsyncNetworkDelegate.java" />
+        <option value="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/Player.java" />
+        <option value="$PROJECT_DIR$/AndroidManifest.xml" />
         <option value="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/CapManager.java" />
         <option value="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/GameBoardActivity.java" />
-        <option value="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/BottlecapsDatabaseAdapter.java" />
+        <option value="$PROJECT_DIR$/res/layout/splashscreen.xml" />
       </list>
     </option>
   </component>
@@ -169,6 +203,25 @@
     <option name="y" value="22" />
     <option name="width" value="1680" />
     <option name="height" value="1024" />
+  </component>
+  <component name="ProjectInspectionProfilesVisibleTreeState">
+    <entry key="Project Default">
+      <profile-state>
+        <expanded-state>
+          <State>
+            <id />
+          </State>
+          <State>
+            <id>Spelling</id>
+          </State>
+        </expanded-state>
+        <selected-state>
+          <State>
+            <id>Spelling</id>
+          </State>
+        </selected-state>
+      </profile-state>
+    </entry>
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -196,7 +249,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -314,10 +366,6 @@
               <option name="myItemId" value="gen" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bottlecaps" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -335,6 +383,7 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
       <pane id="Scope" />
     </panes>
   </component>
@@ -344,18 +393,17 @@
     <property name="project.structure.proportion" value="0.15" />
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="MemberChooser.sorted" value="false" />
-    <property name="options.lastSelected" value="preferences.externalResources" />
+    <property name="options.lastSelected" value="Errors" />
     <property name="recentsLimit" value="5" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_SERIALS" value="3331E6FCA85B00EC" />
     <property name="MemberChooser.copyJavadoc" value="false" />
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
-    <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_AVD" value="Android233" />
     <property name="FullScreen" value="false" />
     <property name="MemberChooser.showClasses" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
-    <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
+    <property name="options.splitter.details.proportions" value="0.2" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -410,24 +458,6 @@
         <option name="Maven.BeforeRunTask" enabled="false" />
       </method>
     </configuration>
-    <configuration default="true" type="Applet" factoryName="Applet">
-      <module name="" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="HTML_FILE_NAME" />
-      <option name="HTML_USED" value="false" />
-      <option name="WIDTH" value="400" />
-      <option name="HEIGHT" value="300" />
-      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
-      <option name="VM_PARAMETERS" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <method>
-        <option name="AntTarget" enabled="false" />
-        <option name="BuildArtifacts" enabled="false" />
-        <option name="Make" enabled="true" />
-        <option name="Maven.BeforeRunTask" enabled="false" />
-      </method>
-    </configuration>
     <configuration default="true" type="TestNG" factoryName="TestNG">
       <module name="" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
@@ -453,6 +483,24 @@
       <envs />
       <properties />
       <listeners />
+      <method>
+        <option name="AntTarget" enabled="false" />
+        <option name="BuildArtifacts" enabled="false" />
+        <option name="Make" enabled="true" />
+        <option name="Maven.BeforeRunTask" enabled="false" />
+      </method>
+    </configuration>
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <module name="" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="HTML_FILE_NAME" />
+      <option name="HTML_USED" value="false" />
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <option name="VM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
       <method>
         <option name="AntTarget" enabled="false" />
         <option name="BuildArtifacts" enabled="false" />
@@ -583,9 +631,10 @@
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32965687" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.68839777" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.27403316" sideWeight="0.32843137" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3325967" sideWeight="0.32843137" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.31049722" sideWeight="0.50061274" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.22916667" sideWeight="0.37900552" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32928178" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -594,11 +643,10 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32965687" sideWeight="0.6895028" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39950982" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.20159313" sideWeight="0.6895028" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.20220588" sideWeight="0.66740334" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32928178" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Android Logcat" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.31049722" sideWeight="0.49509802" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Android Logcat" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3082873" sideWeight="0.49509802" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32965687" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32928178" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
@@ -663,95 +711,92 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="jar://$PROJECT_DIR$/../../android-sdk-macosx/platforms/android-15/android.jar!/java/util/zip/ZipInputStream.class">
+    <entry file="jar://$PROJECT_DIR$/../../android-sdk-macosx/platforms/android-15/android.jar!/android/graphics/drawable/BitmapDrawable.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="11" selection-start="226" selection-end="226" vertical-scroll-proportion="0.10250569" />
+        <state line="7" column="11" selection-start="239" selection-end="239" vertical-scroll-proportion="0.15126051" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/AndroidManifest.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="23" column="21" selection-start="924" selection-end="924" vertical-scroll-proportion="0.0" />
+        <state line="16" column="40" selection-start="795" selection-end="795" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-    <entry file="jar://$PROJECT_DIR$/../../android-sdk-macosx/platforms/android-15/android.jar!/java/io/BufferedInputStream.class">
+    <entry file="jar://$PROJECT_DIR$/../../android-sdk-macosx/platforms/android-15/android.jar!/android/graphics/drawable/ShapeDrawable.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="12" column="11" selection-start="356" selection-end="356" vertical-scroll-proportion="0.3095685" />
+        <state line="5" column="13" selection-start="163" selection-end="163" vertical-scroll-proportion="-0.77490777" />
       </provider>
     </entry>
-    <entry file="jar://$PROJECT_DIR$/../../android-sdk-macosx/platforms/android-15/android.jar!/java/util/zip/ZipEntry.class">
+    <entry file="jar://$PROJECT_DIR$/../../android-sdk-macosx/platforms/android-15/android.jar!/android/graphics/drawable/Drawable.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="13" selection-start="151" selection-end="151" vertical-scroll-proportion="0.07009346" />
-      </provider>
-    </entry>
-    <entry file="jar://$PROJECT_DIR$/../../android-sdk-macosx/platforms/android-15/android.jar!/android/content/Context.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="108" column="33" selection-start="5738" selection-end="5738" vertical-scroll-proportion="0.33333334" />
-      </provider>
-    </entry>
-    <entry file="jar://$PROJECT_DIR$/../../android-sdk-macosx/platforms/android-15/android.jar!/java/io/File.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="51" column="28" selection-start="1896" selection-end="1896" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="jar://$PROJECT_DIR$/libs/commons-io-2.1.jar!/org/apache/commons/io/IOUtils.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="147" column="22" selection-start="8143" selection-end="8143" vertical-scroll-proportion="2.9883945" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/getbonkers/bottlecaps/CapManagerLoadingDelegate.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="8" column="12" selection-start="187" selection-end="187" vertical-scroll-proportion="0.13667426" />
-      </provider>
-    </entry>
-    <entry file="jar://$PROJECT_DIR$/libs/android-async-http-1.3.1.jar!/com/loopj/android/http/AsyncHttpResponseHandler.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="20" column="25" selection-start="699" selection-end="708" vertical-scroll-proportion="0.29195803" />
-      </provider>
-    </entry>
-    <entry file="jar://$PROJECT_DIR$/../../android-sdk-macosx/platforms/android-15/android.jar!/android/graphics/drawable/BitmapDrawable.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="59" column="16" selection-start="2528" selection-end="2528" vertical-scroll-proportion="0.63583815" />
+        <state line="11" column="16" selection-start="324" selection-end="324" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/getbonkers/bottlecaps/SplashScreenActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="25" column="4" selection-start="665" selection-end="665" vertical-scroll-proportion="0.0" />
+        <state line="39" column="9" selection-start="1161" selection-end="1161" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/getbonkers/bottlecaps/CapManager.java">
+    <entry file="jar://$PROJECT_DIR$/../../android-sdk-macosx/platforms/android-15/android.jar!/android/graphics/BitmapFactory.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="535" column="3" selection-start="16863" selection-end="16863" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="17" column="42" selection-start="965" selection-end="965" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/getbonkers/bottlecaps/GetBonkersAPI.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="18" column="21" selection-start="566" selection-end="566" vertical-scroll-proportion="0.0">
+        <state line="29" column="4" selection-start="910" selection-end="910" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/getbonkers/bottlecaps/CapManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="366" column="8" selection-start="11714" selection-end="11714" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/getbonkers/bottlecaps/Player.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="127" column="56" selection-start="3588" selection-end="3588" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/getbonkers/bottlecaps/AsyncNetworkDelegate.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="9" column="1" selection-start="187" selection-end="187" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/getbonkers/bottlecaps/CapManagerLoadingDelegate.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="8" column="12" selection-start="187" selection-end="187" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/../../android-sdk-macosx/platforms/android-15/android.jar!/android/graphics/Rect.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="14" column="11" selection-start="435" selection-end="435" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/../../android-sdk-macosx/platforms/android-15/android.jar!/android/graphics/Canvas.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="165" column="16" selection-start="8170" selection-end="8170" vertical-scroll-proportion="0.33333334">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/../../android-sdk-macosx/platforms/android-15/android.jar!/android/graphics/Paint.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="128" column="16" selection-start="4697" selection-end="4697" vertical-scroll-proportion="0.33294392">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/getbonkers/bottlecaps/GameBoardActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="331" column="12" selection-start="11288" selection-end="11288" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="e#7653#7664#0" expanded="true" />
-            <element signature="e#7743#7759#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$PROJECT_DIR$/../../android-sdk-macosx/platforms/android-15/android.jar!/android/database/sqlite/SQLiteDatabase.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="93" column="35" selection-start="5427" selection-end="5427" vertical-scroll-proportion="0.33294797">
+        <state line="500" column="23" selection-start="18500" selection-end="18500" vertical-scroll-proportion="-12.192307">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/getbonkers/bottlecaps/BottlecapsDatabaseAdapter.java">
+    <entry file="file://$PROJECT_DIR$/res/layout/splashscreen.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="134" column="4" selection-start="4767" selection-end="4767" vertical-scroll-proportion="0.27745664">
+        <state line="18" column="40" selection-start="779" selection-end="779" vertical-scroll-proportion="0.4864865">
           <folding />
         </state>
       </provider>

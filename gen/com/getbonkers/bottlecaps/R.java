@@ -16,6 +16,16 @@ public final class R {
         public static final int boostincreasetime=0x7f020002;
         public static final int boostjoker=0x7f020003;
         public static final int boostnitro=0x7f020004;
+        public static final int btnhard=0x7f020005;
+        public static final int btnhardon=0x7f020006;
+        public static final int btnnormal=0x7f020007;
+        public static final int gamebg1=0x7f020008;
+        public static final int gamebg2=0x7f020009;
+        public static final int gamebg3=0x7f02000a;
+        public static final int home=0x7f02000b;
+        public static final int menu=0x7f02000c;
+        public static final int pause=0x7f02000d;
+        public static final int timer=0x7f02000e;
     }
     public static final class id {
         public static final int resultsBiggestCombo=0x7f060003;
@@ -23,10 +33,10 @@ public final class R {
         public static final int resultsMomentum=0x7f060002;
         public static final int resultsScore=0x7f060001;
         public static final int resultsTitle=0x7f060000;
+        public static final int splashButtons=0x7f060005;
         public static final int splashMenuButton=0x7f060008;
         public static final int splashPlayButton=0x7f060007;
         public static final int splashPlayKidsMode=0x7f060006;
-        public static final int splashTitle=0x7f060005;
     }
     public static final class layout {
         public static final int gameresults=0x7f030000;

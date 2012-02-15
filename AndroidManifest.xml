@@ -18,6 +18,8 @@
         <activity android:name="GameResultsActivity"
                   android:label="Results">
         </activity>
+        
+        <activity android:name="GameMenuActivity" android:label="Menu" />
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />

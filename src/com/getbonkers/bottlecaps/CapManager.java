@@ -659,8 +659,10 @@ public class CapManager implements CapManagerLoadingDelegate {
                         Cursor cursor=adapter.getSet(set.getInt("id"));
                         if(cursor.getCount()>0 || capSetExistsInAssets(setID))
                         {
-                            if(cursor.getCount() <=0)
+                            if(cursor.getCount() <=0) {
                                 downloadManager.queueSetDataForDownload(setID);
+                                downloadManager.queueSetAssetsForDownload(setID);
+                            }
                             else
                                 Log.d("CapLoader", "Cap set "+setID+" exists in the database");
 

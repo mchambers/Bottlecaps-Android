@@ -19,13 +19,17 @@ public final class R {
         public static final int btnhard=0x7f020005;
         public static final int btnhardon=0x7f020006;
         public static final int btnnormal=0x7f020007;
-        public static final int gamebg1=0x7f020008;
-        public static final int gamebg2=0x7f020009;
-        public static final int gamebg3=0x7f02000a;
-        public static final int home=0x7f02000b;
-        public static final int menu=0x7f02000c;
-        public static final int pause=0x7f02000d;
-        public static final int timer=0x7f02000e;
+        public static final int buttonhard=0x7f020008;
+        public static final int gamebg1=0x7f020009;
+        public static final int gamebg2=0x7f02000a;
+        public static final int gamebg3=0x7f02000b;
+        public static final int home=0x7f02000c;
+        public static final int menu=0x7f02000d;
+        public static final int pause=0x7f02000e;
+        public static final int timer=0x7f02000f;
+        public static final int timerbluelayer=0x7f020010;
+        public static final int timerpauselayer=0x7f020011;
+        public static final int timerpauselayerover=0x7f020012;
     }
     public static final class id {
         public static final int resultsBiggestCombo=0x7f060003;

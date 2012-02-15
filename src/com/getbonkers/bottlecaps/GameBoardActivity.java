@@ -359,6 +359,7 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
                 case GAME_DIFFICULTY_EASY:
                     boardSize=12;
                     itemsPerRow=3;
+                    boardMarginHeight=70;
                     break;
                 case GAME_DIFFICULTY_NORMAL:
                     boardSize=20;
@@ -505,11 +506,21 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
             this.initSounds();
 
             // set up the static paints
-            text.setColor(Color.WHITE);
+            text.setColor(Color.BLACK);
             text.setStyle(Paint.Style.FILL);
-            text.setTextAlign(Paint.Align.LEFT);
+            text.setTextAlign(Paint.Align.CENTER);
             text.setShadowLayer((float)0.5, 0, 1, Color.BLACK);
-            text.setTextSize(16 * getApplicationContext().getResources().getDisplayMetrics().density);
+            text.setTextSize(32 * getApplicationContext().getResources().getDisplayMetrics().density);
+            text.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/Pacifico.ttf"));
+
+            textStroke.setColor(Color.WHITE);
+            textStroke.setStyle(Paint.Style.STROKE);
+            textStroke.setTextAlign(Paint.Align.CENTER);
+            //textStroke.setShadowLayer((float)0.5, 0, 1, Color.BLACK);
+            textStroke.setTextSize(32 * getApplicationContext().getResources().getDisplayMetrics().density);
+            textStroke.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/Pacifico.ttf"));
+            textStroke.setStrokeWidth(1.0f);
+            textStroke.setAntiAlias(true);
 
             _thread.setRunning(true);
             _thread.start();
@@ -654,6 +665,7 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
         
         Paint tp=new Paint();
         Paint text=new Paint();
+        Paint textStroke=new Paint();
         Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
 
         BitmapDrawable bg;
@@ -677,21 +689,22 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
             ArcShape timer=new ArcShape(0, (float)timerArc);
 
             ShapeDrawable timerShape=new ShapeDrawable(timer);
-            ShapeDrawable timerBg=new ShapeDrawable(new ArcShape(0, 360));
+            BitmapDrawable timerCover=new BitmapDrawable(BitmapFactory.decodeResource(getResources(), R.drawable.timerpauselayer));
+            BitmapDrawable timerBlue=new BitmapDrawable(BitmapFactory.decodeResource(getResources(), R.drawable.timerbluelayer));
 
-            BitmapDrawable pauseButton=new BitmapDrawable(BitmapFactory.decodeResource(getResources(), R.drawable.pause));
+            //BitmapDrawable pauseButton=new BitmapDrawable(BitmapFactory.decodeResource(getResources(), R.drawable.timerpauselayer));
 
             Rect timerRect=new Rect(display.getWidth()-60, 10, display.getWidth()-10, 60);
-            timerBg.setBounds(timerRect);
-            timerShape.setBounds(timerRect);
-            pauseButton.setBounds(timerRect.left+5, timerRect.top+5, timerRect.right-5, timerRect.bottom-5);
+            timerShape.setBounds(timerRect.left+6, timerRect.top+5, timerRect.right-6, timerRect.bottom-5);
+            timerCover.setBounds(timerRect);
+            timerBlue.setBounds(timerRect);
 
-            timerBg.getPaint().setColor(Color.CYAN);
             timerShape.getPaint().setColor(Color.BLACK);
             timerShape.getPaint().setAntiAlias(true);
-            timerBg.draw(canvas);
+
+            timerBlue.draw(canvas);
             timerShape.draw(canvas);
-            pauseButton.draw(canvas);
+            timerCover.draw(canvas);
 
             // draw the game board.
             int x=0;
@@ -734,7 +747,19 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
 
             x=(pieceWidth)*(i%itemsPerRow);//+(pieceWidth/2);
             y=(pieceWidth)*curRow;
-            canvas.drawText("Momentum: "+Math.round(currentMomentum)+"  Score: "+currentScore, 10, 40, text);
+
+            canvas.drawText(String.valueOf(currentScore), display.getWidth()/2, 40, text);
+            canvas.drawText(String.valueOf(currentScore), display.getWidth()/2, 40, textStroke);
+            
+            int multiplier=0;
+            
+            if(currentMomentum>10)
+                multiplier=(int)Math.ceil(currentMomentum/10);
+
+            if(multiplier<=0) multiplier=1;
+
+            canvas.drawText(String.valueOf(multiplier)+"X", 50, 50, text);
+            canvas.drawText(String.valueOf(multiplier)+"X", 50, 50, textStroke);
         }
     }
 
@@ -745,7 +770,7 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
         super.onCreate(savedInstanceState);
 
         dialog = ProgressDialog.show(this, "",
-                "Loading. Please wait...", true);
+                "Updating...", true);
 
         int difficulty=getIntent().getExtras().getInt("GAME_DIFFICULTY", 1);
 

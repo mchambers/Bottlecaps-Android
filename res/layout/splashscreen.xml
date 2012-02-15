@@ -30,7 +30,7 @@
                 android:layout_height="fill_parent"
                 android:gravity="left"
                 android:scaleType="fitXY"
-                android:src="@drawable/btnhard"
+                android:src="@drawable/buttonhard"
                 android:layout_weight="0.55" />
 
     </LinearLayout>
@@ -43,6 +43,7 @@
             android:layout_marginTop="15dp"
             android:layout_marginRight="20dp"
             android:layout_height="47dp"
+            android:onClick="onMenuButtonClick"
             android:src="@drawable/menu"/>
 
 </RelativeLayout>

@@ -71,6 +71,12 @@ public class SplashScreenActivity extends Activity {
     {
         super.onDestroy();
     }
+    
+    public void onMenuButtonClick(View v)
+    {
+        Intent menuIntent=new Intent(this, GameMenuActivity.class);
+        this.startActivity(menuIntent);
+    }
 
     public void onKidsModeClick(View v)
     {

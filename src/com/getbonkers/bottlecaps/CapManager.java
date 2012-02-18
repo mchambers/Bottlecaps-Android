@@ -675,10 +675,17 @@ public class CapManager implements CapManagerLoadingDelegate {
                     }
                 } catch(JSONException e)
                 {
+                    _delegate.onCapManagerLoadFailure(2);
                 }
 
                 new Thread(downloadManager).start();
 
+            }
+
+            @Override
+            public void onFailure(java.lang.Throwable throwable)
+            {
+                _delegate.onCapManagerLoadFailure(1);
             }
         });
     }

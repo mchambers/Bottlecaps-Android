@@ -4,6 +4,20 @@
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
               android:background="@drawable/home">
+    
+    <TextView android:id="@+id/splashTitle"
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:text="GETBONKERS AND ENDEMOL USA PRESENT"
+              android:textColor="@android:color/white"
+              android:gravity="center"
+              android:shadowColor="@android:color/black"
+              android:shadowRadius="1.0"
+              android:shadowDx="0.0"
+              android:shadowDy="1.0"
+              android:textSize="10sp"
+              android:layout_marginTop="5dp"
+              />
 
     <LinearLayout android:id="@+id/splashButtons"
                   android:layout_width="fill_parent"

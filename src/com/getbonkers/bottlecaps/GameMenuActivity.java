@@ -1,7 +1,9 @@
 package com.getbonkers.bottlecaps;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 /**
  * Created by IntelliJ IDEA.
@@ -15,5 +17,10 @@ public class GameMenuActivity extends Activity {
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+    }
+
+    public void onMyCapsButtonPressed(View v) {
+        Intent i=new Intent(this, CapSetsActivity.class);
+        startActivity(i);
     }
 }

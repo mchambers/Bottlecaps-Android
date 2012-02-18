@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+                android:background="@drawable/bginner">
+
+    <ImageView android:id="@+id/capSetsHeader"
+               android:layout_width="fill_parent"
+               android:layout_height="91dp"
+               android:src="@drawable/innerheader"
+               android:scaleType="fitXY"
+               />
+
+    <ListView android:id="@+id/capSetsListView"
+              android:layout_height="fill_parent"
+              android:layout_width="fill_parent"
+              android:layout_below="@id/capSetsHeader"
+              />
+
+</RelativeLayout>

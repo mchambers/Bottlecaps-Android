@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent">
+
+    <com.loopj.android.image.SmartImageView android:id="@+id/capListItemImage"
+               android:layout_width="75sp"
+               android:layout_height="75sp"
+               />
+    
+    <TextView android:id="@+id/capListItemName"
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:layout_toRightOf="@id/capListItemImage" />
+
+</RelativeLayout>

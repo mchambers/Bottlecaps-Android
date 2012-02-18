@@ -1,8 +1,11 @@
 package com.getbonkers.bottlecaps;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.*;
 import android.graphics.drawable.BitmapDrawable;
@@ -29,10 +32,34 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
 {
     ProgressDialog dialog;
     CapManager capMgr;
+    
+    public static final int DIALOG_CAPMANAGER_FAILURE=1;
+
+    protected Dialog onCreateDialog(int id) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        switch(id)
+        {
+            case DIALOG_CAPMANAGER_FAILURE:
+                builder.setMessage("There was a problem communicating with the BottleCaps server. Make sure you're connected to Wi-Fi or 3G and try again.")
+                    .setCancelable(false)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            finish();
+                            dialog.cancel();
+                        }
+                    });
+                break;
+        }
+
+        return builder.create();
+    }
 
     public void onCapManagerLoadFailure(int error)
     {
-
+        dialog.dismiss();
+        showDialog(DIALOG_CAPMANAGER_FAILURE);
     }
 
     public void capManagerProgressUpdate(int code)

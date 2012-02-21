@@ -8,10 +8,15 @@ package com.getbonkers.bottlecaps;
  * To change this template use File | Settings | File Templates.
  */
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.graphics.Typeface;
 import android.util.Log;
+import android.widget.Gallery;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -46,6 +51,7 @@ public class CapSetListAdapter extends ArrayAdapter<JSONObject> {
 
         TextView setName=(TextView)rowView.findViewById(R.id.listCapSetItemHeader);
         //SmartImageView tagImage=(SmartImageView)rowView.findViewById(R.id.capListItemImage);
+        final Gallery setIcons=(Gallery)rowView.findViewById(R.id.listCapSetItemGallery);
 
         setName.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/Pacifico.ttf"));
 
@@ -57,22 +63,47 @@ public class CapSetListAdapter extends ArrayAdapter<JSONObject> {
             //tagName.setText(item.getString(itemNameKey));
             setName.setText(item.getString("name"));
 
-            Log.d("CapSetListAdapter", item.toString());
-        } catch (/*JSONException e*/ Exception e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            try {
+                GetBonkersAPI.get("/sets/" + item.getInt("id"), new RequestParams(), context, new AsyncHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(String response) {
+                        try {
+                            Log.d("CapManager", response);
+
+                            JSONObject set = new JSONObject(response).getJSONObject("cap_set");
+
+                            //adapter.insertSet(setID, set.getString("name"), set.getString("artist"), set.getString("description"));
+
+                            JSONArray caps=set.getJSONArray("cap");
+
+                            List<JSONObject> capObjects=new ArrayList<JSONObject>();
+
+                            for(int i=0; i<caps.length(); i++)
+                            {
+                                capObjects.add(caps.getJSONObject(i));
+                                //adapter.insertCapIntoSet((long)setID, cap.getInt("id"), cap.getInt("available"), cap.getInt("issued"), cap.getString("name"), cap.getString("description"), cap.getInt("scarcity"));
+                                Log.d("CapSetListAdapter", caps.getJSONObject(i).toString());
+                            }
+
+                            setIcons.setAdapter(new CapMiniGalleryAdapter(context, capObjects));
+                            //Log.d("CapSetListAdapter", item.toString());
+                        } catch (JSONException e) {
+                            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                        }
+                    }
+                });
+            }
+            catch (JSONException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        catch (JSONException e)
+        {
+
         }
 
-        // Change the icon for Windows and iPhone
-
-        /*
-		String s = values[position];
-		if (s.startsWith("Windows7") || s.startsWith("iPhone")
-				|| s.startsWith("Solaris")) {
-			imageView.setImageResource(R.drawable.no);
-		} else {
-			imageView.setImageResource(R.drawable.ok);
-		}                       */
-
         return rowView;
+
     }
 }

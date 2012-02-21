@@ -4,7 +4,7 @@
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
               android:background="@drawable/home">
-    
+    `
     <TextView android:id="@+id/splashTitle"
               android:layout_width="fill_parent"
               android:layout_height="wrap_content"
@@ -19,45 +19,50 @@
               android:layout_marginTop="5dp"
               />
 
+    <ImageView android:id="@+id/splashMenuButton"
+               android:layout_width="wrap_content"
+               android:gravity="right"
+               android:layout_alignParentBottom="true"
+               android:layout_alignParentRight="true"
+               android:layout_marginTop="15dp"
+               android:layout_marginRight="20dp"
+               android:layout_marginBottom="20dp"
+               android:layout_height="wrap_content"
+               android:onClick="onMenuButtonClick"
+               android:src="@drawable/menu"/>
+
     <LinearLayout android:id="@+id/splashButtons"
-                  android:layout_width="fill_parent"
-                  android:layout_marginTop="340dp"
+                  android:layout_width="wrap_content"
                   android:layout_marginLeft="20dp"
                   android:layout_marginRight="20dp"
                   android:weightSum="1.0"
-                  android:layout_height="71dp"
+                  android:layout_height="wrap_content"
+                  android:layout_above="@id/splashMenuButton"
+                  android:layout_centerHorizontal="true"
                   >
 
         <ImageView android:id="@+id/splashPlayKidsMode"
                 android:onClick="onKidsModeClick"
-                android:layout_height="fill_parent"
+                android:layout_height="wrap_content"
                 android:gravity="right"
-                android:layout_width="fill_parent"
+                android:layout_width="wrap_content"
                 android:scaleType="fitXY"
                 android:src="@drawable/btnnormal"
-                android:layout_weight="0.45"
                 />
+
+        <!--                 android:layout_weight="0.45" -->
 
         <ImageView android:id="@+id/splashPlayButton"
                 android:onClick="onPlayButtonClick"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:gravity="left"
                 android:scaleType="fitXY"
                 android:src="@drawable/buttonhard"
-                android:layout_weight="0.55" />
+                 />
+        <!-- android:layout_weight="0.55" -->
 
     </LinearLayout>
 
-    <ImageView android:id="@+id/splashMenuButton"
-            android:layout_width="103dp"
-            android:gravity="right"
-            android:layout_below="@id/splashButtons"
-            android:layout_alignParentRight="true"
-            android:layout_marginTop="15dp"
-            android:layout_marginRight="20dp"
-            android:layout_height="47dp"
-            android:onClick="onMenuButtonClick"
-            android:src="@drawable/menu"/>
 
 </RelativeLayout>

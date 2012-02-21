@@ -13,15 +13,15 @@
               android:layout_marginBottom="-5dp"
               android:layout_marginTop="10dp"
               android:textSize="24sp"
+              android:textColor="@android:color/white"
             />
 
-    <HorizontalScrollView android:id="@+id/listCapSetItemContents"
-                          android:layout_width="fill_parent"
-                          android:layout_height="80sp"
-                          android:background="@drawable/mycapsbg"
-                          android:layout_below="@id/listCapSetItemHeader"
-                          >
-
-   </HorizontalScrollView>
+        <Gallery android:id="@+id/listCapSetItemGallery"
+                 android:layout_width="fill_parent"
+                 android:layout_height="fill_parent"
+                 android:background="@drawable/mycapsbg"
+                 android:layout_below="@id/listCapSetItemHeader"
+                 android:spacing="5sp"
+                 />
 
 </RelativeLayout>

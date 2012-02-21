@@ -41,7 +41,7 @@ public final class R {
         public static final int capListItemName=0x7f060008;
         public static final int capSetsHeader=0x7f060000;
         public static final int capSetsListView=0x7f060001;
-        public static final int listCapSetItemContents=0x7f06000a;
+        public static final int listCapSetItemGallery=0x7f06000a;
         public static final int listCapSetItemHeader=0x7f060009;
         public static final int mainBack=0x7f06000b;
         public static final int mainBoosts=0x7f06000d;
@@ -51,10 +51,10 @@ public final class R {
         public static final int resultsMomentum=0x7f060004;
         public static final int resultsScore=0x7f060003;
         public static final int resultsTitle=0x7f060002;
-        public static final int splashButtons=0x7f06000f;
-        public static final int splashMenuButton=0x7f060012;
-        public static final int splashPlayButton=0x7f060011;
-        public static final int splashPlayKidsMode=0x7f060010;
+        public static final int splashButtons=0x7f060010;
+        public static final int splashMenuButton=0x7f06000f;
+        public static final int splashPlayButton=0x7f060012;
+        public static final int splashPlayKidsMode=0x7f060011;
         public static final int splashTitle=0x7f06000e;
     }
     public static final class layout {

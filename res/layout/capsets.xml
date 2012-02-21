@@ -7,9 +7,9 @@
 
     <ImageView android:id="@+id/capSetsHeader"
                android:layout_width="fill_parent"
-               android:layout_height="91dp"
+               android:layout_height="wrap_content"
                android:src="@drawable/innerheader"
-               android:scaleType="fitXY"
+               android:scaleType="fitCenter"
                />
 
     <ListView android:id="@+id/capSetsListView"

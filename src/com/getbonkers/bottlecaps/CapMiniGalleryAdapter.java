@@ -2,6 +2,7 @@ package com.getbonkers.bottlecaps;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -37,15 +38,35 @@ public class CapMiniGalleryAdapter extends ArrayAdapter<JSONObject> {
 
         JSONObject item=values.get(position);
 
+        int capSize=75;
+
         try {
-            imageView.setImageUrl("http://data.getbonkers.com/bottlecaps/150/"+item.getInt("cap_set_id")+"/"+item.getInt("id")+".png");
+            DisplayMetrics metrics;
+            metrics=mContext.getResources().getDisplayMetrics();
+            String capURL="";
+
+            switch(metrics.densityDpi){
+                case DisplayMetrics.DENSITY_LOW:
+                    capURL="http://data.getbonkers.com/bottlecaps/caps/75/"+item.getInt("cap_set_id")+"/"+item.getInt("id")+".png";
+                    capSize=48;
+                    break;
+                case DisplayMetrics.DENSITY_MEDIUM:
+                    capSize=75;
+                    capURL="http://data.getbonkers.com/bottlecaps/caps/75/"+item.getInt("cap_set_id")+"/"+item.getInt("id")+".png";
+                    break;
+                case DisplayMetrics.DENSITY_HIGH:
+                    capURL="http://data.getbonkers.com/bottlecaps/caps/150/"+item.getInt("cap_set_id")+"/"+item.getInt("id")+".png";
+                    capSize=112;
+                    break;
+            }
+            imageView.setImageUrl(capURL);
         } catch(JSONException e)
         {
             e.printStackTrace();
         }
 
         //imageView.setImageResource(R.drawable.boostfreeze);
-        imageView.setLayoutParams(new Gallery.LayoutParams(112, 112));
+        imageView.setLayoutParams(new Gallery.LayoutParams(capSize, capSize));
         imageView.setScaleType(ImageView.ScaleType.FIT_XY);
         //imageView.setBackgroundResource(mGalleryItemBackground);
 

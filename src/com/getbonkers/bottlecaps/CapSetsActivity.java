@@ -1,10 +1,18 @@
 package com.getbonkers.bottlecaps;
 
 import android.app.Activity;
+import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import org.json.JSONArray;
@@ -26,6 +34,35 @@ public class CapSetsActivity extends Activity {
     ArrayList<JSONObject> listItems;
     CapSetListAdapter adapter;
     
+    View            listHeader;
+    ImageView       leftSelector;
+    ImageView       rightSelector;
+
+    public void leftSelectorTapped(View v)
+    {
+        View arrow=listHeader.findViewById(R.id.capsetsHeaderSelectorArrow);
+
+        Animation animation = AnimationUtils.loadAnimation(this,
+                R.anim.slideleft);
+        arrow.startAnimation(animation);
+
+        leftSelector.setImageResource(R.drawable.selectorlon);
+        rightSelector.setImageResource(R.drawable.selectorroff);
+    }
+
+    public void rightSelectorTapped(View v)
+    {
+        View arrow=listHeader.findViewById(R.id.capsetsHeaderSelectorArrow);
+
+        Animation animation = AnimationUtils.loadAnimation(this,
+                R.anim.slideright);
+        arrow.startAnimation(animation);
+
+        leftSelector.setImageResource(R.drawable.selectorloff);
+        rightSelector.setImageResource(R.drawable.selectorron);
+
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
@@ -34,13 +71,32 @@ public class CapSetsActivity extends Activity {
 
         ListView lv=(ListView)findViewById(R.id.capSetsListView);
 
+        lv.setDivider(null);
+//        lv.setOverscrollFooter(null);
+//        lv.setOverscrollHeader(null);
+
         lv.setCacheColorHint(0);
 
         this.listItems=new ArrayList<JSONObject>();
         
         this.adapter = new CapSetListAdapter(this, listItems);
 
+        LayoutInflater inflater = (LayoutInflater) this
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        
+        View v=inflater.inflate(R.layout.capsets_header, null);
+
+        leftSelector=(ImageView)v.findViewById(R.id.capsetsHeaderLeftSelector);
+        rightSelector=(ImageView)v.findViewById(R.id.capsetsHeaderRightSelector);
+
+        ((TextView)v.findViewById(R.id.capsetsHeaderLeftSelectorCaption)).setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/Coolvetica.ttf"));
+        ((TextView)v.findViewById(R.id.capsetsHeaderRightSelectorCaption)).setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/Coolvetica.ttf"));
+
+        lv.addHeaderView(v, null, false);
         lv.setAdapter(adapter);
+        lv.setItemsCanFocus(false);
+
+        listHeader=v;
 
         GetBonkersAPI.get("/sets", new RequestParams(), this, new AsyncHttpResponseHandler() {
             @Override

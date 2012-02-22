@@ -23,4 +23,8 @@ public class GameMenuActivity extends Activity {
         Intent i=new Intent(this, CapSetsActivity.class);
         startActivity(i);
     }
+    
+    public void onHomeButtonPressed(View v) {
+        finish();
+    }
 }

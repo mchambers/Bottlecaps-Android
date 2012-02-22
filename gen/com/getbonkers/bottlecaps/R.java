@@ -8,6 +8,10 @@
 package com.getbonkers.bottlecaps;
 
 public final class R {
+    public static final class anim {
+        public static final int slideleft=0x7f040000;
+        public static final int slideright=0x7f040001;
+    }
     public static final class attr {
     }
     public static final class drawable {
@@ -31,46 +35,59 @@ public final class R {
         public static final int mycaps=0x7f020011;
         public static final int mycapsbg=0x7f020012;
         public static final int pause=0x7f020013;
-        public static final int timer=0x7f020014;
-        public static final int timerbluelayer=0x7f020015;
-        public static final int timerpauselayer=0x7f020016;
-        public static final int timerpauselayerover=0x7f020017;
+        public static final int selectorarrow=0x7f020014;
+        public static final int selectorloff=0x7f020015;
+        public static final int selectorlon=0x7f020016;
+        public static final int selectorroff=0x7f020017;
+        public static final int selectorron=0x7f020018;
+        public static final int timer=0x7f020019;
+        public static final int timerbluelayer=0x7f02001a;
+        public static final int timerpauselayer=0x7f02001b;
+        public static final int timerpauselayerover=0x7f02001c;
     }
     public static final class id {
-        public static final int capListItemImage=0x7f060007;
-        public static final int capListItemName=0x7f060008;
-        public static final int capSetsHeader=0x7f060000;
-        public static final int capSetsListView=0x7f060001;
-        public static final int listCapSetItemGallery=0x7f06000a;
-        public static final int listCapSetItemHeader=0x7f060009;
-        public static final int mainBack=0x7f06000b;
-        public static final int mainBoosts=0x7f06000d;
-        public static final int mainMyCaps=0x7f06000c;
-        public static final int resultsBiggestCombo=0x7f060005;
-        public static final int resultsMenuButton=0x7f060006;
-        public static final int resultsMomentum=0x7f060004;
-        public static final int resultsScore=0x7f060003;
-        public static final int resultsTitle=0x7f060002;
-        public static final int splashButtons=0x7f060010;
-        public static final int splashMenuButton=0x7f06000f;
-        public static final int splashPlayButton=0x7f060012;
-        public static final int splashPlayKidsMode=0x7f060011;
-        public static final int splashTitle=0x7f06000e;
+        public static final int capListItemImage=0x7f07000e;
+        public static final int capListItemName=0x7f07000f;
+        public static final int capSetsHeader=0x7f070000;
+        public static final int capSetsListView=0x7f070001;
+        public static final int capsetsHeaderLeftSelector=0x7f070004;
+        public static final int capsetsHeaderLeftSelectorCaption=0x7f070005;
+        public static final int capsetsHeaderMyCaps=0x7f070002;
+        public static final int capsetsHeaderRightSelector=0x7f070006;
+        public static final int capsetsHeaderRightSelectorCaption=0x7f070007;
+        public static final int capsetsHeaderSelector=0x7f070003;
+        public static final int capsetsHeaderSelectorArrow=0x7f070008;
+        public static final int listCapSetItemGallery=0x7f070011;
+        public static final int listCapSetItemHeader=0x7f070010;
+        public static final int mainBack=0x7f070012;
+        public static final int mainBoosts=0x7f070014;
+        public static final int mainMyCaps=0x7f070013;
+        public static final int resultsBiggestCombo=0x7f07000c;
+        public static final int resultsMenuButton=0x7f07000d;
+        public static final int resultsMomentum=0x7f07000b;
+        public static final int resultsScore=0x7f07000a;
+        public static final int resultsTitle=0x7f070009;
+        public static final int splashButtons=0x7f070017;
+        public static final int splashMenuButton=0x7f070016;
+        public static final int splashPlayButton=0x7f070019;
+        public static final int splashPlayKidsMode=0x7f070018;
+        public static final int splashTitle=0x7f070015;
     }
     public static final class layout {
         public static final int capsets=0x7f030000;
-        public static final int gameresults=0x7f030001;
-        public static final int list_capitem=0x7f030002;
-        public static final int list_capsetitem=0x7f030003;
-        public static final int main=0x7f030004;
-        public static final int splashscreen=0x7f030005;
+        public static final int capsets_header=0x7f030001;
+        public static final int gameresults=0x7f030002;
+        public static final int list_capitem=0x7f030003;
+        public static final int list_capsetitem=0x7f030004;
+        public static final int main=0x7f030005;
+        public static final int splashscreen=0x7f030006;
     }
     public static final class raw {
-        public static final int bad=0x7f040000;
-        public static final int click=0x7f040001;
-        public static final int good=0x7f040002;
+        public static final int bad=0x7f050000;
+        public static final int click=0x7f050001;
+        public static final int good=0x7f050002;
     }
     public static final class string {
-        public static final int app_name=0x7f050000;
+        public static final int app_name=0x7f060000;
     }
 }

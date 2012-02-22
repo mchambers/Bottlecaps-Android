@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:layout_marginBottom="10dp">
+    
+    <ImageView
+                android:id="@+id/capsetsHeaderMyCaps"
+            android:src="@drawable/mycaps"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:layout_centerHorizontal="true"
+               />
+
+    <LinearLayout  android:id="@+id/capsetsHeaderSelector"
+            android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/capsetsHeaderMyCaps"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="10dp"
+            >
+
+        <RelativeLayout android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+            <ImageView android:src="@drawable/selectorlon"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:onClick="leftSelectorTapped"
+                       android:id="@+id/capsetsHeaderLeftSelector"
+                       android:layout_below="@id/capsetsHeaderMyCaps"
+                    />
+
+            <TextView android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:text="Release Date"
+                      android:layout_alignTop="@id/capsetsHeaderLeftSelector"
+                      android:textColor="@android:color/white"
+                      android:padding="5dp"
+                      android:layout_centerInParent="true"
+                      android:id="@+id/capsetsHeaderLeftSelectorCaption"
+                      android:textSize="20sp"
+                      android:shadowColor="@android:color/black"
+                      android:shadowDy="1"
+                      android:shadowRadius="1.0"
+                    />
+
+        </RelativeLayout>
+
+        <RelativeLayout android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+            <ImageView android:src="@drawable/selectorroff"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:onClick="rightSelectorTapped"
+                       android:id="@+id/capsetsHeaderRightSelector"
+                    />
+
+            <TextView android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:text="Pack/Series"
+                      android:textColor="@android:color/white"
+                      android:layout_alignTop="@id/capsetsHeaderRightSelector"
+                      android:layout_centerInParent="true"
+                      android:padding="5dp"
+                      android:id="@+id/capsetsHeaderRightSelectorCaption"
+                      android:textSize="20sp"
+                      android:shadowColor="@android:color/black"
+                      android:shadowDy="1"
+                      android:shadowRadius="1.0"
+
+                    />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+
+    <ImageView android:id="@+id/capsetsHeaderSelectorArrow"
+            android:src="@drawable/selectorarrow"
+               android:layout_height="wrap_content"
+               android:layout_width="wrap_content"
+               android:layout_below="@id/capsetsHeaderSelector"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="-10dp"
+            android:layout_alignParentLeft="true" />
+
+</RelativeLayout>

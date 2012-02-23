@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:background="@drawable/bginner">
+
+    <ImageView android:id="@+id/capSetHeader"
+               android:layout_width="fill_parent"
+               android:layout_height="wrap_content"
+               android:src="@drawable/innerheader"
+               android:scaleType="fitCenter"
+            />
+
+     <TextView android:id="@+id/capSetName"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:layout_below="@id/capSetHeader"
+               android:text="Set Name"
+               android:layout_marginLeft="15dp"
+               android:textColor="@android:color/white"
+               />
+
+    <RelativeLayout android:id="@+id/capSetDetailsOuter"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:background="@drawable/setdetails"
+                  android:layout_below="@id/capSetName"
+                  android:layout_marginLeft="8dp"
+                  android:weightSum="2.0">
+
+        <LinearLayout android:id="@+id/capSetDetailsContent"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:layout_below="@id/capSetName"
+                      android:layout_marginLeft="8dp"
+                    android:weightSum="2.0">
+
+            <TextView android:id="@+id/capSetDetailsTotal"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:text="870"
+                      android:layout_marginLeft="10dp"
+                    android:layout_marginTop="5dp"
+                    android:textSize="48sp"
+                    android:textColor="@android:color/black"
+                    android:layout_weight="1.5" />
+
+            <TextView android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:text="total caps"
+                      android:layout_weight="0.5"
+                      android:textColor="@android:color/black"
+                      />
+
+        </LinearLayout>
+
+        <LinearLayout android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:layout_below="@id/capSetDetailsContent"
+                >
+
+            <TextView android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:text="Ricardo de Zoete"
+                      android:textSize="10sp"
+                      android:paddingTop="5dp"
+                      android:paddingLeft="10dp"
+                    />
+
+            <TextView android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:text="03-05-1989"
+                      android:textSize="10sp"
+                      android:paddingTop="5dp"
+                      android:paddingLeft="10dp"
+                      />
+
+        </LinearLayout>
+    </RelativeLayout>
+
+    <LinearLayout android:id="@+id/capSetQuoteContent"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_below="@id/capSetDetailsOuter"
+                  android:background="@drawable/quote"
+                  android:layout_marginLeft="8dp"
+                  android:layout_marginRight="8dp"
+                  android:paddingBottom="12dp"
+                  >
+        
+        <TextView android:id="@+id/capSetQuoteText"
+                  android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:paddingTop="12dp"
+                  android:paddingLeft="8dp"
+                  android:paddingRight="8dp"
+                  android:text="&quot;Sed posuere consectetur est at lobortis. Cras justo odio, dapibus ac facilisis in, egestas eget."
+                android:textColor="@android:color/white" />
+
+    </LinearLayout>
+
+
+</RelativeLayout>

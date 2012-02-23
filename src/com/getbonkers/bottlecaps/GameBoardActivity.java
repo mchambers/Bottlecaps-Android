@@ -296,10 +296,16 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
         public int maxBoosts;
         long deltaTick;
 
+        private boolean gameIsPaused;
+
         public CapManager capManager;
 
         private static final int PIECE_FADEOUT_ANIM_SPEED=1000;
         private static final int COMBO_FADEOUT_ANIM_SPEED=250;
+
+        BitmapDrawable timerCover;
+        BitmapDrawable timerBlue;
+        Rect timerRect;
 
         public GameBoard(Context context, CapManager capMgr)
         {
@@ -413,6 +419,18 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
 
         private void handleTouch(float x, float y)
         {
+            // check for button intersection
+            if(x>timerRect.left && x<timerRect.right && y>timerRect.top && y<timerRect.bottom)
+            {
+                // touch inside the pause button
+                gameIsPaused=!gameIsPaused;
+                return;
+            }
+
+            // check for piece intersection
+
+            if(gameIsPaused) return;
+
             float whichPiece=x/pieceWidth;//event.getX()/pieceWidth;
             float whichRow=(y-boardMarginHeight)/pieceWidth;//event.getY()/pieceWidth;
 
@@ -422,7 +440,7 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
             int pieceIndex=(int)whichRow*itemsPerRow;
             pieceIndex-=itemsPerRow-whichPiece;
             pieceIndex--;
-            
+
             try {
                 if(pieceIndex<gamePieces.size() && !gamePieces.get(pieceIndex).terminalState)
                 {
@@ -549,6 +567,15 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
             textStroke.setStrokeWidth(1.0f);
             textStroke.setAntiAlias(true);
 
+            timerCover=new BitmapDrawable(BitmapFactory.decodeResource(getResources(), R.drawable.timerpauselayer));
+            timerBlue=new BitmapDrawable(BitmapFactory.decodeResource(getResources(), R.drawable.timerbluelayer));
+
+            //BitmapDrawable pauseButton=new BitmapDrawable(BitmapFactory.decodeResource(getResources(), R.drawable.timerpauselayer));
+
+            timerRect=new Rect(display.getWidth()-60, 10, display.getWidth()-10, 60);
+            timerCover.setBounds(timerRect);
+            timerBlue.setBounds(timerRect);
+
             _thread.setRunning(true);
             _thread.start();
         }
@@ -579,10 +606,15 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
             // for this reason we should never use deltaTick to update
             // "actual time" timers, only timers that are counting down
             //
-
-            if(gameTimers[GAME_TIMER_PAUSE]>0)
+            if(gameIsPaused)
+            {
+                //
+                deltaTick=0;
+            }
+            else if(gameTimers[GAME_TIMER_PAUSE]>0)
             {
                 gameTimers[GAME_TIMER_PAUSE]-=deltaTick;
+                deltaTick=0;
             }
             else
             {
@@ -604,8 +636,20 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
         {
             Random rand=new Random();
 
+            if(gameIsPaused) return;
+
             if(gameTimers[GAME_TIMER_REMAINING]<=0)
             {
+                // queue the collected caps for reconciliation
+                BottlecapsDatabaseAdapter adapter=new BottlecapsDatabaseAdapter(getApplicationContext());
+
+                adapter.open();
+                for(int x=0; x<capsCollected.size(); x++)
+                {
+                    adapter.addCapSettlement(capsCollected.get(x).index);
+                }
+                adapter.close();
+
                 Intent resultsIntent=new Intent(getBaseContext(), GameResultsActivity.class);
 
                 resultsIntent.putExtra("GAME_RESULTS_SCORE", currentScore);
@@ -716,16 +760,7 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
             ArcShape timer=new ArcShape(0, (float)timerArc);
 
             ShapeDrawable timerShape=new ShapeDrawable(timer);
-            BitmapDrawable timerCover=new BitmapDrawable(BitmapFactory.decodeResource(getResources(), R.drawable.timerpauselayer));
-            BitmapDrawable timerBlue=new BitmapDrawable(BitmapFactory.decodeResource(getResources(), R.drawable.timerbluelayer));
-
-            //BitmapDrawable pauseButton=new BitmapDrawable(BitmapFactory.decodeResource(getResources(), R.drawable.timerpauselayer));
-
-            Rect timerRect=new Rect(display.getWidth()-60, 10, display.getWidth()-10, 60);
             timerShape.setBounds(timerRect.left+6, timerRect.top+5, timerRect.right-6, timerRect.bottom-5);
-            timerCover.setBounds(timerRect);
-            timerBlue.setBounds(timerRect);
-
             timerShape.getPaint().setColor(Color.BLACK);
             timerShape.getPaint().setAntiAlias(true);
 

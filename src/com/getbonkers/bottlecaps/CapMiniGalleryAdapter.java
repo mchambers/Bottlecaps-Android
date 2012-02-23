@@ -34,6 +34,10 @@ public class CapMiniGalleryAdapter extends ArrayAdapter<JSONObject> {
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
+        BottlecapsDatabaseAdapter adapter=new BottlecapsDatabaseAdapter(mContext);
+        
+        adapter.open();
+
         SmartImageView imageView=new SmartImageView(mContext);
 
         JSONObject item=values.get(position);
@@ -44,6 +48,7 @@ public class CapMiniGalleryAdapter extends ArrayAdapter<JSONObject> {
             DisplayMetrics metrics;
             metrics=mContext.getResources().getDisplayMetrics();
             String capURL="";
+            
 
             switch(metrics.densityDpi){
                 case DisplayMetrics.DENSITY_LOW:
@@ -52,10 +57,16 @@ public class CapMiniGalleryAdapter extends ArrayAdapter<JSONObject> {
                     break;
                 case DisplayMetrics.DENSITY_MEDIUM:
                     capSize=75;
-                    capURL="http://data.getbonkers.com/bottlecaps/caps/75/"+item.getInt("cap_set_id")+"/"+item.getInt("id")+".png";
+                    if(adapter.capIsCollected(item.getInt("id")))
+                        capURL="http://data.getbonkers.com/bottlecaps/caps/75/"+item.getInt("cap_set_id")+"/"+item.getInt("id")+".png";
+                    else
+                        capURL="http://data.getbonkers.com/bottlecaps/caps/150_BW/"+item.getInt("cap_set_id")+"/"+item.getInt("id")+".png";
                     break;
                 case DisplayMetrics.DENSITY_HIGH:
-                    capURL="http://data.getbonkers.com/bottlecaps/caps/150/"+item.getInt("cap_set_id")+"/"+item.getInt("id")+".png";
+                    if(adapter.capIsCollected(item.getInt("id")))
+                        capURL="http://data.getbonkers.com/bottlecaps/caps/150/"+item.getInt("cap_set_id")+"/"+item.getInt("id")+".png";
+                    else
+                        capURL="http://data.getbonkers.com/bottlecaps/caps/150_BW/"+item.getInt("cap_set_id")+"/"+item.getInt("id")+".png";
                     capSize=112;
                     break;
             }
@@ -64,6 +75,8 @@ public class CapMiniGalleryAdapter extends ArrayAdapter<JSONObject> {
         {
             e.printStackTrace();
         }
+
+        adapter.close();
 
         //imageView.setImageResource(R.drawable.boostfreeze);
         imageView.setLayoutParams(new Gallery.LayoutParams(capSize, capSize));

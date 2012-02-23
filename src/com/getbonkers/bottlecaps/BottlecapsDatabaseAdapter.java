@@ -33,6 +33,7 @@ public class BottlecapsDatabaseAdapter {
     public static final String KEY_CAPS_NAME="name";
     public static final String KEY_CAPS_SETID="setID";
     public static final String KEY_CAPS_SCARCITY="scarcity";
+    public static final String KEY_CAPS_COLLECTED="collected";
     
     public static final String KEY_SETTLEMENTS_CAP="cap";
     
@@ -51,7 +52,7 @@ public class BottlecapsDatabaseAdapter {
                     + "description text, lastPlayed datetime);";
     private static final String DATABASE_CAPS_CREATE =
             "create table caps (_id integer unique primary key, "
-                    + "available integer, issued integer, description text, name text, setID integer, scarcity integer);";
+                    + "available integer, issued integer, description text, name text, setID integer, scarcity integer, collected integer);";
     private static final String DATABASE_SETTLEMENTS_CREATE =
             "create table settlements (_id integer unique primary key autoincrement, " +
                     "cap integer);";
@@ -108,6 +109,15 @@ public class BottlecapsDatabaseAdapter {
     {
         DBHelper.close();
     }
+    
+    public boolean capIsCollected(long capID)
+    {
+        Cursor howMany=db.query(DATABASE_CAPS_TABLE, new String[] { KEY_CAPS_COLLECTED }, KEY_ROWID+"="+capID, null, null, null, null);
+        howMany.moveToFirst();
+        
+        if(howMany.getCount()==0) return false;
+        return(howMany.getInt(howMany.getColumnIndex(KEY_CAPS_COLLECTED)) > 0);
+    }
 
     public boolean updateSetLastPlayed(long setID, Date newDate)
     {
@@ -130,7 +140,15 @@ public class BottlecapsDatabaseAdapter {
     {
         ContentValues values=new ContentValues();
         values.put(KEY_SETTLEMENTS_CAP, capID);
-        return db.insertWithOnConflict(DATABASE_SETTLEMENTS_TABLE, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+        long ret1=db.insertWithOnConflict(DATABASE_SETTLEMENTS_TABLE, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+
+        Cursor howMany=db.query(DATABASE_CAPS_TABLE, new String[] { KEY_ROWID, KEY_CAPS_COLLECTED }, KEY_ROWID+"="+capID, null, null, null, null);
+        howMany.moveToFirst();
+        ContentValues capCollectedUpdate=new ContentValues();
+        capCollectedUpdate.put(KEY_CAPS_COLLECTED, howMany.getInt(howMany.getColumnIndex(KEY_CAPS_COLLECTED))+1);
+        long ret2=db.updateWithOnConflict(DATABASE_CAPS_TABLE, capCollectedUpdate, KEY_ROWID+"="+capID, null, SQLiteDatabase.CONFLICT_IGNORE);
+
+        return ret1;
     }
     
     public Cursor getOutstandingCapSettlements()

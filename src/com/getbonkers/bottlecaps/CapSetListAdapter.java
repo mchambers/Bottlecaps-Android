@@ -11,8 +11,10 @@ package com.getbonkers.bottlecaps;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.util.Log;
+import android.widget.AdapterView;
 import android.widget.Gallery;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -70,7 +72,7 @@ public class CapSetListAdapter extends ArrayAdapter<JSONObject> {
                         try {
                             Log.d("CapManager", response);
 
-                            JSONObject set = new JSONObject(response).getJSONObject("cap_set");
+                            final JSONObject set = new JSONObject(response).getJSONObject("cap_set");
 
                             //adapter.insertSet(setID, set.getString("name"), set.getString("artist"), set.getString("description"));
 
@@ -84,6 +86,20 @@ public class CapSetListAdapter extends ArrayAdapter<JSONObject> {
                                 //adapter.insertCapIntoSet((long)setID, cap.getInt("id"), cap.getInt("available"), cap.getInt("issued"), cap.getString("name"), cap.getString("description"), cap.getInt("scarcity"));
                                 Log.d("CapSetListAdapter", caps.getJSONObject(i).toString());
                             }
+
+                            setIcons.setTag(set);
+                            setIcons.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                    Intent capSetIntent=new Intent(context, CapSetActivity.class);
+                                    try {
+                                        capSetIntent.putExtra("setID", set.getLong("id"));
+                                    } catch (JSONException e)
+                                    {
+                                    }
+                                    context.startActivity(capSetIntent);
+                                }
+                            });
 
                             setIcons.setAdapter(new CapMiniGalleryAdapter(context, capObjects));
                             //Log.d("CapSetListAdapter", item.toString());

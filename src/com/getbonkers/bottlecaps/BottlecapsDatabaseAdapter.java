@@ -44,7 +44,7 @@ public class BottlecapsDatabaseAdapter {
     private static final String DATABASE_SETS_TABLE = "sets";
     private static final String DATABASE_SETTLEMENTS_TABLE = "settlements";
 
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     private static final String DATABASE_SETS_CREATE =
             "create table sets (_id integer unique primary key, "
@@ -112,11 +112,19 @@ public class BottlecapsDatabaseAdapter {
     
     public boolean capIsCollected(long capID)
     {
+        int numCollected;
+
         Cursor howMany=db.query(DATABASE_CAPS_TABLE, new String[] { KEY_CAPS_COLLECTED }, KEY_ROWID+"="+capID, null, null, null, null);
         howMany.moveToFirst();
-        
-        if(howMany.getCount()==0) return false;
-        return(howMany.getInt(howMany.getColumnIndex(KEY_CAPS_COLLECTED)) > 0);
+
+        if(howMany.getCount()==0)
+            numCollected=0;
+        else
+            numCollected=howMany.getInt(howMany.getColumnIndex(KEY_CAPS_COLLECTED));
+
+        howMany.close();
+
+        return numCollected>0;
     }
 
     public boolean updateSetLastPlayed(long setID, Date newDate)
@@ -148,6 +156,8 @@ public class BottlecapsDatabaseAdapter {
         capCollectedUpdate.put(KEY_CAPS_COLLECTED, howMany.getInt(howMany.getColumnIndex(KEY_CAPS_COLLECTED))+1);
         long ret2=db.updateWithOnConflict(DATABASE_CAPS_TABLE, capCollectedUpdate, KEY_ROWID+"="+capID, null, SQLiteDatabase.CONFLICT_IGNORE);
 
+        howMany.close();
+
         return ret1;
     }
     
@@ -170,7 +180,9 @@ public class BottlecapsDatabaseAdapter {
     {
         Cursor ret=db.query(DATABASE_SETS_TABLE, new String[] { KEY_ROWID }, null, null, null, null, "RANDOM()", "1");
         ret.moveToFirst();
-        return ret.getLong(ret.getColumnIndex(KEY_ROWID));
+        long id=ret.getLong(ret.getColumnIndex(KEY_ROWID));
+        ret.close();
+        return id;
     }
     
     public long insertCapIntoSet(long setID, long capID, int available, int issued, String name, String description, int scarcity)

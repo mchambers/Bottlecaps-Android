@@ -49,7 +49,6 @@ public class CapMiniGalleryAdapter extends ArrayAdapter<JSONObject> {
             metrics=mContext.getResources().getDisplayMetrics();
             String capURL="";
             
-
             switch(metrics.densityDpi){
                 case DisplayMetrics.DENSITY_LOW:
                     capURL="http://data.getbonkers.com/bottlecaps/caps/75/"+item.getInt("cap_set_id")+"/"+item.getInt("id")+".png";
@@ -58,15 +57,15 @@ public class CapMiniGalleryAdapter extends ArrayAdapter<JSONObject> {
                 case DisplayMetrics.DENSITY_MEDIUM:
                     capSize=75;
                     if(adapter.capIsCollected(item.getInt("id")))
-                        capURL="http://data.getbonkers.com/bottlecaps/caps/75/"+item.getInt("cap_set_id")+"/"+item.getInt("id")+".png";
+                        capURL="http://data.getbonkers.com/bottlecaps/caps/75/"+item.getInt("id")+".png";
                     else
-                        capURL="http://data.getbonkers.com/bottlecaps/caps/150_BW/"+item.getInt("cap_set_id")+"/"+item.getInt("id")+".png";
+                        capURL="http://data.getbonkers.com/bottlecaps/caps/150_BW/"+item.getInt("id")+".png";
                     break;
                 case DisplayMetrics.DENSITY_HIGH:
                     if(adapter.capIsCollected(item.getInt("id")))
-                        capURL="http://data.getbonkers.com/bottlecaps/caps/150/"+item.getInt("cap_set_id")+"/"+item.getInt("id")+".png";
+                        capURL="http://data.getbonkers.com/bottlecaps/caps/150/"+item.getInt("id")+".png";
                     else
-                        capURL="http://data.getbonkers.com/bottlecaps/caps/150_BW/"+item.getInt("cap_set_id")+"/"+item.getInt("id")+".png";
+                        capURL="http://data.getbonkers.com/bottlecaps/caps/150_BW/"+item.getInt("id")+".png";
                     capSize=112;
                     break;
             }

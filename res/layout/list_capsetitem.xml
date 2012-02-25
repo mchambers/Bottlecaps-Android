@@ -17,6 +17,8 @@
               android:shadowColor="@android:color/black"
               android:shadowDy="1"
               android:shadowRadius="1.0"
+              android:focusable="false"
+              android:focusableInTouchMode="false"
             />
 
         <Gallery android:id="@+id/listCapSetItemGallery"
@@ -27,6 +29,8 @@
                  android:spacing="5sp"
                  android:padding="5dp"
                  android:layout_margin="5dp"
+                 android:focusable="false"
+                 android:focusableInTouchMode="false"
                  />
 
 </RelativeLayout>

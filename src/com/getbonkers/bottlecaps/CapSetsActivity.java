@@ -2,6 +2,7 @@ package com.getbonkers.bottlecaps;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -97,6 +99,19 @@ public class CapSetsActivity extends Activity {
         lv.setItemsCanFocus(false);
 
         listHeader=v;
+
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> a, View v, int position, long id) {
+                JSONObject item = (JSONObject) adapter.getItem(position);
+                try {
+                    Intent capSetIntent=new Intent(getApplicationContext(), CapSetActivity.class);
+                    capSetIntent.putExtra("setID", item.getLong("id"));
+                    startActivity(capSetIntent);
+                } catch (JSONException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                }
+            }
+        });
 
         GetBonkersAPI.get("/sets", new RequestParams(), this, new AsyncHttpResponseHandler() {
             @Override

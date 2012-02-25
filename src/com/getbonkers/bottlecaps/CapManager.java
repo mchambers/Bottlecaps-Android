@@ -505,10 +505,7 @@ public class CapManager implements CapManagerLoadingDelegate {
         double totalMemoryUsed = (Runtime.getRuntime().totalMemory() + android.os.Debug.getNativeHeapAllocatedSize());
         int percentUsed = (int)(totalMemoryUsed / Runtime.getRuntime().maxMemory() * 100);
 
-        if(percentUsed>85)
-            lowMemoryMode=true;
-        else
-            lowMemoryMode=false;
+        lowMemoryMode=(percentUsed>90); // down-rez this cap image if we're close to running out of memory
 
         try {
             cap.putCapInPlay(context, lowMemoryMode);
@@ -519,7 +516,7 @@ public class CapManager implements CapManagerLoadingDelegate {
             try {
                 cap.putCapInPlay(context, lowMemoryMode);
             } catch(OutOfMemoryError e2) {
-                throw e2; // fuck, so much for "low memory mode."
+                throw e2; // :-/
             }
         }
         if(currentMostPlayedCap==null || cap.numberInPlay>currentMostPlayedCap.numberInPlay)
@@ -599,6 +596,7 @@ public class CapManager implements CapManagerLoadingDelegate {
         while(getAnotherSet)
         {
             setID=adapter.getRandomSetID();
+            adapter.updateSetLastPlayed(setID, new Date());
             Cursor set=adapter.getCapsInSet(setID);
             actualCapAmount+=set.getCount();
 
@@ -617,6 +615,8 @@ public class CapManager implements CapManagerLoadingDelegate {
 
             actualSetAmount++;
             if(actualCapAmount>=targetCapAmount || actualSetAmount>=maxNumberOfSets) getAnotherSet=false;
+            
+            set.close();
         }
 
         Collections.sort(allCaps, new CapTotalAvailableComparator());
@@ -672,6 +672,7 @@ public class CapManager implements CapManagerLoadingDelegate {
                                 downloadManager.queueSetAssetsForDownload(setID);
                             }
                         }
+                        cursor.close();
                     }
                 } catch(JSONException e)
                 {
@@ -689,7 +690,7 @@ public class CapManager implements CapManagerLoadingDelegate {
             }
         });
     }
-
+              /*
     public void loadCaps()
     {
         sets=new ArrayList<Set>();
@@ -745,7 +746,7 @@ public class CapManager implements CapManagerLoadingDelegate {
         }
 
         Collections.sort(allCaps, new CapMaxProbabilityComparator());
-    }
+    }     */
 
     public void prepNextBoost()
     {

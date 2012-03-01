@@ -87,6 +87,7 @@ public final class R {
         public static final int resultsMomentum=0x7f070015;
         public static final int resultsScore=0x7f070014;
         public static final int resultsTitle=0x7f070013;
+        public static final int scoreboardFacebookConnect=0x7f07002e;
         public static final int scoreboardHeader=0x7f070023;
         public static final int scoreboardHeaderLeftSelector=0x7f070028;
         public static final int scoreboardHeaderLeftSelectorCaption=0x7f070029;
@@ -101,11 +102,11 @@ public final class R {
         public static final int scoreboardMyHighScore=0x7f070024;
         public static final int scoreboardMyScoreRank=0x7f070025;
         public static final int scoreboardMyScoreScore=0x7f070026;
-        public static final int splashButtons=0x7f070030;
-        public static final int splashMenuButton=0x7f07002f;
-        public static final int splashPlayButton=0x7f070032;
-        public static final int splashPlayKidsMode=0x7f070031;
-        public static final int splashTitle=0x7f07002e;
+        public static final int splashButtons=0x7f070031;
+        public static final int splashMenuButton=0x7f070030;
+        public static final int splashPlayButton=0x7f070033;
+        public static final int splashPlayKidsMode=0x7f070032;
+        public static final int splashTitle=0x7f07002f;
     }
     public static final class layout {
         public static final int capset=0x7f030000;

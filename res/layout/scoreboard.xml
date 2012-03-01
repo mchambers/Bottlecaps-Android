@@ -102,7 +102,6 @@
 
     </LinearLayout>
 
-
     <ImageView android:id="@+id/scoreboardHeaderSelectorArrow"
                android:src="@drawable/selectorarrow"
                android:layout_height="wrap_content"
@@ -118,5 +117,11 @@
               android:layout_below="@id/scoreboardHeaderSelector"
               android:layout_marginTop="10dp"
               />
+    
+    <Button android:id="@+id/scoreboardFacebookConnect"
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:onClick="connectFacebook"
+            android:text="Connect With Facebook" />
 
 </RelativeLayout>

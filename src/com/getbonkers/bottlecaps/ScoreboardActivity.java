@@ -2,8 +2,13 @@ package com.getbonkers.bottlecaps;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -25,9 +30,49 @@ import java.util.ArrayList;
 public class ScoreboardActivity extends Activity {
     
     ArrayList<JSONObject> allScores;
-    ScoreboardListAdapter adapter;
+    ArrayList<JSONObject> friendScores;
+    ScoreboardListAdapter allAdapter;
+    ScoreboardListAdapter friendAdapter;
     
     Facebook facebook;
+    
+    ImageView leftSelector;
+    ImageView rightSelector;
+
+    SharedPreferences mPrefs;
+
+    public void leftSelectorTapped(View v)
+    {
+        View arrow=findViewById(R.id.scoreboardHeaderSelectorArrow);
+
+        Animation animation = AnimationUtils.loadAnimation(this,
+                R.anim.slideleft);
+        arrow.startAnimation(animation);
+
+        leftSelector.setImageResource(R.drawable.selectorlon);
+        rightSelector.setImageResource(R.drawable.selectorroff);
+    }
+
+    public void rightSelectorTapped(View v)
+    {
+        View arrow=findViewById(R.id.scoreboardHeaderSelectorArrow);
+
+        Animation animation = AnimationUtils.loadAnimation(this,
+                R.anim.slideright);
+        arrow.startAnimation(animation);
+
+        leftSelector.setImageResource(R.drawable.selectorloff);
+        rightSelector.setImageResource(R.drawable.selectorron);
+
+        if(facebook.isSessionValid())
+        {
+            findViewById(R.id.scoreboardList).setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            findViewById(R.id.scoreboardList).setVisibility(View.GONE);
+        }
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -36,12 +81,52 @@ public class ScoreboardActivity extends Activity {
         facebook.authorizeCallback(requestCode, resultCode, data);
     }
 
-    public void facebookConnect()
+    /*
+    NSURL *url = [NSURL URLWithStringNSString stringWithFormat"%@/admin/players/%@",kServerUrl,AppDelegate.user.uuid]];
+
+ASIFormDataRequest *request = [ASIFormDataRequest requestWithURL:url];
+
+[request addPostValueuser objectForKey"id"] forKey"facebook_id"];
+[request addPostValueuser objectForKey"name"] forKey"name"];
+[request addPostValueuser objectForKey"picture"] forKey"avatar"];
+[request startAsynchronous];
+     */
+    public void connectFacebook(View v)
     {
         facebook.authorize(this, new DialogListener() {
             @Override
             public void onComplete(Bundle values) {
                 // tell GetBonkers about the new FBID
+                SharedPreferences.Editor editor = mPrefs.edit();
+                editor.putString("access_token", facebook.getAccessToken());
+                editor.putLong("access_expires", facebook.getAccessExpires());
+                editor.commit();
+
+                JSONObject meResponse;
+                RequestParams params=new RequestParams();
+
+                try {
+                    meResponse=new JSONObject(facebook.request("me"));
+                    params.put("facebook_id", meResponse.getString("id"));
+                    params.put("name", meResponse.getString("name"));
+                    params.put("avatar", "http://graph.facebook.com/"+meResponse.getString("id")+"/picture");
+                } catch(Exception e)
+                {
+                    e.printStackTrace();
+                }
+
+                GetBonkersAPI.post("/admin/players/"+GetBonkersAPI.getPlayerUUID(getApplicationContext()), params, getApplicationContext(), new AsyncHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(String response)
+                    {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                updateScoreboard();
+                            }
+                        });
+                    }
+                });
             }
 
             @Override
@@ -55,21 +140,8 @@ public class ScoreboardActivity extends Activity {
         });
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState)
+    public void updateScoreboard()
     {
-        super.onCreate(savedInstanceState);
-
-        setContentView(R.layout.scoreboard);
-        
-        facebook=new Facebook("220182624731035");
-
-        allScores=new ArrayList<JSONObject>();
-
-        adapter=new ScoreboardListAdapter(this, allScores);
-
-        ((ListView)findViewById(R.id.scoreboardList)).setAdapter(adapter);
-
         RequestParams params=new RequestParams("friends", "");
 
         GetBonkersAPI.post("/admin/players/" + GetBonkersAPI.getPlayerUUID(this) + "/rank", params, this, new AsyncHttpResponseHandler() {
@@ -100,7 +172,7 @@ public class ScoreboardActivity extends Activity {
 
                             }
 
-                            adapter.notifyDataSetChanged();
+                            allAdapter.notifyDataSetChanged();
                         }
                     });
 
@@ -117,6 +189,37 @@ public class ScoreboardActivity extends Activity {
                 Log.d("ScoreboardActivity", throwable.getMessage());
             }
         });
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.scoreboard);
+
+        facebook=new Facebook("220182624731035");
+
+        mPrefs = getPreferences(MODE_PRIVATE);
+        String access_token = mPrefs.getString("access_token", null);
+        long expires = mPrefs.getLong("access_expires", 0);
+        if(access_token != null) {
+            facebook.setAccessToken(access_token);
+        }
+        if(expires != 0) {
+            facebook.setAccessExpires(expires);
+        }
+
+        leftSelector=(ImageView)findViewById(R.id.scoreboardHeaderLeftSelector);
+        rightSelector=(ImageView)findViewById(R.id.scoreboardHeaderRightSelector);
+
+        allScores=new ArrayList<JSONObject>();
+
+        allAdapter=new ScoreboardListAdapter(this, allScores);
+
+        ((ListView)findViewById(R.id.scoreboardList)).setAdapter(allAdapter);
+
+        updateScoreboard();
     }
 
 

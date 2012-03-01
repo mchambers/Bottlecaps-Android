@@ -25,12 +25,14 @@
         <activity android:screenOrientation="portrait" android:name="GameMenuActivity" android:label="Menu" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
         <activity android:screenOrientation="portrait" android:name="CapSetsActivity" android:label="My Caps" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
         <activity android:screenOrientation="portrait" android:name="CapSetActivity" android:label="Cap Set" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+        <activity android:screenOrientation="portrait" android:name="ScoreboardActivity" android:label="Scoreboard" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
     </application>
 
     <supports-screen android:largeScreens="true"/>
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <uses-feature android:name="android.hardware.screen.portrait"/>
 

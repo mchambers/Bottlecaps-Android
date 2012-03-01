@@ -4,7 +4,10 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.util.JsonReader;
 import android.view.View;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -13,6 +16,8 @@ import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
 
 /**
  * Created by IntelliJ IDEA.
@@ -24,12 +29,40 @@ import org.json.JSONObject;
 
 public class SplashScreenActivity extends Activity {
 
+    private SoundPool soundPool;
+    private HashMap<Integer, Integer> soundPoolMap;
+
+    public static final int SOUND_CLICK1 = 1;
+    public static final int SOUND_CLICK2 = 2;
+    public static final int SOUND_GAMESTART = 3;
+
+    private void initSounds() {
+        soundPool = new SoundPool(3, AudioManager.STREAM_MUSIC, 100);
+        soundPoolMap = new HashMap<Integer, Integer>();
+        soundPoolMap.put(SOUND_CLICK1, soundPool.load(this, R.raw.button1click1, 1));
+        soundPoolMap.put(SOUND_CLICK2, soundPool.load(this, R.raw.button1click2, 1));
+        soundPoolMap.put(SOUND_GAMESTART, soundPool.load(this, R.raw.gamestart, 1));
+    }
+
+    public void playSound(int sound) {
+        /* Updated: The next 4 lines calculate the current volume in a scale of 0.0 to 1.0 */
+        AudioManager mgr = (AudioManager)this.getSystemService(Context.AUDIO_SERVICE);
+        float streamVolumeCurrent = mgr.getStreamVolume(AudioManager.STREAM_MUSIC);
+        float streamVolumeMax = mgr.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        float volume = streamVolumeCurrent / streamVolumeMax;
+
+        /* Play the sound with the correct volume */
+        soundPool.play(soundPoolMap.get(sound), volume, volume, 1, 0, 1f);
+    }
+
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splashscreen);
+
+        initSounds();
 
         GetBonkersAPI.initPersistentCookieStore(getApplicationContext());
 
@@ -46,9 +79,13 @@ public class SplashScreenActivity extends Activity {
                 RequestParams playerParams=new RequestParams();
                 if(!GetBonkersAPI.havePlayerUUID(getApplicationContext()))
                 {
-                    final String newUUID=java.util.UUID.randomUUID().toString();
+                    //final String newUUID=java.util.UUID.randomUUID().toString();
+                    TelephonyManager telMgr=(TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
+                    final String newUUID=telMgr.getDeviceId();
+
                     playerParams.put("player[guid]", newUUID);
                     playerParams.put("format", "json");
+                    playerParams.put("player[device]", android.os.Build.MANUFACTURER+" "+android.os.Build.MODEL+" api "+android.os.Build.VERSION.SDK_INT);
                     GetBonkersAPI.post("/admin/players", playerParams, getApplicationContext(), new AsyncHttpResponseHandler() {
                         @Override
                         public void onSuccess(String response) {
@@ -62,6 +99,8 @@ public class SplashScreenActivity extends Activity {
                         }
                     });
                 }
+                else
+                    Log.d("SplashScreen", GetBonkersAPI.getPlayerUUID(getApplicationContext()));
             }
         });
     }
@@ -74,6 +113,8 @@ public class SplashScreenActivity extends Activity {
     
     public void onMenuButtonClick(View v)
     {
+        playSound(SOUND_CLICK1);
+
         Intent menuIntent=new Intent(this, GameMenuActivity.class);
         this.startActivity(menuIntent);
     }
@@ -82,6 +123,8 @@ public class SplashScreenActivity extends Activity {
     {
         //if(!readyToGo) return;
 
+        playSound(SOUND_CLICK1);
+        playSound(SOUND_GAMESTART);
         Intent kidsModeIntent=new Intent(this, GameBoardActivity.class);
         kidsModeIntent.putExtra("GAME_DIFFICULTY", 0);
         this.startActivity(kidsModeIntent);
@@ -90,6 +133,9 @@ public class SplashScreenActivity extends Activity {
     public void onPlayButtonClick(View v)
     {
         //if(!readyToGo) return;
+
+        playSound(SOUND_CLICK1);
+        playSound(SOUND_GAMESTART);
 
         Intent playIntent = new Intent(this, GameBoardActivity.class);
         playIntent.putExtra("GAME_DIFFICULTY", 1);

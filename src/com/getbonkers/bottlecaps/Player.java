@@ -2,7 +2,14 @@ package com.getbonkers.bottlecaps;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.util.JsonWriter;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Stack;
 
 /**
@@ -61,12 +68,38 @@ public class Player {
 
         private void sendCapReconcileToServer(long id)
         {
-
+                // blah!
         }
 
         private void sendCapReconcileToServer(long[] ids)
         {
+            JSONArray capArray=new JSONArray();
+            for(int i=0; i<ids.length; i++)
+            {
+                try {
+                    capArray.put(i, ids[i]);
+                } catch(JSONException e)
+                {
+                    e.printStackTrace();
+                }
+            }
 
+            JSONObject transaction=new JSONObject();
+            try {
+                transaction.put("guid", GetBonkersAPI.getPlayerUUID(_context));
+                transaction.put("transaction_id", java.util.UUID.randomUUID().toString());
+                transaction.put("caps", capArray);
+            } catch(JSONException e)
+            {
+                e.printStackTrace();
+            }
+
+            GetBonkersAPI.postJson("/player_caps", transaction, _context, new AsyncHttpResponseHandler() {
+                @Override
+                public void onSuccess(String response) {
+                    requestsOutstanding--;
+                }
+            });
         }
 
         public void run()
@@ -82,8 +115,10 @@ public class Player {
                             case DATA_COMPLETED_GOAL:
                                 break;
                             case DATA_EARNED_CAP:
+                                sendCapReconcileToServer(item.ID);
                                 break;
                             case DATA_EARNED_CAP_BATCH:
+                                sendCapReconcileToServer(item.IDs);
                                 break;
                             default:
                                 break;
@@ -119,6 +154,15 @@ public class Player {
         _db.addCapSettlement(capID);
     }
 
+    public void postScore(long score)
+    {
+        RequestParams params=new RequestParams("score", String.valueOf(score));
+        params.put("guid", GetBonkersAPI.getPlayerUUID(_context));
+        GetBonkersAPI.post("/scores", params, _context, new AsyncHttpResponseHandler() {
+            // wutever
+        });
+    }
+
     public void reconcileCollectedCaps(AsyncNetworkDelegate completionDelegate)
     {
         PlayerDataReconciler reconciler=new PlayerDataReconciler(completionDelegate);
@@ -128,8 +172,11 @@ public class Player {
         int i=0;
         while(settlements.moveToNext())
         {
-            batchIds[i]=settlements.getLong(settlements.getColumnIndex(BottlecapsDatabaseAdapter.KEY_SETTLEMENTS_CAP));
+            batchIds[i++]=settlements.getLong(settlements.getColumnIndex(BottlecapsDatabaseAdapter.KEY_SETTLEMENTS_CAP));
         }
+        settlements.close();
+
+        _db.clearCapSettlements();
 
         reconciler.addBatchQueueItem(PlayerDataReconciler.DATA_EARNED_CAP_BATCH, batchIds);
 

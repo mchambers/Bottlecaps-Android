@@ -6,6 +6,16 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.PersistentCookieStore;
 import com.loopj.android.http.RequestParams;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.entity.BasicHttpEntity;
+import org.apache.http.entity.StringEntity;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 
 /**
  * Created by IntelliJ IDEA.
@@ -72,6 +82,27 @@ public class GetBonkersAPI {
 
     public static void post(String url, RequestParams params, Context context, AsyncHttpResponseHandler responseHandler) {
         client.post(getAbsoluteUrl(url), params, responseHandler);
+    }
+
+    /*
+    public void post(Context context,
+                 String url,
+                 HttpEntity entity,
+                 String contentType,
+                 AsyncHttpResponseHandler responseHandler)
+     */
+    public static void postJson(String url, JSONObject data, Context context, AsyncHttpResponseHandler responseHandler) {
+        StringEntity jsonEntity;
+
+        try {
+            jsonEntity=new StringEntity(data.toString());
+        } catch(UnsupportedEncodingException e)
+        {
+            e.printStackTrace();
+            return;
+        }
+
+        client.post(context, getAbsoluteUrl(url), jsonEntity, "application/json", responseHandler);
     }
 
     private static String getAbsoluteUrl(String relativeUrl) {

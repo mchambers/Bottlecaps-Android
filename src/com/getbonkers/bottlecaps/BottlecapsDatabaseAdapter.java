@@ -166,6 +166,11 @@ public class BottlecapsDatabaseAdapter {
         return db.query(DATABASE_SETTLEMENTS_TABLE, new String[] { KEY_SETTLEMENTS_CAP}, null, null, null, null, null, null);
     }
 
+    public void clearCapSettlements()
+    {
+        db.delete(DATABASE_SETTLEMENTS_TABLE, null, null);
+    }
+
     public long[] getNextPlayableSetsTotalingNumberOfCaps(int numberOfCaps)
     {
         /*

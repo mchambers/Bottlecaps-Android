@@ -24,6 +24,11 @@ public class GameMenuActivity extends Activity {
         startActivity(i);
     }
     
+    public void onScoreboardButtonPressed(View v) {
+        Intent i=new Intent(this, ScoreboardActivity.class);
+        startActivity(i);
+    }
+    
     public void onHomeButtonPressed(View v) {
         finish();
     }

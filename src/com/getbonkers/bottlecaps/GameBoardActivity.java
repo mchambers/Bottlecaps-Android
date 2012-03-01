@@ -473,8 +473,10 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
 
                                     if(currentMomentum<=0) currentMomentum=1;
 
-                                    deltaScore=(int)(Math.pow(currentCombo.size(), 2)+Math.pow(currentCombo.get(0).cap.rarityClass, 2) * currentMomentum) * 10;// * (currentLevel/2));
-                                    currentMomentum+=1/Math.log10(deltaScore)*10;
+                                    double tweakLevel=currentLevel+1.0;
+
+                                    deltaScore=(int)(Math.pow(currentCombo.size(), 2)+Math.pow(currentCombo.get(0).cap.rarityClass, 2) * currentMomentum * (tweakLevel/2));
+                                    currentMomentum+=1/Math.log10(deltaScore)*8;
                                     highestMomentum=Math.max(currentMomentum, highestMomentum);
                                     currentScore+=deltaScore;
 

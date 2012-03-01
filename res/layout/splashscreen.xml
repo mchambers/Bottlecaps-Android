@@ -4,7 +4,7 @@
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
               android:background="@drawable/home">
-    `
+
     <TextView android:id="@+id/splashTitle"
               android:layout_width="fill_parent"
               android:layout_height="wrap_content"
@@ -29,9 +29,9 @@
                android:layout_marginBottom="20dp"
                android:layout_height="wrap_content"
                android:onClick="onMenuButtonClick"
-               android:src="@drawable/menu"/>
+               android:src="@drawable/buttonmenu"/>
 
-    <LinearLayout android:id="@+id/splashButtons"
+    <RelativeLayout android:id="@+id/splashButtons"
                   android:layout_width="wrap_content"
                   android:layout_marginLeft="20dp"
                   android:layout_marginRight="20dp"
@@ -44,10 +44,11 @@
         <ImageView android:id="@+id/splashPlayKidsMode"
                 android:onClick="onKidsModeClick"
                 android:layout_height="wrap_content"
-                android:gravity="right"
                 android:layout_width="wrap_content"
                 android:scaleType="fitXY"
-                android:src="@drawable/btnnormal"
+                android:src="@drawable/buttonnormal"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
                 />
 
         <!--                 android:layout_weight="0.45" -->
@@ -56,13 +57,14 @@
                 android:onClick="onPlayButtonClick"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="left"
                 android:scaleType="fitXY"
                 android:src="@drawable/buttonhard"
+                android:layout_alignParentBottom="true"
+                android:layout_toRightOf="@id/splashPlayKidsMode"
                  />
         <!-- android:layout_weight="0.55" -->
 
-    </LinearLayout>
+    </RelativeLayout>
 
 
 </RelativeLayout>

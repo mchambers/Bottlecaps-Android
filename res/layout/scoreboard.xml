@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:background="@drawable/bginner">
+
+    <ImageView android:id="@+id/scoreboardHeader"
+               android:layout_width="fill_parent"
+               android:layout_height="wrap_content"
+               android:src="@drawable/innerheader"
+               android:scaleType="fitCenter"
+            />
+
+    <LinearLayout android:id="@+id/scoreboardMyHighScore"
+                  android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:weightSum="1.0"
+                  android:layout_below="@id/scoreboardHeader"
+            >
+
+        <TextView android:id="@+id/scoreboardMyScoreRank"
+                  android:text=""
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_weight="0.5"
+                  android:textSize="24sp"
+                />
+
+        <TextView android:id="@+id/scoreboardMyScoreScore"
+                  android:text="0"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_weight="0.5"
+                  android:gravity="center_horizontal"
+                  android:textSize="24sp"
+
+                />
+
+    </LinearLayout>
+
+    <LinearLayout  android:id="@+id/scoreboardHeaderSelector"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_below="@id/scoreboardMyHighScore"
+                   android:layout_centerHorizontal="true"
+                   android:layout_marginTop="10dp"
+            >
+
+        <RelativeLayout android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+            <ImageView android:src="@drawable/selectorlon"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:onClick="leftSelectorTapped"
+                       android:id="@+id/scoreboardHeaderLeftSelector"
+                    />
+
+            <TextView android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:text="Everybody"
+                      android:layout_alignTop="@id/capsetsHeaderLeftSelector"
+                      android:textColor="@android:color/white"
+                      android:padding="5dp"
+                      android:layout_centerInParent="true"
+                      android:id="@+id/scoreboardHeaderLeftSelectorCaption"
+                      android:textSize="20sp"
+                      android:shadowColor="@android:color/black"
+                      android:shadowDy="1"
+                      android:shadowRadius="1.0"
+                    />
+
+        </RelativeLayout>
+
+        <RelativeLayout android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+            <ImageView android:src="@drawable/selectorroff"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:onClick="rightSelectorTapped"
+                       android:id="@+id/scoreboardHeaderRightSelector"
+                    />
+
+            <TextView android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:text="Friends"
+                      android:textColor="@android:color/white"
+                      android:layout_alignTop="@id/capsetsHeaderRightSelector"
+                      android:layout_centerInParent="true"
+                      android:padding="5dp"
+                      android:id="@+id/scoreboardHeaderRightSelectorCaption"
+                      android:textSize="20sp"
+                      android:shadowColor="@android:color/black"
+                      android:shadowDy="1"
+                      android:shadowRadius="1.0"
+
+                    />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+
+    <ImageView android:id="@+id/scoreboardHeaderSelectorArrow"
+               android:src="@drawable/selectorarrow"
+               android:layout_height="wrap_content"
+               android:layout_width="wrap_content"
+               android:layout_below="@id/scoreboardHeaderSelector"
+               android:layout_marginLeft="40dp"
+               android:layout_marginTop="-10dp"
+               android:layout_alignParentLeft="true" />
+
+    <ListView android:id="@+id/scoreboardList"
+              android:layout_height="fill_parent"
+              android:layout_width="fill_parent"
+              android:layout_below="@id/scoreboardHeaderSelector"
+              android:layout_marginTop="10dp"
+              />
+
+</RelativeLayout>

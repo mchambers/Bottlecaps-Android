@@ -122,7 +122,7 @@ public class CapManager implements CapManagerLoadingDelegate {
 
                         adapter.insertSet(setID, set.getString("name"), set.getString("artist"), set.getString("description"));
 
-                        JSONArray caps=set.getJSONArray("cap");
+                        JSONArray caps=set.getJSONArray("caps");
 
                         for(int i=0; i<caps.length(); i++)
                         {

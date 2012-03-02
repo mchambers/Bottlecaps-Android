@@ -4,34 +4,43 @@
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
               android:weightSum="1.0"
+              android:layout_marginLeft="10dp"
+              android:layout_marginRight="10dp"
+
               >
     
     <TextView android:id="@+id/scoreboardItemRank"
               android:text=""
-              android:layout_width="wrap_content"
+              android:layout_width="0dp"
               android:layout_height="wrap_content"
               android:layout_weight="0.1"
-              android:textSize="18sp"
+              android:textSize="24sp"
+              android:textColor="@android:color/black"
               />
 
+    <com.loopj.android.image.SmartImageView android:id="@+id/scoreboardItemAvatar"
+                                            android:layout_width="32dp"
+                                            android:layout_height="32dp"
+                                            />
+
     <TextView android:id="@+id/scoreboardItemName"
-              android:text="Billy Dee"
-              android:layout_width="wrap_content"
+              android:text=""
+              android:layout_width="0dp"
               android:layout_height="wrap_content"
               android:layout_weight="0.5"
               android:gravity="left"
-              android:textSize="18sp"
-
+              android:textSize="20sp"
+              android:textColor="@android:color/black"
               />
 
     <TextView android:id="@+id/scoreboardItemScore"
               android:text="0"
-              android:layout_width="wrap_content"
+              android:layout_width="0dp"
               android:layout_height="wrap_content"
               android:layout_weight="0.4"
               android:gravity="right"
-              android:textSize="18sp"
-
+              android:textSize="24sp"
+              android:textColor="@android:color/black"
             />
 
 </LinearLayout>

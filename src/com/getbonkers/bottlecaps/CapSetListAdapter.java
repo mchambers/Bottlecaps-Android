@@ -76,7 +76,7 @@ public class CapSetListAdapter extends ArrayAdapter<JSONObject> {
 
                             //adapter.insertSet(setID, set.getString("name"), set.getString("artist"), set.getString("description"));
 
-                            JSONArray caps=set.getJSONArray("cap");
+                            JSONArray caps=set.getJSONArray("caps");
 
                             List<JSONObject> capObjects=new ArrayList<JSONObject>();
 

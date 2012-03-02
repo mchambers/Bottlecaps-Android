@@ -18,6 +18,11 @@ public class GameMenuActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
     }
+    
+    public void onBoostsButtonPressed(View v) {
+        Intent i=new Intent(this, BoostsActivity.class);
+        startActivity(i);
+    }
 
     public void onMyCapsButtonPressed(View v) {
         Intent i=new Intent(this, CapSetsActivity.class);

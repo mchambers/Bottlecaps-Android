@@ -194,6 +194,14 @@
       <JAVADOC />
       <SOURCES />
     </library>
+    <library name="fb">
+      <CLASSES />
+      <JAVADOC />
+      <SOURCES>
+        <root url="file://$PROJECT_DIR$/../../facebook-android-sdk/facebook/src" />
+        <root url="file://$PROJECT_DIR$/../../facebook-android-sdk/facebook/gen" />
+      </SOURCES>
+    </library>
   </component>
 </project>
 

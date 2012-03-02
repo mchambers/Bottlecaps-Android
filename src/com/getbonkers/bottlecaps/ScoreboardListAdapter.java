@@ -54,6 +54,7 @@ public class ScoreboardListAdapter extends ArrayAdapter<JSONObject> {
         TextView playerName=(TextView)rowView.findViewById(R.id.scoreboardItemName);
         TextView playerScore=(TextView)rowView.findViewById(R.id.scoreboardItemScore);
         TextView playerRank=(TextView)rowView.findViewById(R.id.scoreboardItemRank);      
+        SmartImageView playerAvatar=(SmartImageView)rowView.findViewById(R.id.scoreboardItemAvatar);
         
         playerName.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/Coolvetica.ttf"));
         playerScore.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/Coolvetica.ttf"));
@@ -67,6 +68,7 @@ public class ScoreboardListAdapter extends ArrayAdapter<JSONObject> {
             playerRank.setText(String.valueOf(item.getInt("rank")));
             playerScore.setText(String.valueOf(item.getLong("score")));
             playerName.setText(item.getString("name"));
+            playerAvatar.setImageUrl(item.getString("avatar"));
         } catch(JSONException e)
         {
             e.printStackTrace();

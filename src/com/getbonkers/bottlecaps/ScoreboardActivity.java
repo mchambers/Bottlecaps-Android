@@ -1,8 +1,10 @@
 package com.getbonkers.bottlecaps;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -11,6 +13,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import org.json.JSONArray;
@@ -41,6 +44,8 @@ public class ScoreboardActivity extends Activity {
 
     SharedPreferences mPrefs;
 
+    ProgressDialog wait;
+
     public void leftSelectorTapped(View v)
     {
         View arrow=findViewById(R.id.scoreboardHeaderSelectorArrow);
@@ -51,6 +56,11 @@ public class ScoreboardActivity extends Activity {
 
         leftSelector.setImageResource(R.drawable.selectorlon);
         rightSelector.setImageResource(R.drawable.selectorroff);
+
+        findViewById(R.id.scoreboardList).setVisibility(View.VISIBLE);
+        findViewById(R.id.scoreboardFacebookConnect).setVisibility(View.GONE);
+
+        ((ListView)findViewById(R.id.scoreboardList)).setAdapter(allAdapter);
     }
 
     public void rightSelectorTapped(View v)
@@ -67,11 +77,17 @@ public class ScoreboardActivity extends Activity {
         if(facebook.isSessionValid())
         {
             findViewById(R.id.scoreboardList).setVisibility(View.VISIBLE);
+            findViewById(R.id.scoreboardFacebookConnect).setVisibility(View.GONE);
+            
+            ((ListView)findViewById(R.id.scoreboardList)).setAdapter(friendAdapter);
+            friendAdapter.notifyDataSetChanged();
         }
         else
         {
             findViewById(R.id.scoreboardList).setVisibility(View.GONE);
+            findViewById(R.id.scoreboardFacebookConnect).setVisibility(View.VISIBLE);
         }
+        
     }
 
     @Override
@@ -93,6 +109,8 @@ ASIFormDataRequest *request = [ASIFormDataRequest requestWithURL:url];
      */
     public void connectFacebook(View v)
     {
+        wait.show();
+
         facebook.authorize(this, new DialogListener() {
             @Override
             public void onComplete(Bundle values) {
@@ -123,26 +141,40 @@ ASIFormDataRequest *request = [ASIFormDataRequest requestWithURL:url];
                             @Override
                             public void run() {
                                 updateScoreboard();
+                                rightSelectorTapped(null);
+                                wait.dismiss();
                             }
                         });
+                    }
+                    
+                    @Override
+                    public void onFailure(Throwable error)
+                    {
+                        wait.dismiss();
                     }
                 });
             }
 
             @Override
-            public void onFacebookError(FacebookError error) {}
+            public void onFacebookError(FacebookError error) {
+                wait.dismiss();
+            }
 
             @Override
-            public void onError(DialogError e) {}
+            public void onError(DialogError e) {
+                wait.dismiss();
+            }
 
             @Override
-            public void onCancel() {}
+            public void onCancel() {
+                wait.dismiss();
+            }
         });
     }
-
-    public void updateScoreboard()
+    
+    public void callForScoreUpdates(String fbFriendList)
     {
-        RequestParams params=new RequestParams("friends", "");
+        RequestParams params=new RequestParams("friends", fbFriendList);
 
         GetBonkersAPI.post("/admin/players/" + GetBonkersAPI.getPlayerUUID(this) + "/rank", params, this, new AsyncHttpResponseHandler() {
             @Override
@@ -150,11 +182,21 @@ ASIFormDataRequest *request = [ASIFormDataRequest requestWithURL:url];
                 try {
                     JSONObject resp = new JSONObject(response);
                     JSONArray scoresAll = resp.getJSONArray("all");
+                    JSONArray scoresFriends=resp.getJSONArray("friends");
+
                     final JSONObject myScoreData = resp.getJSONArray("me").getJSONObject(0).getJSONObject("player");
 
                     for (int i = 0; i < scoresAll.length(); i++) {
                         try {
                             allScores.add(scoresAll.getJSONObject(i).getJSONObject("player"));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    for(int j=0; j<scoresFriends.length(); j++) {
+                        try {
+                            friendScores.add(scoresFriends.getJSONObject(j).getJSONObject("player"));
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -191,12 +233,52 @@ ASIFormDataRequest *request = [ASIFormDataRequest requestWithURL:url];
         });
     }
 
+    public void updateScoreboard()
+    {
+        allScores.clear();
+        friendScores.clear();
+
+        allAdapter.notifyDataSetChanged();
+        friendAdapter.notifyDataSetChanged();
+
+        if(facebook.isSessionValid())
+        {
+            AsyncHttpClient fbRest=new AsyncHttpClient();
+            fbRest.get("https://api.facebook.com/method/friends.getAppUsers?format=json&access_token="+facebook.getAccessToken(), new AsyncHttpResponseHandler() {
+                @Override
+                public void onSuccess(final String response)
+                {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(response.length()>=3)
+                            {
+                                String fixedResponse;
+                                fixedResponse=response.replace("[", "");
+                                fixedResponse=fixedResponse.replace("]", "");
+                                callForScoreUpdates(fixedResponse);
+                            }
+                            else
+                                callForScoreUpdates("");
+                        }
+                    });
+                }
+            });
+        }
+        else
+        {
+            callForScoreUpdates("");
+        }
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.scoreboard);
+
+        wait=new ProgressDialog(this);
 
         facebook=new Facebook("220182624731035");
 
@@ -210,14 +292,21 @@ ASIFormDataRequest *request = [ASIFormDataRequest requestWithURL:url];
             facebook.setAccessExpires(expires);
         }
 
+        ((TextView)findViewById(R.id.scoreboardHeaderLeftSelectorCaption)).setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/Coolvetica.ttf"));
+        ((TextView)findViewById(R.id.scoreboardHeaderRightSelectorCaption)).setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/Coolvetica.ttf"));
+
         leftSelector=(ImageView)findViewById(R.id.scoreboardHeaderLeftSelector);
         rightSelector=(ImageView)findViewById(R.id.scoreboardHeaderRightSelector);
 
         allScores=new ArrayList<JSONObject>();
+        friendScores=new ArrayList<JSONObject>();
 
         allAdapter=new ScoreboardListAdapter(this, allScores);
+        friendAdapter=new ScoreboardListAdapter(this, friendScores);
 
-        ((ListView)findViewById(R.id.scoreboardList)).setAdapter(allAdapter);
+        ListView lv=((ListView)findViewById(R.id.scoreboardList));
+        lv.setAdapter(allAdapter);
+        lv.setCacheColorHint(0); // fooey
 
         updateScoreboard();
     }

@@ -57,9 +57,9 @@ public class GameResultsActivity extends Activity implements AsyncNetworkDelegat
         TextView score=(TextView)findViewById(R.id.resultsScore);
         TextView momentum=(TextView)findViewById(R.id.resultsMomentum);
         TextView biggestCombo=(TextView)findViewById(R.id.resultsBiggestCombo);
-        score.setText("Score: "+scoreInt);
+        score.setText(String.valueOf(scoreInt));
         momentum.setText("Highest Momentum: "+momentumInt);
-        biggestCombo.setText("Biggest Combo: "+biggestComboInt);
+        biggestCombo.setText(String.valueOf(biggestComboInt));
     }
 
     public void onMenuButtonClick(View v)

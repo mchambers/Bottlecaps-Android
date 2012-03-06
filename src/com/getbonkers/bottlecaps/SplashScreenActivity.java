@@ -17,6 +17,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Date;
 import java.util.HashMap;
 
 /**
@@ -63,7 +64,7 @@ public class SplashScreenActivity extends Activity {
         setContentView(R.layout.splashscreen);
 
         initSounds();
-
+        
         GetBonkersAPI.initPersistentCookieStore(getApplicationContext());
 
         RequestParams params=new RequestParams();
@@ -124,7 +125,7 @@ public class SplashScreenActivity extends Activity {
         //if(!readyToGo) return;
 
         playSound(SOUND_CLICK1);
-        playSound(SOUND_GAMESTART);
+        //playSound(SOUND_GAMESTART);
         Intent kidsModeIntent=new Intent(this, GameBoardActivity.class);
         kidsModeIntent.putExtra("GAME_DIFFICULTY", 0);
         this.startActivity(kidsModeIntent);
@@ -135,7 +136,7 @@ public class SplashScreenActivity extends Activity {
         //if(!readyToGo) return;
 
         playSound(SOUND_CLICK1);
-        playSound(SOUND_GAMESTART);
+        //playSound(SOUND_GAMESTART);
 
         Intent playIntent = new Intent(this, GameBoardActivity.class);
         playIntent.putExtra("GAME_DIFFICULTY", 1);

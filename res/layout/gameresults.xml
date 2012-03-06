@@ -5,11 +5,11 @@
               android:layout_height="fill_parent">
 
     <TextView
-            android:text="Results"
+            android:text="Final Score"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:textSize="48sp"
+            android:textSize="34sp"
             android:textStyle="bold"
                 android:layout_marginTop="40dp"
                 android:id="@+id/resultsTitle"/>
@@ -18,28 +18,40 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:textSize="20sp"
+        android:textSize="70sp"
         android:layout_marginTop="10dp"
         android:layout_below="@id/resultsTitle"
             android:id="@+id/resultsScore"/>
 
-    <TextView
+    <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:textSize="20sp"
-        android:layout_marginTop="10dp"
         android:layout_below="@id/resultsScore"
-            android:id="@+id/resultsMomentum"/>
+        android:weightSum="1.0"
+        android:id="@+id/resultsMiniScores"
+        >
 
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:textSize="20sp"
-        android:layout_marginTop="10dp"
-        android:layout_below="@id/resultsMomentum"
-        android:id="@+id/resultsBiggestCombo" />
+        <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:textSize="20sp"
+                android:layout_marginTop="10dp"
+                android:layout_weight="0.5"
+                android:id="@+id/resultsMomentum"/>
+
+        <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:textSize="20sp"
+                android:layout_marginTop="10dp"
+                android:layout_weight="0.5"
+                android:id="@+id/resultsBiggestCombo" />
+
+        </LinearLayout>
+
+
 
         <Button android:id="@+id/resultsMenuButton"
                 android:onClick="onMenuButtonClick"
@@ -48,7 +60,7 @@
                 android:gravity="center"
                 android:textSize="15sp"
                 android:layout_marginTop="20dp"
-                android:layout_below="@id/resultsBiggestCombo"
+                android:layout_below="@id/resultsMiniScores"
                 android:layout_height="45dp"
                 android:layout_centerHorizontal="true"/>
 

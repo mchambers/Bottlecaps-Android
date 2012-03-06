@@ -533,6 +533,12 @@ public class CapManager implements CapManagerLoadingDelegate {
         return capsBuffer.size();
     }
 
+    public boolean capAssetExistsOnDisk(int capID)
+    {
+        File f=new File(_context.getFilesDir().getPath()+"/"+capID+".png");
+        return f.exists();
+    }
+
     public boolean capSetExistsOnDisk(int setID)
     {
          // verify we have the png for each cap
@@ -580,8 +586,6 @@ public class CapManager implements CapManagerLoadingDelegate {
         return true;
     }
 
-
-
     public void buildWorkingSet()
     {
         long setID;
@@ -609,8 +613,9 @@ public class CapManager implements CapManagerLoadingDelegate {
                 c.rarityClass=set.getInt(set.getColumnIndex(BottlecapsDatabaseAdapter.KEY_CAPS_SCARCITY));
                 c.index=set.getInt(set.getColumnIndex(BottlecapsDatabaseAdapter.KEY_ROWID));
                 c.resourceId=0;
-                
-                allCaps.add(c);
+
+                if(capAssetExistsOnDisk(c.index))
+                    allCaps.add(c);
             }
 
             actualSetAmount++;

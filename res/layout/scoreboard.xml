@@ -11,34 +11,55 @@
                android:src="@drawable/innerheader"
                android:scaleType="fitCenter"
             />
+    
+    <TextView android:text="My Scoreboard"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_below="@id/scoreboardHeader"
+              android:id="@+id/scoreboardHeaderCaption"
+              android:textSize="28sp"
+              android:layout_marginLeft="15dp" />
 
     <LinearLayout android:id="@+id/scoreboardMyHighScore"
                   android:layout_width="fill_parent"
                   android:layout_height="wrap_content"
                   android:weightSum="1.0"
-                  android:layout_below="@id/scoreboardHeader"
-                  android:background="@drawable/mycaps"
+                  android:layout_below="@id/scoreboardHeaderCaption"
                   android:layout_marginLeft="10dp"
                   android:layout_marginRight="10dp"
             >
 
-        <TextView android:id="@+id/scoreboardMyScoreScore"
-                  android:text=""
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:layout_weight="0.5"
-                  android:textSize="40sp"
-                />
+        <LinearLayout
+                android:layout_weight="0.5"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/mycapsleft">
 
-        <TextView android:id="@+id/scoreboardMyScoreRank"
+            <TextView android:id="@+id/scoreboardMyScoreScore"
+                      android:text="0"
+                      android:layout_width="match_parent"
+                      android:layout_height="match_parent"
+                      android:layout_gravity="center"
+                      android:textSize="40sp"
+                    />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_weight="0.5"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/mycapsright">
+
+            <TextView android:id="@+id/scoreboardMyScoreRank"
                   android:text="0"
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:layout_weight="0.5"
-                  android:gravity="center_horizontal"
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent"
+                  android:gravity="center"
                   android:textSize="40sp"
-
                 />
+
+        </LinearLayout>
 
     </LinearLayout>
 

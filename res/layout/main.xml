@@ -3,46 +3,70 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:background="@drawable/bginner"
     >
 
-    <Button android:id="@+id/mainBack"
-            android:text="Home"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="35dp"
-            android:onClick="onHomeButtonPressed"/>
+    <ImageView android:id="@+id/mainHeader"
+               android:layout_width="fill_parent"
+               android:layout_height="wrap_content"
+               android:src="@drawable/innerheader"
+               android:scaleType="fitCenter"
+            />
 
-    <Button android:id="@+id/mainMyCaps"
+    <ImageButton android:id="@+id/mainMyCaps"
             android:text="My Caps"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="15dp"
-            android:layout_below="@id/mainBack"
+            android:layout_marginTop="35dp"
+            android:src="@drawable/buttonmenumycaps"
+            android:layout_below="@id/mainHeader"
+            android:background="@android:color/transparent"
             android:onClick="onMyCapsButtonPressed" />
 
-    <Button android:id="@+id/mainBoosts"
+    <ImageButton android:id="@+id/mainBoosts"
             android:text="Boosts"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="15dp"
             android:layout_below="@id/mainMyCaps"
+            android:src="@drawable/buttonmenubuyboosts"
+            android:background="@android:color/transparent"
             android:onClick="onBoostsButtonPressed" />
 
-    <Button android:id="@+id/mainScoreboard"
+    <ImageButton android:id="@+id/mainScoreboard"
             android:text="Scoreboard"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="15dp"
             android:layout_below="@id/mainBoosts"
+            android:src="@drawable/buttonmenuleaderboard"
+            android:background="@android:color/transparent"
             android:onClick="onScoreboardButtonPressed" />
+
+    <LinearLayout android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_below="@id/mainScoreboard"
+                  android:layout_alignLeft="@id/mainScoreboard"
+                  android:layout_marginTop="10dp"
+                  >
+
+        <ImageButton android:src="@drawable/buttonmenuhelp"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:background="@android:color/transparent"
+                     />
+
+        <ImageButton android:src="@drawable/buttonmenumoregames"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:background="@android:color/transparent"
+                     />
+
+    </LinearLayout>
 
 
 </RelativeLayout>

@@ -1,8 +1,12 @@
 package com.getbonkers.bottlecaps;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.os.Bundle;
 import android.util.JsonWriter;
+import android.util.Log;
+import com.facebook.android.Facebook;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import org.json.JSONArray;
@@ -12,13 +16,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Stack;
 
-/**
- * Created by IntelliJ IDEA.
- * User: owner2
- * Date: 2/6/12
- * Time: 2:18 PM
- * To change this template use File | Settings | File Templates.
- */
 public class Player {
     public class PlayerDataReconciler implements Runnable {
         public static final int DATA_EARNED_CAP=1;
@@ -99,6 +96,12 @@ public class Player {
                 public void onSuccess(String response) {
                     requestsOutstanding--;
                 }
+                
+                @Override
+                public void onFailure(Throwable e)
+                {
+                    requestsOutstanding--;
+                }
             });
         }
 
@@ -141,12 +144,17 @@ public class Player {
 
     private Context _context;
     private BottlecapsDatabaseAdapter _db;
+    
+    private Facebook facebook;
+    SharedPreferences mPrefs;
 
     public Player(Context context)
     {
         _context=context;
         _db=new BottlecapsDatabaseAdapter(_context);
         _db.open();
+
+        validateFacebookConnection();
     }
 
     public void addCollectedCap(long capID)
@@ -154,8 +162,41 @@ public class Player {
         _db.addCapSettlement(capID);
     }
 
+    public void validateFacebookConnection()
+    {
+        facebook=new Facebook("220182624731035");
+        mPrefs = _context.getSharedPreferences("BottlecapsFacebook", Context.MODE_PRIVATE);
+        String access_token = mPrefs.getString("access_token", null);
+        long expires = mPrefs.getLong("access_expires", 0);
+        if(access_token != null) {
+            facebook.setAccessToken(access_token);
+        }
+        if(expires != 0) {
+            facebook.setAccessExpires(expires);
+        }
+    }
+
+    public boolean isConnectedToFacebook()
+    {
+        return facebook.isSessionValid();
+    }
+
     public void postScore(long score)
     {
+        if(facebook.isSessionValid())
+        {
+            try {
+                Bundle params=new Bundle();
+                params.putString("score", String.valueOf(score));
+                facebook.setAccessToken(mPrefs.getString("app_access_token", null));
+                String ret=facebook.request(mPrefs.getString("facebook_id", "me")+"/scores", params, "POST");
+                //Log.d("Player", ret);
+            } catch(Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+
         RequestParams params=new RequestParams("score", String.valueOf(score));
         params.put("guid", GetBonkersAPI.getPlayerUUID(_context));
         GetBonkersAPI.post("/scores", params, _context, new AsyncHttpResponseHandler() {

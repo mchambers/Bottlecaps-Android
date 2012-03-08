@@ -746,8 +746,10 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
                 Intent resultsIntent=new Intent(getBaseContext(), GameResultsActivity.class);
 
                 resultsIntent.putExtra("GAME_RESULTS_SCORE", currentScore);
-                resultsIntent.putExtra("GAME_RESULTS_MOMENTUM", (int)highestMomentum);
-                resultsIntent.putExtra("GAME_RESULTS_BIGGESTCOMBO", (int)highestComboScore);
+                resultsIntent.putExtra("GAME_RESULTS_CAPSCOLLECTED", capsCollected.size());
+                resultsIntent.putExtra("GAME_RESULTS_BIGGESTCOMBO", highestComboScore);
+                resultsIntent.putExtra("GAME_RESULTS_LEVEL", currentLevel);
+
                 startActivity(resultsIntent);
 
                 boolean retry=true;

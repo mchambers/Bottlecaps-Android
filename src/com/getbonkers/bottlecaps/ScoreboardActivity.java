@@ -45,6 +45,8 @@ public class ScoreboardActivity extends Activity {
     SharedPreferences mPrefs;
 
     ProgressDialog wait;
+    
+    int mode;
 
     public void leftSelectorTapped(View v)
     {
@@ -111,7 +113,7 @@ ASIFormDataRequest *request = [ASIFormDataRequest requestWithURL:url];
     {
         wait.show();
 
-        facebook.authorize(this, new DialogListener() {
+        facebook.authorize(this, new String[] { "publish_actions" }, new DialogListener() {
             @Override
             public void onComplete(Bundle values) {
                 // tell GetBonkers about the new FBID
@@ -121,10 +123,30 @@ ASIFormDataRequest *request = [ASIFormDataRequest requestWithURL:url];
                 editor.commit();
 
                 JSONObject meResponse;
+                String appAccessToken;
                 RequestParams params=new RequestParams();
 
                 try {
                     meResponse=new JSONObject(facebook.request("me"));
+                    //facebook.setAccessToken(null);
+                    //facebook.setAccessExpires(0);
+
+                    Facebook appTokenGetter=new Facebook(facebook.getAppId());
+
+                    Bundle appTokenParams=new Bundle();
+                    appTokenParams.putString("client_id", "220182624731035");
+                    appTokenParams.putString("client_secret", "4eaad26ffa800e232438647bbc8af28f");
+                    appTokenParams.putString("grant_type", "client_credentials");
+
+                    appAccessToken=appTokenGetter.request("oauth/access_token", appTokenParams);
+
+                    editor.putString("app_access_token", appAccessToken.replace("access_token=", ""));
+
+                    Log.d("ScoreboardActivity", "Received app access token: " + appAccessToken);
+
+                    editor.putString("facebook_id", meResponse.getString("id"));
+                    editor.commit();
+
                     params.put("facebook_id", meResponse.getString("id"));
                     params.put("name", meResponse.getString("name"));
                     params.put("avatar", "http://graph.facebook.com/"+meResponse.getString("id")+"/picture");
@@ -140,9 +162,16 @@ ASIFormDataRequest *request = [ASIFormDataRequest requestWithURL:url];
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                updateScoreboard();
-                                rightSelectorTapped(null);
                                 wait.dismiss();
+                                if(mode==1)
+                                {
+                                    finish();
+                                }
+                                else
+                                {
+                                    updateScoreboard();
+                                    rightSelectorTapped(null);
+                                }
                             }
                         });
                     }
@@ -282,7 +311,7 @@ ASIFormDataRequest *request = [ASIFormDataRequest requestWithURL:url];
 
         facebook=new Facebook("220182624731035");
 
-        mPrefs = getPreferences(MODE_PRIVATE);
+        mPrefs = getSharedPreferences("BottlecapsFacebook", MODE_PRIVATE);
         String access_token = mPrefs.getString("access_token", null);
         long expires = mPrefs.getLong("access_expires", 0);
         if(access_token != null) {
@@ -290,6 +319,16 @@ ASIFormDataRequest *request = [ASIFormDataRequest requestWithURL:url];
         }
         if(expires != 0) {
             facebook.setAccessExpires(expires);
+        }
+
+        if(getIntent().hasExtra("fbMode"))
+            mode=getIntent().getExtras().getInt("fbMode", 0);
+        else
+            mode=0;
+
+        if(mode==1)
+        {
+            connectFacebook(null);
         }
 
         ((TextView)findViewById(R.id.scoreboardHeaderLeftSelectorCaption)).setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/Coolvetica.ttf"));

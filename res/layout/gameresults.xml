@@ -2,31 +2,89 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="fill_parent"
-              android:layout_height="fill_parent">
+              android:layout_height="fill_parent"
+              android:background="@drawable/bginner">
 
     <TextView
             android:text="Final Score"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:textSize="34sp"
+            android:textSize="15pt"
             android:textStyle="bold"
-                android:layout_marginTop="40dp"
+            android:textColor="@android:color/white"
+                android:layout_marginTop="10dp"
+                android:shadowColor="@android:color/black"
+                android:shadowRadius="1"
+                android:shadowDy="1"
                 android:id="@+id/resultsTitle"/>
 
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:textSize="70sp"
-        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:textSize="22pt"
         android:layout_below="@id/resultsTitle"
+        android:textColor="@android:color/white"
+        android:text="99100"
+        android:shadowColor="@android:color/black"
+        android:shadowRadius="1"
+        android:shadowDy="1"
             android:id="@+id/resultsScore"/>
+
+    <ImageButton android:id="@+id/resultsShareButton"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:layout_centerHorizontal="true"
+                 android:src="@drawable/buttonsharefacebook"
+            android:layout_below="@id/resultsScore"
+            android:background="@android:color/transparent"
+            android:onClick="shareOnFacebook" />
+
+    <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/resultsShareButton"
+            android:weightSum="1.0"
+            android:id="@+id/resultsMiniScoreCaptions"
+            >
+
+        <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:textSize="10pt"
+                android:layout_marginTop="10dp"
+                android:layout_weight="0.5"
+                android:text="Best Combo"
+                android:shadowColor="@android:color/black"
+                android:shadowRadius="1"
+                android:shadowDy="1"
+                android:id="@+id/resultsBestComboCaption"
+                android:textColor="@android:color/white"
+                />
+
+        <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:textSize="10pt"
+                android:layout_marginTop="10dp"
+                android:layout_weight="0.5"
+                android:text="Caps Collected"
+                android:shadowColor="@android:color/black"
+                android:shadowRadius="1"
+                android:shadowDy="1"
+                android:id="@+id/resultsCapsCollectedCaption"
+                android:textColor="@android:color/white"
+                 />
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/resultsScore"
+        android:layout_below="@id/resultsMiniScoreCaptions"
         android:weightSum="1.0"
         android:id="@+id/resultsMiniScores"
         >
@@ -34,35 +92,68 @@
         <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:textSize="20sp"
+                android:textSize="20pt"
                 android:layout_marginTop="10dp"
                 android:layout_weight="0.5"
-                android:id="@+id/resultsMomentum"/>
+                android:text="683"
+                android:shadowColor="@android:color/black"
+                android:shadowRadius="1"
+                android:shadowDy="1"
+                android:gravity="center"
+                android:textColor="@android:color/white"
+                android:id="@+id/resultsBestCombo"/>
 
         <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:textSize="20sp"
+                android:textSize="20pt"
                 android:layout_marginTop="10dp"
                 android:layout_weight="0.5"
-                android:id="@+id/resultsBiggestCombo" />
+                android:text="10"
+                android:shadowColor="@android:color/black"
+                android:shadowRadius="1"
+                android:shadowDy="1"
+                android:gravity="center"
+                android:textColor="@android:color/white"
+                android:id="@+id/resultsCapsCollected" />
 
         </LinearLayout>
 
+    <ImageButton android:id="@+id/resultsBoostsButton"
+                 android:src="@drawable/buttonbuyboosts"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:background="@android:color/transparent"
+                 android:layout_alignParentBottom="true"
+                 android:layout_marginBottom="10dp"
+                 android:layout_marginTop="10dp"
+                 android:onClick="onBoostsButtonClick"
+                 android:layout_centerHorizontal="true" />
 
+    <LinearLayout android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:weightSum="1.0"
+                  android:layout_above="@id/resultsBoostsButton"
+                  android:gravity="center"
+            >
 
-        <Button android:id="@+id/resultsMenuButton"
-                android:onClick="onMenuButtonClick"
-                android:text="Play Again"
-                android:layout_width="wrap_content"
-                android:gravity="center"
-                android:textSize="15sp"
-                android:layout_marginTop="20dp"
-                android:layout_below="@id/resultsMiniScores"
-                android:layout_height="45dp"
-                android:layout_centerHorizontal="true"/>
+        <ImageButton android:id="@+id/resultsRestartButton"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:src="@drawable/buttonrestart"
+                     android:background="@android:color/transparent"
+                     android:onClick="onRestartButtonClick"
+                />
 
+        <ImageButton android:id="@+id/resultsMenuButton"
+                     android:onClick="onMenuButtonClick"
+                     android:layout_width="wrap_content"
+                     android:textSize="15sp"
+                     android:layout_height="wrap_content"
+                     android:src="@drawable/buttonhome"
+                     android:background="@android:color/transparent"
+                />
+
+    </LinearLayout>
 
 </RelativeLayout>

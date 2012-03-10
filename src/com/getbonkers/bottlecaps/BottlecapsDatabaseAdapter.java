@@ -143,6 +143,28 @@ public class BottlecapsDatabaseAdapter {
         values.put(KEY_SETS_DESCRIPTION, description);
         return db.insertWithOnConflict(DATABASE_SETS_TABLE, null, values, SQLiteDatabase.CONFLICT_REPLACE);
     }
+
+    public long numberOfUniqueCapsCollected()
+    {
+        Cursor howMany=db.query(DATABASE_CAPS_TABLE, new String[] { KEY_ROWID }, KEY_CAPS_COLLECTED+">0", null, null, null, null);
+
+        howMany.moveToFirst();
+        long capCount=howMany.getCount();
+        howMany.close();
+
+        return capCount;
+    }
+
+    public long numberOfCapsInDatabase()
+    {
+        Cursor howMany=db.query(DATABASE_CAPS_TABLE, new String[] { KEY_ROWID }, null, null, null, null, null);
+
+        howMany.moveToFirst();
+        long capCount=howMany.getCount();
+        howMany.close();
+
+        return capCount;
+    }
     
     public long addCapSettlement(long capID)
     {

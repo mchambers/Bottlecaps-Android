@@ -311,7 +311,7 @@ ASIFormDataRequest *request = [ASIFormDataRequest requestWithURL:url];
 
         facebook=new Facebook("220182624731035");
 
-        mPrefs = getSharedPreferences("BottlecapsFacebook", MODE_PRIVATE);
+        mPrefs = getSharedPreferences("BottlecapsPlayer", MODE_PRIVATE);
         String access_token = mPrefs.getString("access_token", null);
         long expires = mPrefs.getLong("access_expires", 0);
         if(access_token != null) {

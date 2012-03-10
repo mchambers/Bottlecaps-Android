@@ -583,7 +583,7 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
 
             return true;
         }
-
+           /*
         private void dumpEvent(MotionEvent event) {
    String names[] = { "DOWN" , "UP" , "MOVE" , "CANCEL" , "OUTSIDE" ,
       "POINTER_DOWN" , "POINTER_UP" , "7?" , "8?" , "9?" };
@@ -608,7 +608,7 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
    }
    sb.append("]" );
    Log.d("GameBoard", sb.toString());
-}
+}        */
 
         public boolean onTouchEvent(MotionEvent event) {
               return super.onTouchEvent(event);

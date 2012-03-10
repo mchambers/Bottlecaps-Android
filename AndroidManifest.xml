@@ -28,6 +28,7 @@
         <activity android:screenOrientation="portrait" android:name="CapSetActivity" android:label="Cap Set" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
         <activity android:screenOrientation="portrait" android:name="ScoreboardActivity" android:label="Scoreboard" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
         <activity android:screenOrientation="portrait" android:name="BoostsActivity" android:label="Boosts" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+        <activity android:screenOrientation="portrait" android:name="TutorialActivity" android:label="Tutorial" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
     </application>
 
     <supports-screen android:largeScreens="true"/>

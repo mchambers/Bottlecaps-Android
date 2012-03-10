@@ -119,27 +119,37 @@ public class SplashScreenActivity extends Activity {
         Intent menuIntent=new Intent(this, GameMenuActivity.class);
         this.startActivity(menuIntent);
     }
+    
+    private void startGame(int difficulty)
+    {
+        boolean showTutorial=true;
+
+        if(showTutorial)
+        {
+            Intent tutorialIntent=new Intent(this, TutorialActivity.class);
+            tutorialIntent.putExtra("GAME_DIFFICULTY", difficulty);
+            this.startActivity(tutorialIntent);
+        }
+        else
+        {
+            Intent playIntent = new Intent(this, GameBoardActivity.class);
+            playIntent.putExtra("GAME_DIFFICULTY", difficulty);
+            this.startActivity(playIntent);
+        }
+    }
 
     public void onKidsModeClick(View v)
     {
         //if(!readyToGo) return;
-
         playSound(SOUND_CLICK1);
-        //playSound(SOUND_GAMESTART);
-        Intent kidsModeIntent=new Intent(this, GameBoardActivity.class);
-        kidsModeIntent.putExtra("GAME_DIFFICULTY", 0);
-        this.startActivity(kidsModeIntent);
+
+        startGame(0);
     }
 
     public void onPlayButtonClick(View v)
     {
-        //if(!readyToGo) return;
-
         playSound(SOUND_CLICK1);
-        //playSound(SOUND_GAMESTART);
 
-        Intent playIntent = new Intent(this, GameBoardActivity.class);
-        playIntent.putExtra("GAME_DIFFICULTY", 1);
-        this.startActivity(playIntent);
+        startGame(1);
     }
 }

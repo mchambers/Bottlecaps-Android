@@ -154,6 +154,8 @@ public class Player {
         _db=new BottlecapsDatabaseAdapter(_context);
         _db.open();
 
+        mPrefs = _context.getSharedPreferences("BottlecapsPlayer", Context.MODE_PRIVATE);
+
         validateFacebookConnection();
     }
 
@@ -162,10 +164,41 @@ public class Player {
         _db.addCapSettlement(capID);
     }
 
+    public int unlocksAvailable()
+    {
+        return mPrefs.getInt("unlocksAvailable", 0);
+    }
+    
+    public int capsToNextUnlock()
+    {
+        long earnedCaps=_db.numberOfUniqueCapsCollected();
+        long availableCaps=_db.numberOfCapsInDatabase();
+
+        return (int)((Math.floor(availableCaps*0.75))-earnedCaps);
+    }
+
+    public boolean awardUnlocksIfNecessary()
+    {
+        long earnedCaps=_db.numberOfUniqueCapsCollected();
+        long availableCaps=_db.numberOfCapsInDatabase();
+
+        int curUnlocks=this.unlocksAvailable();
+        
+        if(earnedCaps > Math.floor(availableCaps*0.75))
+        {
+            curUnlocks++;
+            SharedPreferences.Editor editPrefs=mPrefs.edit();
+            editPrefs.putInt("unlocksAvailable", curUnlocks);
+            editPrefs.commit();
+            return true;
+        }
+
+        return false;
+    }
+
     public void validateFacebookConnection()
     {
         facebook=new Facebook("220182624731035");
-        mPrefs = _context.getSharedPreferences("BottlecapsFacebook", Context.MODE_PRIVATE);
         String access_token = mPrefs.getString("access_token", null);
         long expires = mPrefs.getLong("access_expires", 0);
         if(access_token != null) {

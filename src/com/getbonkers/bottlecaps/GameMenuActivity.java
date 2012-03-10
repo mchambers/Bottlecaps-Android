@@ -25,7 +25,28 @@ public class GameMenuActivity extends Activity {
     }
 
     public void onMyCapsButtonPressed(View v) {
-        Intent i=new Intent(this, CapSetsActivity.class);
+        boolean runTutorial;
+        Intent i;
+
+        runTutorial=true;
+
+        if(runTutorial)
+        {
+            i=new Intent(this, TutorialActivity.class);
+            i.putExtra("mode", 1);
+        }
+        else
+        {
+            i=new Intent(this, CapSetsActivity.class);
+        }
+
+        startActivity(i);
+    }
+    
+    public void onHelpButtonPressed(View v)
+    {
+        Intent i=new Intent(this, TutorialActivity.class);
+        i.putExtra("mode", 2);
         startActivity(i);
     }
     

@@ -5,12 +5,24 @@
               android:layout_height="fill_parent"
               android:layout_marginBottom="10dp">
     
-    <ImageView
-                android:id="@+id/capsetsHeaderMyCaps"
-            android:src="@drawable/mycaps"
+    <TextView android:text="My Caps"
+              android:layout_width="wrap_content"
+              android:layout_marginLeft="10dp"
+              android:layout_height="wrap_content"
+              android:id="@+id/capsetsHeaderMyCapsCaption"
+              android:textSize="30sp"
+              android:textColor="@android:color/white"
+              android:shadowColor="@android:color/black"
+              android:shadowDy="1"
+              android:shadowRadius="1"
+              />
+    
+    <ImageView android:id="@+id/capsetsHeaderMyCaps"
+               android:src="@drawable/mycaps"
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"
                android:layout_centerHorizontal="true"
+               android:layout_below="@id/capsetsHeaderMyCapsCaption"
                />
 
     <LinearLayout  android:id="@+id/capsetsHeaderSelector"
@@ -34,7 +46,7 @@
 
             <TextView android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
-                      android:text="Release Date"
+                      android:text="Unlocked"
                       android:layout_alignTop="@id/capsetsHeaderLeftSelector"
                       android:textColor="@android:color/white"
                       android:padding="5dp"
@@ -60,7 +72,7 @@
 
             <TextView android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
-                      android:text="Pack/Series"
+                      android:text="Locked"
                       android:textColor="@android:color/white"
                       android:layout_alignTop="@id/capsetsHeaderRightSelector"
                       android:layout_centerInParent="true"
@@ -86,5 +98,19 @@
             android:layout_marginLeft="40dp"
             android:layout_marginTop="-10dp"
             android:layout_alignParentLeft="true" />
+
+    <TextView android:id="@+id/capsetsHeaderUnlocks"
+              android:background="@drawable/greenslim"
+              android:text="Collect 9 more caps to unlock a set!"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:gravity="center"
+              android:layout_alignLeft="@id/capsetsHeaderMyCaps"
+              android:layout_below="@id/capsetsHeaderSelectorArrow"
+              android:layout_marginTop="10dp"
+              android:textColor="@android:color/white"
+              android:visibility="gone"
+            />
+
 
 </RelativeLayout>

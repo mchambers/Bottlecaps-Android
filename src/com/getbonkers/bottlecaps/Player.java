@@ -164,10 +164,12 @@ public class Player {
         _db.addCapSettlement(capID);
     }
 
+         /*
     public int unlocksAvailable()
     {
         return mPrefs.getInt("unlocksAvailable", 0);
-    }
+    }      */
+
     
     public int capsToNextUnlock()
     {
@@ -177,6 +179,7 @@ public class Player {
         return (int)((Math.floor(availableCaps*0.75))-earnedCaps);
     }
 
+            /*
     public boolean awardUnlocksIfNecessary()
     {
         long earnedCaps=_db.numberOfUniqueCapsCollected();
@@ -195,6 +198,7 @@ public class Player {
 
         return false;
     }
+            */
 
     public void validateFacebookConnection()
     {

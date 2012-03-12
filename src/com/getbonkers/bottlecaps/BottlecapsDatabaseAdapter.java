@@ -230,6 +230,17 @@ public class BottlecapsDatabaseAdapter {
         return db.query(DATABASE_SETS_TABLE, new String[] { KEY_ROWID, KEY_SETS_DESCRIPTION, KEY_SETS_NAME, KEY_SETS_ARTIST }, KEY_ROWID+"="+setID, null, null, null, null);
     }
     
+    public boolean setExistsInDatabase(long setID)
+    {
+        Cursor set=db.query(DATABASE_SETS_TABLE, new String[] { KEY_ROWID, KEY_SETS_DESCRIPTION, KEY_SETS_NAME, KEY_SETS_ARTIST }, KEY_ROWID+"="+setID, null, null, null, null);
+
+        boolean exists=(set.getCount()>0);
+        
+        set.close();
+
+        return exists;
+    }
+    
     public Cursor getCapsInSet(long setID)
     {
         return db.query(DATABASE_CAPS_TABLE, new String[] { KEY_ROWID, KEY_CAPS_SCARCITY, KEY_CAPS_AVAILABLE, KEY_CAPS_DESCRIPTION, KEY_CAPS_ISSUED, KEY_CAPS_NAME, KEY_CAPS_SETID}, KEY_CAPS_SETID+"="+setID, null, null, null, null);

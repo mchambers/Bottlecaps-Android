@@ -33,76 +33,116 @@ import java.util.ArrayList;
 
 public class CapSetsActivity extends Activity {
     
-    ArrayList<JSONObject> listItems;
-    CapSetListAdapter adapter;
+    ArrayList<JSONObject> unlockedSets;
+    ArrayList<JSONObject> lockedSets;
+    CapSetListAdapter lockedAdapter;
+    CapSetListAdapter unlockedAdapter;
+    
+    ListView lv;
     
     View            listHeader;
     ImageView       leftSelector;
     ImageView       rightSelector;
 
+    BottlecapsDatabaseAdapter db=new BottlecapsDatabaseAdapter(this);
+
     public void leftSelectorTapped(View v)
     {
-        View arrow=listHeader.findViewById(R.id.capsetsHeaderSelectorArrow);
+        if(!lv.getAdapter().equals(unlockedAdapter))
+        {
+            lv.setAdapter(unlockedAdapter);
+            unlockedAdapter.notifyDataSetChanged();
 
-        Animation animation = AnimationUtils.loadAnimation(this,
-                R.anim.slideleft);
-        arrow.startAnimation(animation);
+            View arrow=listHeader.findViewById(R.id.capsetsHeaderSelectorArrow);
+            
+            listHeader.findViewById(R.id.capsetsHeaderUnlocks).setVisibility(View.GONE);
 
-        leftSelector.setImageResource(R.drawable.selectorlon);
-        rightSelector.setImageResource(R.drawable.selectorroff);
+            Animation animation = AnimationUtils.loadAnimation(this,
+                    R.anim.slideleft);
+            arrow.startAnimation(animation);
+
+            leftSelector.setImageResource(R.drawable.selectorlon);
+            rightSelector.setImageResource(R.drawable.selectorroff);
+        }
     }
 
     public void rightSelectorTapped(View v)
     {
-        View arrow=listHeader.findViewById(R.id.capsetsHeaderSelectorArrow);
+        if(!lv.getAdapter().equals(lockedAdapter))
+        {
+            lv.setAdapter(lockedAdapter);
+            lockedAdapter.notifyDataSetChanged();
 
-        Animation animation = AnimationUtils.loadAnimation(this,
-                R.anim.slideright);
-        arrow.startAnimation(animation);
+            View arrow=listHeader.findViewById(R.id.capsetsHeaderSelectorArrow);
 
-        leftSelector.setImageResource(R.drawable.selectorloff);
-        rightSelector.setImageResource(R.drawable.selectorron);
+            listHeader.findViewById(R.id.capsetsHeaderUnlocks).setVisibility(View.VISIBLE);
 
+            Animation animation = AnimationUtils.loadAnimation(this,
+                    R.anim.slideright);
+            arrow.startAnimation(animation);
+
+            leftSelector.setImageResource(R.drawable.selectorloff);
+            rightSelector.setImageResource(R.drawable.selectorron);
+        }
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
+        Player p;
+        
+        p=new Player(this);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.capsets);
 
-        ListView lv=(ListView)findViewById(R.id.capSetsListView);
+        lv=(ListView)findViewById(R.id.capSetsListView);
 
         lv.setDivider(null);
-//        lv.setOverscrollFooter(null);
-//        lv.setOverscrollHeader(null);
 
         lv.setCacheColorHint(0);
 
-        this.listItems=new ArrayList<JSONObject>();
-        
-        this.adapter = new CapSetListAdapter(this, listItems);
+        this.lockedSets=new ArrayList<JSONObject>();
+        this.unlockedSets=new ArrayList<JSONObject>();
 
-        LayoutInflater inflater = (LayoutInflater) this
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.lockedAdapter=new CapSetListAdapter(this, lockedSets);
+        this.unlockedAdapter=new CapSetListAdapter(this, unlockedSets);
+
+        LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         
         View v=inflater.inflate(R.layout.capsets_header, null);
 
         leftSelector=(ImageView)v.findViewById(R.id.capsetsHeaderLeftSelector);
         rightSelector=(ImageView)v.findViewById(R.id.capsetsHeaderRightSelector);
 
+        ((TextView)v.findViewById(R.id.capsetsHeaderMyCapsCaption)).setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/Pacifico.ttf"));
         ((TextView)v.findViewById(R.id.capsetsHeaderLeftSelectorCaption)).setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/Coolvetica.ttf"));
         ((TextView)v.findViewById(R.id.capsetsHeaderRightSelectorCaption)).setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/Coolvetica.ttf"));
 
+        int capsToNext=p.capsToNextUnlock();
+
+        ((TextView)v.findViewById(R.id.capsetsHeaderUnlocks)).setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/Coolvetica.ttf"));
+
+        if(capsToNext>0)
+        {
+            ((TextView)v.findViewById(R.id.capsetsHeaderUnlocks)).setText("Collect "+capsToNext+" more caps to unlock a set!");
+        }
+        else
+        {
+            ((TextView)v.findViewById(R.id.capsetsHeaderUnlocks)).setText("Select a locked set to unlock it!");
+        }
+
         lv.addHeaderView(v, null, false);
-        lv.setAdapter(adapter);
+        lv.setAdapter(unlockedAdapter);
         lv.setItemsCanFocus(false);
 
         listHeader=v;
 
+        db.open();
+
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> a, View v, int position, long id) {
-                JSONObject item = (JSONObject) adapter.getItem(position);
+                JSONObject item = (JSONObject) lv.getAdapter().getItem(position);
                 try {
                     Intent capSetIntent=new Intent(getApplicationContext(), CapSetActivity.class);
                     capSetIntent.putExtra("setID", item.getLong("id"));
@@ -124,22 +164,25 @@ public class CapSetsActivity extends Activity {
                     {
                         JSONObject set=sets.getJSONObject(i).getJSONObject("cap_set");
 
-                        //int setID=set.getInt("id");
-                        listItems.add(set);
+                        if(db.setExistsInDatabase(set.getInt("id")))
+                            unlockedSets.add(set);
+                        else
+                            lockedSets.add(set);
                     }
-                    
                 } catch(JSONException e)
                 {
                     //
                 }
 
-                adapter.notifyDataSetChanged();
+                db.close();
+
+                unlockedAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void onFailure(java.lang.Throwable throwable)
             {
-
+                   db.close();
             }
         });
     }

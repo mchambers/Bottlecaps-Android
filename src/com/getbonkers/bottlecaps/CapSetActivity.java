@@ -18,14 +18,24 @@ import org.json.JSONObject;
  * To change this template use File | Settings | File Templates.
  */
 public class CapSetActivity extends Activity {
+    BottlecapsDatabaseAdapter db=new BottlecapsDatabaseAdapter(this);
+
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
 
+        db.open();
+
         setContentView(R.layout.capset);
 
         GetBonkersAPI.get("/sets/"+getIntent().getExtras().getLong("setID"), new RequestParams(), this, new AsyncHttpResponseHandler() {
+            @Override 
+            public void onFailure(Throwable e)
+            {
+                db.close();
+            }
+
             @Override
             public void onSuccess(String response) {
                 JSONObject capSet;
@@ -35,6 +45,7 @@ public class CapSetActivity extends Activity {
                 TextView capsAuthor=(TextView)findViewById(R.id.capSetDetailsAuthor);
                 TextView capsDate=(TextView)findViewById(R.id.capSetDetailsDate);
                 TextView capsDetails=(TextView)findViewById(R.id.capSetQuoteText);
+                TextView capsAmountDetails=(TextView)findViewById(R.id.capSetNumberDetails);
 
                 capsName.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/Pacifico.ttf"));
                 capsAmount.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/Coolvetica.ttf"));
@@ -48,7 +59,9 @@ public class CapSetActivity extends Activity {
                     capSet=new JSONObject(response).getJSONObject("cap_set");
 
                     capsName.setText(capSet.getString("name"));
-                    capsAmount.setText(String.valueOf(capSet.getJSONArray("cap").length()));
+                    capsAmount.setText(String.valueOf(db.capsCollectedInSet(getIntent().getExtras().getLong("setID"))));
+                    capsAmountDetails.setText("collected of "+capSet.getJSONArray("caps").length() + " in set");
+                    //capsAmount.setText(String.valueOf(capSet.getJSONArray("caps").length()));
                     capsAuthor.setText(capSet.getString("artist"));
                     capsDetails.setText(capSet.getString("description"));
 
@@ -57,7 +70,7 @@ public class CapSetActivity extends Activity {
                     e.printStackTrace();
                 }
 
-
+                db.close();
             }
         });
     }

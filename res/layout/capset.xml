@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bginner"
+            >
+
+<RelativeLayout
               android:layout_width="fill_parent"
-              android:layout_height="fill_parent"
-              android:background="@drawable/bginner">
+              android:layout_height="wrap_content"
+              >
 
     <ImageView android:id="@+id/capSetHeader"
                android:layout_width="fill_parent"
@@ -51,9 +57,10 @@
 
             <TextView android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
-                      android:text="total caps"
+                      android:text=""
                       android:layout_weight="0.5"
                       android:textColor="@android:color/black"
+                      android:id="@+id/capSetNumberDetails"
                       />
 
         </LinearLayout>
@@ -82,6 +89,28 @@
         </LinearLayout>
     </RelativeLayout>
 
+    <TextView android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="This Set Is Locked"
+              android:textSize="15sp"
+              android:background="@drawable/locked"
+              android:gravity="center"
+              android:paddingBottom="10dp"
+              android:layout_alignLeft="@id/capSetDetailsOuter"
+              android:layout_below="@id/capSetName"
+              android:textColor="@android:color/white"
+            />
+    
+    <Button android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:background="@drawable/greenslim"
+                 android:text="Unlock This Set"
+                 android:gravity="center"
+                 android:layout_alignLeft="@id/capSetDetailsOuter"
+                 android:layout_below="@id/capSetName"
+                 android:textColor="@android:color/white"
+                 />
+
     <LinearLayout android:id="@+id/capSetQuoteContent"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
@@ -102,14 +131,19 @@
                 android:textColor="@android:color/white" />
     </LinearLayout>
 
-    <Button android:id="@+id/capSetPlayThisSet"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="Play This Set"
-            android:layout_below="@id/capSetQuoteContent"
+    <android.support.v4.view.ViewPager
+            android:id="@+id/capSetPager"
+            android:layout_width="wrap_content"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:layout_marginTop="5dp"
-            />
+            android:layout_height="217dp"
+            android:layout_weight="0"
+            android:background="@drawable/setdetailsbg"
+            android:layout_below="@id/capSetQuoteContent"
+            android:layout_centerHorizontal="true">
 
+    </android.support.v4.view.ViewPager>
 </RelativeLayout>
+
+</ScrollView>

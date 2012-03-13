@@ -154,6 +154,16 @@ public class BottlecapsDatabaseAdapter {
 
         return capCount;
     }
+    
+    public long capsCollectedInSet(long setID)
+    {
+        Cursor howMany=db.query(DATABASE_CAPS_TABLE, new String[] { KEY_ROWID }, KEY_CAPS_COLLECTED+">0 and "+KEY_CAPS_SETID+"="+setID, null, null, null, null);
+
+        long inSet=howMany.getCount();
+        howMany.close();
+
+        return inSet;
+    }
 
     public long numberOfCapsInDatabase()
     {

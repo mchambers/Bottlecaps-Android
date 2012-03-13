@@ -921,6 +921,7 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
                 multiplier=(int)Math.ceil(currentMomentum/10);
 
             if(multiplier<=0) multiplier=1;
+            if(multiplier>10) multiplier=10;
 
             if(multiplierGfx[multiplier]!=null)
             {

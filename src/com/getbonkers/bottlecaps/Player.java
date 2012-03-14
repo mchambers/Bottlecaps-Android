@@ -21,7 +21,7 @@ public class Player {
         public static final int DATA_EARNED_CAP=1;
         public static final int DATA_COMPLETED_GOAL=2;
         public static final int DATA_EARNED_CAP_BATCH=3;
-
+      
         public class DataReconcilerQueueItem {
             public int type;
             public long ID;
@@ -147,6 +147,24 @@ public class Player {
     
     private Facebook facebook;
     SharedPreferences mPrefs;
+    
+    public static final int PLAYER_BOOST_TYPE_ALL=-1;
+    public static final int PLAYER_BOOST_TYPE_NITRO=0;
+    public static final int PLAYER_BOOST_TYPE_JOKER=1;
+    public static final int PLAYER_BOOST_TYPE_FRENZY=2;
+    public static final int PLAYER_BOOST_TYPE_MORETIME=3;
+    
+    public static final String[] PLAYER_BOOST_TYPE_KEYS={
+            "PLAYER_BOOST_TYPE_NITRO",
+            "PLAYER_BOOST_TYPE_JOKER",
+            "PLAYER_BOOST_TYPE_FRENZY",
+            "PLAYER_BOOST_TYPE_MORETIME" };
+    
+    public static final String[] PLAYER_BOOST_TYPE_NAMES={
+            "Nitro",
+            "Joker",
+            "Frenzy",
+            "Time"};
 
     public Player(Context context)
     {
@@ -157,6 +175,35 @@ public class Player {
         mPrefs = _context.getSharedPreferences("BottlecapsPlayer", Context.MODE_PRIVATE);
 
         validateFacebookConnection();
+    }
+
+    public void addBoosts(int amount, int type)
+    {
+        SharedPreferences.Editor edit=mPrefs.edit();
+
+        int newAmount=0;
+
+        if(type==-1)
+        {
+            for(int i=0; i<PLAYER_BOOST_TYPE_KEYS.length; i++)
+            {
+                newAmount=amount;
+                newAmount+=mPrefs.getInt(PLAYER_BOOST_TYPE_KEYS[i], 0);
+                edit.putInt(PLAYER_BOOST_TYPE_KEYS[i], newAmount);
+            }
+        }
+        else
+        {
+            newAmount=amount+mPrefs.getInt(PLAYER_BOOST_TYPE_KEYS[type], 0);
+            edit.putInt(PLAYER_BOOST_TYPE_KEYS[type], newAmount);
+        }
+
+        edit.commit();
+    }
+    
+    public int numberOfBoostsForType(int type)
+    {
+        return mPrefs.getInt(PLAYER_BOOST_TYPE_KEYS[type], 0);
     }
 
     public void addCollectedCap(long capID)

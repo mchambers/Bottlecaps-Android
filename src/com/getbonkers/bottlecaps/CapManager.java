@@ -127,7 +127,7 @@ public class CapManager implements CapManagerLoadingDelegate {
                         for(int i=0; i<caps.length(); i++)
                         {
                             JSONObject cap=caps.getJSONObject(i);
-                            adapter.insertCapIntoSet((long)setID, cap.getInt("id"), cap.getInt("available"), cap.getInt("issued"), cap.getString("name"), cap.getString("description"), cap.getInt("scarcity"));
+                            adapter.insertCapIntoSet(setID, cap.getInt("id"), cap.getInt("available"), cap.getInt("issued"), cap.getString("name"), cap.getString("description"), cap.getInt("scarcity"));
                             Log.d("CapManager", "Cap: "+caps.getJSONObject(i).getString("name"));
                         }
                     } catch(JSONException e)
@@ -794,7 +794,7 @@ public class CapManager implements CapManagerLoadingDelegate {
 
         Cap nextCap=this.getNextCap(true);
 
-        Log.d("CapManager", "Prepping combo of cap "+nextCap.index+" (set "+nextCap.setNumber+"), size " + nextComboLength + " with momentum " + momentum);
+        //Log.d("CapManager", "Prepping combo of cap "+nextCap.index+" (set "+nextCap.setNumber+"), size " + nextComboLength + " with momentum " + momentum);
 
         for(int i=0; i<nextComboLength; i++)
         {
@@ -806,12 +806,34 @@ public class CapManager implements CapManagerLoadingDelegate {
     public void fillBoostsBuffer()
     {
         boostsAvailable=new ArrayList<Boost>();
-        boostsAvailable.add(new MomentumBoost());
-        boostsAvailable.add(new TimeBoost());
-        boostsAvailable.add(new MomentumBoost());
-        boostsAvailable.add(new HighlightCombosBoost());
-        boostsAvailable.add(new HighlightCombosBoost());
-        // BOOM!
+        
+        Player p=new Player(_context);
+        
+        int numFrenzyBoosts=p.numberOfBoostsForType(Player.PLAYER_BOOST_TYPE_FRENZY);
+        int numTimeBoosts=p.numberOfBoostsForType(Player.PLAYER_BOOST_TYPE_MORETIME);
+        int numNitro=p.numberOfBoostsForType(Player.PLAYER_BOOST_TYPE_NITRO);
+        int numJoker=p.numberOfBoostsForType(Player.PLAYER_BOOST_TYPE_JOKER);
+        
+        for(int i=0; i<numFrenzyBoosts; i++)
+        {
+            // add frenzies
+        }
+        
+        for(int i=0; i<numTimeBoosts; i++)
+        {
+            boostsAvailable.add(new TimeBoost());
+        }
+        
+        for(int i=0; i<numNitro; i++)
+        {
+            boostsAvailable.add(new MomentumBoost());
+        }
+        
+        for(int i=0; i<numJoker; i++)
+        {
+            boostsAvailable.add(new JokerBoost());
+        }
+
     }
 
     public void fillCapsBuffer()
@@ -851,7 +873,7 @@ public class CapManager implements CapManagerLoadingDelegate {
                 }
             }
 
-            Log.d("CapManager", "Adding cap to buffer: "+allCaps.get(cutStartIdx).index+" (set "+allCaps.get(cutStartIdx).setNumber+")");
+            //Log.d("CapManager", "Adding cap to buffer: "+allCaps.get(cutStartIdx).index+" (set "+allCaps.get(cutStartIdx).setNumber+")");
 
             capsBuffer.push(allCaps.get(cutStartIdx));
             usedCaps.add(allCaps.get(cutStartIdx));
@@ -878,7 +900,7 @@ public class CapManager implements CapManagerLoadingDelegate {
                 this.fillCapsBuffer();
         }
 
-        Log.d("CapManager", "Next cap is: "+cap.index+" (set "+cap.setNumber+") forCombo: "+String.valueOf(forCombo) );
+        //Log.d("CapManager", "Next cap is: "+cap.index+" (set "+cap.setNumber+") forCombo: "+String.valueOf(forCombo) );
 
         return cap;
     }

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android"
+          android:constantSize="true" >
+
+    <item
+            android:drawable="@drawable/rateappon"
+            android:state_pressed="true"
+
+            />
+
+    <item
+            android:drawable="@drawable/rateapp"
+            android:state_pressed="false"
+            />
+
+</selector>

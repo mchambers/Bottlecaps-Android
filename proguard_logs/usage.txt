@@ -1,0 +1,920 @@
+android.support.v4.accessibilityservice.AccessibilityServiceInfoCompat
+android.support.v4.accessibilityservice.AccessibilityServiceInfoCompat$AccessibilityServiceInfoIcsImpl
+android.support.v4.accessibilityservice.AccessibilityServiceInfoCompat$AccessibilityServiceInfoStubImpl
+android.support.v4.accessibilityservice.AccessibilityServiceInfoCompat$AccessibilityServiceInfoVersionImpl
+android.support.v4.accessibilityservice.AccessibilityServiceInfoCompatIcs
+android.support.v4.app.ActivityCompatHoneycomb:
+    34:35:static void dump(android.app.Activity,java.lang.String,java.io.FileDescriptor,java.io.PrintWriter,java.lang.String[])
+android.support.v4.app.BackStackRecord:
+    static final java.lang.String TAG
+    static final int OP_NULL
+    static final int OP_ADD
+    static final int OP_REPLACE
+    static final int OP_REMOVE
+    static final int OP_HIDE
+    static final int OP_SHOW
+    static final int OP_DETACH
+    static final int OP_ATTACH
+    291:291:public int getId()
+    295:295:public int getBreadCrumbTitleRes()
+    299:299:public int getBreadCrumbShortTitleRes()
+    303:306:public java.lang.CharSequence getBreadCrumbTitle()
+    310:313:public java.lang.CharSequence getBreadCrumbShortTitle()
+    332:333:public android.support.v4.app.FragmentTransaction add(android.support.v4.app.Fragment,java.lang.String)
+    337:338:public android.support.v4.app.FragmentTransaction add(int,android.support.v4.app.Fragment)
+    374:374:public android.support.v4.app.FragmentTransaction replace(int,android.support.v4.app.Fragment)
+    378:383:public android.support.v4.app.FragmentTransaction replace(int,android.support.v4.app.Fragment,java.lang.String)
+    387:392:public android.support.v4.app.FragmentTransaction remove(android.support.v4.app.Fragment)
+    396:401:public android.support.v4.app.FragmentTransaction hide(android.support.v4.app.Fragment)
+    405:410:public android.support.v4.app.FragmentTransaction show(android.support.v4.app.Fragment)
+    432:432:public android.support.v4.app.FragmentTransaction setCustomAnimations(int,int)
+    437:441:public android.support.v4.app.FragmentTransaction setCustomAnimations(int,int,int,int)
+    445:446:public android.support.v4.app.FragmentTransaction setTransition(int)
+    450:451:public android.support.v4.app.FragmentTransaction setTransitionStyle(int)
+    455:461:public android.support.v4.app.FragmentTransaction addToBackStack(java.lang.String)
+    465:465:public boolean isAddToBackStackAllowed()
+    469:474:public android.support.v4.app.FragmentTransaction disallowAddToBackStack()
+    478:480:public android.support.v4.app.FragmentTransaction setBreadCrumbTitle(int)
+    484:486:public android.support.v4.app.FragmentTransaction setBreadCrumbTitle(java.lang.CharSequence)
+    490:492:public android.support.v4.app.FragmentTransaction setBreadCrumbShortTitle(int)
+    496:498:public android.support.v4.app.FragmentTransaction setBreadCrumbShortTitle(java.lang.CharSequence)
+    525:525:public int commit()
+    712:712:public int getTransition()
+    716:716:public int getTransitionStyle()
+    720:720:public boolean isEmpty()
+android.support.v4.app.DialogFragment
+android.support.v4.app.Fragment:
+    static final int INITIALIZING
+    static final int CREATED
+    static final int ACTIVITY_CREATED
+    static final int STOPPED
+    static final int STARTED
+    static final int RESUMED
+    461:461:public final int getId()
+    468:468:public final java.lang.String getTag()
+    502:507:public void setInitialSavedState(android.support.v4.app.Fragment$SavedState)
+    521:523:public void setTargetFragment(android.support.v4.app.Fragment,int)
+    529:529:public final android.support.v4.app.Fragment getTargetFragment()
+    536:536:public final int getTargetRequestCode()
+    550:553:public final android.content.res.Resources getResources()
+    563:563:public final java.lang.CharSequence getText(int)
+    573:573:public final java.lang.String getString(int)
+    586:586:public final java.lang.String getString(int,java.lang.Object[])
+    597:597:public final android.support.v4.app.FragmentManager getFragmentManager()
+    613:613:public final boolean isDetached()
+    622:622:public final boolean isRemoving()
+    633:633:public final boolean isInLayout()
+    641:641:public final boolean isResumed()
+    650:650:public final boolean isVisible()
+    690:691:public void setRetainInstance(boolean)
+    694:694:public final boolean getRetainInstance()
+    705:711:public void setHasOptionsMenu(boolean)
+    757:757:public boolean getUserVisibleHint()
+    764:772:public android.support.v4.app.LoaderManager getLoaderManager()
+    780:784:public void startActivity(android.content.Intent)
+    791:795:public void startActivityForResult(android.content.Intent,int)
+    1218:1219:public void registerForContextMenu(android.view.View)
+    1229:1230:public void unregisterForContextMenu(android.view.View)
+android.support.v4.app.Fragment$SavedState:
+    291:293:Fragment$SavedState(android.os.Bundle)
+android.support.v4.app.FragmentActivity:
+    private static final java.lang.String TAG
+    private static final java.lang.String FRAGMENTS_TAG
+    private static final int HONEYCOMB
+    static final int MSG_REALLY_STOPPED
+    static final int MSG_RESUME_PENDING
+    558:560:public java.lang.Object getLastCustomNonConfigurationInstance()
+    677:685:public void startActivityFromFragment(android.support.v4.app.Fragment,android.content.Intent,int)
+    706:711:public android.support.v4.app.LoaderManager getSupportLoaderManager()
+android.support.v4.app.FragmentActivity$FragmentTag:
+    public static final int Fragment_id
+    public static final int Fragment_name
+    public static final int Fragment_tag
+android.support.v4.app.FragmentManager:
+    public static final int POP_BACK_STACK_INCLUSIVE
+    139:139:public android.support.v4.app.FragmentTransaction openTransaction()
+    public abstract android.support.v4.app.Fragment findFragmentById(int)
+    public abstract void popBackStack()
+    public abstract boolean popBackStackImmediate()
+    public abstract void popBackStack(java.lang.String,int)
+    public abstract boolean popBackStackImmediate(java.lang.String,int)
+    public abstract void popBackStack(int,int)
+    public abstract boolean popBackStackImmediate(int,int)
+    public abstract int getBackStackEntryCount()
+    public abstract android.support.v4.app.FragmentManager$BackStackEntry getBackStackEntryAt(int)
+    public abstract void addOnBackStackChangedListener(android.support.v4.app.FragmentManager$OnBackStackChangedListener)
+    public abstract void removeOnBackStackChangedListener(android.support.v4.app.FragmentManager$OnBackStackChangedListener)
+    public abstract void putFragment(android.os.Bundle,java.lang.String,android.support.v4.app.Fragment)
+    public abstract android.support.v4.app.Fragment getFragment(android.os.Bundle,java.lang.String)
+    public abstract android.support.v4.app.Fragment$SavedState saveFragmentInstanceState(android.support.v4.app.Fragment)
+    public abstract void dump(java.lang.String,java.io.FileDescriptor,java.io.PrintWriter,java.lang.String[])
+    334:335:public static void enableDebugLogging(boolean)
+android.support.v4.app.FragmentManager$BackStackEntry
+android.support.v4.app.FragmentManagerImpl:
+    static final java.lang.String TAG
+    static final java.lang.String TARGET_REQUEST_CODE_STATE_TAG
+    static final java.lang.String TARGET_STATE_TAG
+    static final java.lang.String VIEW_STATE_TAG
+    static final java.lang.String USER_VISIBLE_HINT_TAG
+    static final int ANIM_DUR
+    public static final int ANIM_STYLE_OPEN_ENTER
+    public static final int ANIM_STYLE_OPEN_EXIT
+    public static final int ANIM_STYLE_CLOSE_ENTER
+    public static final int ANIM_STYLE_CLOSE_EXIT
+    public static final int ANIM_STYLE_FADE_ENTER
+    public static final int ANIM_STYLE_FADE_EXIT
+    436:441:public void popBackStack()
+    452:457:public void popBackStack(java.lang.String,int)
+    461:463:public boolean popBackStackImmediate(java.lang.String,int)
+    468:476:public void popBackStack(int,int)
+    480:485:public boolean popBackStackImmediate(int,int)
+    490:490:public int getBackStackEntryCount()
+    495:495:public android.support.v4.app.FragmentManager$BackStackEntry getBackStackEntryAt(int)
+    500:504:public void addOnBackStackChangedListener(android.support.v4.app.FragmentManager$OnBackStackChangedListener)
+    508:511:public void removeOnBackStackChangedListener(android.support.v4.app.FragmentManager$OnBackStackChangedListener)
+    542:550:public android.support.v4.app.Fragment$SavedState saveFragmentInstanceState(android.support.v4.app.Fragment)
+    1286:1294:public android.support.v4.app.Fragment findFragmentByWho(java.lang.String)
+android.support.v4.app.FragmentManagerImpl$2
+android.support.v4.app.FragmentManagerImpl$3
+android.support.v4.app.FragmentManagerImpl$4
+android.support.v4.app.FragmentPagerAdapter:
+    private static final java.lang.String TAG
+    private static final boolean DEBUG
+android.support.v4.app.FragmentStatePagerAdapter
+android.support.v4.app.FragmentTransaction:
+    public static final int TRANSIT_ENTER_MASK
+    public static final int TRANSIT_EXIT_MASK
+    public static final int TRANSIT_UNSET
+    public static final int TRANSIT_NONE
+    public static final int TRANSIT_FRAGMENT_OPEN
+    public static final int TRANSIT_FRAGMENT_CLOSE
+    public static final int TRANSIT_FRAGMENT_FADE
+    public abstract android.support.v4.app.FragmentTransaction add(android.support.v4.app.Fragment,java.lang.String)
+    public abstract android.support.v4.app.FragmentTransaction add(int,android.support.v4.app.Fragment)
+    public abstract android.support.v4.app.FragmentTransaction replace(int,android.support.v4.app.Fragment)
+    public abstract android.support.v4.app.FragmentTransaction replace(int,android.support.v4.app.Fragment,java.lang.String)
+    public abstract android.support.v4.app.FragmentTransaction remove(android.support.v4.app.Fragment)
+    public abstract android.support.v4.app.FragmentTransaction hide(android.support.v4.app.Fragment)
+    public abstract android.support.v4.app.FragmentTransaction show(android.support.v4.app.Fragment)
+    public abstract boolean isEmpty()
+    public abstract android.support.v4.app.FragmentTransaction setCustomAnimations(int,int)
+    public abstract android.support.v4.app.FragmentTransaction setCustomAnimations(int,int,int,int)
+    public abstract android.support.v4.app.FragmentTransaction setTransition(int)
+    public abstract android.support.v4.app.FragmentTransaction setTransitionStyle(int)
+    public abstract android.support.v4.app.FragmentTransaction addToBackStack(java.lang.String)
+    public abstract boolean isAddToBackStackAllowed()
+    public abstract android.support.v4.app.FragmentTransaction disallowAddToBackStack()
+    public abstract android.support.v4.app.FragmentTransaction setBreadCrumbTitle(int)
+    public abstract android.support.v4.app.FragmentTransaction setBreadCrumbTitle(java.lang.CharSequence)
+    public abstract android.support.v4.app.FragmentTransaction setBreadCrumbShortTitle(int)
+    public abstract android.support.v4.app.FragmentTransaction setBreadCrumbShortTitle(java.lang.CharSequence)
+    public abstract int commit()
+android.support.v4.app.HCSparseArray:
+    223:228:public void setValueAt(int,java.lang.Object)
+    236:240:public int indexOfKey(int)
+    252:260:public int indexOfValue(java.lang.Object)
+    283:310:public void append(int,java.lang.Object)
+android.support.v4.app.ListFragment
+android.support.v4.app.ListFragment$1
+android.support.v4.app.ListFragment$2
+android.support.v4.app.LoaderManager:
+    public abstract android.support.v4.content.Loader initLoader(int,android.os.Bundle,android.support.v4.app.LoaderManager$LoaderCallbacks)
+    public abstract android.support.v4.content.Loader restartLoader(int,android.os.Bundle,android.support.v4.app.LoaderManager$LoaderCallbacks)
+    public abstract void destroyLoader(int)
+    public abstract android.support.v4.content.Loader getLoader(int)
+    public abstract void dump(java.lang.String,java.io.FileDescriptor,java.io.PrintWriter,java.lang.String[])
+    176:177:public static void enableDebugLogging(boolean)
+android.support.v4.app.LoaderManagerImpl:
+    static final java.lang.String TAG
+    boolean mRetainingStarted
+    boolean mCreatingLoader
+    485:488:private android.support.v4.app.LoaderManagerImpl$LoaderInfo createLoader(int,android.os.Bundle,android.support.v4.app.LoaderManager$LoaderCallbacks)
+    494:499:private android.support.v4.app.LoaderManagerImpl$LoaderInfo createAndInstallLoader(int,android.os.Bundle,android.support.v4.app.LoaderManager$LoaderCallbacks)
+    504:511:void installLoader(android.support.v4.app.LoaderManagerImpl$LoaderInfo)
+    539:561:public android.support.v4.content.Loader initLoader(int,android.os.Bundle,android.support.v4.app.LoaderManager$LoaderCallbacks)
+    589:643:public android.support.v4.content.Loader restartLoader(int,android.os.Bundle,android.support.v4.app.LoaderManager$LoaderCallbacks)
+    654:674:public void destroyLoader(int)
+    682:693:public android.support.v4.content.Loader getLoader(int)
+android.support.v4.app.LoaderManagerImpl$LoaderInfo:
+    225:229:public LoaderManagerImpl$LoaderInfo(android.support.v4.app.LoaderManagerImpl,int,android.os.Bundle,android.support.v4.app.LoaderManager$LoaderCallbacks)
+    359:412:public void onLoadComplete(android.support.v4.content.Loader,java.lang.Object)
+android.support.v4.app.ServiceCompat
+android.support.v4.content.AsyncTaskLoader
+android.support.v4.content.AsyncTaskLoader$LoadTask
+android.support.v4.content.CursorLoader
+android.support.v4.content.IntentCompat
+android.support.v4.content.Loader:
+    android.content.Context mContext
+    90:92:public Loader(android.content.Context)
+    102:105:public void deliverResult(java.lang.Object)
+    111:111:public android.content.Context getContext()
+    118:118:public int getId()
+    157:157:public boolean isStarted()
+    166:166:public boolean isAbandoned()
+    175:175:public boolean isReset()
+    217:218:public void forceLoad()
+    225:225:protected void onForceLoad()
+    261:263:public void abandon()
+    275:275:protected void onAbandon()
+    312:314:public boolean takeContentChanged()
+    326:334:public void onContentChanged()
+android.support.v4.content.Loader$ForceLoadContentObserver
+android.support.v4.content.Loader$OnLoadCompleteListener:
+    public abstract void onLoadComplete(android.support.v4.content.Loader,java.lang.Object)
+android.support.v4.content.LocalBroadcastManager
+android.support.v4.content.LocalBroadcastManager$1
+android.support.v4.content.LocalBroadcastManager$BroadcastRecord
+android.support.v4.content.LocalBroadcastManager$ReceiverRecord
+android.support.v4.content.ModernAsyncTask
+android.support.v4.content.ModernAsyncTask$1
+android.support.v4.content.ModernAsyncTask$2
+android.support.v4.content.ModernAsyncTask$3
+android.support.v4.content.ModernAsyncTask$4
+android.support.v4.content.ModernAsyncTask$AsyncTaskResult
+android.support.v4.content.ModernAsyncTask$InternalHandler
+android.support.v4.content.ModernAsyncTask$Status
+android.support.v4.content.ModernAsyncTask$WorkerRunnable
+android.support.v4.content.pm.ActivityInfoCompat
+android.support.v4.database.DatabaseUtilsCompat
+android.support.v4.util.LruCache
+android.support.v4.util.TimeUtils
+android.support.v4.view.AccessibilityDelegateCompat
+android.support.v4.view.AccessibilityDelegateCompat$AccessibilityDelegateIcsImpl
+android.support.v4.view.AccessibilityDelegateCompat$AccessibilityDelegateIcsImpl$1
+android.support.v4.view.AccessibilityDelegateCompat$AccessibilityDelegateImpl
+android.support.v4.view.AccessibilityDelegateCompat$AccessibilityDelegateStubImpl
+android.support.v4.view.AccessibilityDelegateCompatIcs
+android.support.v4.view.AccessibilityDelegateCompatIcs$1
+android.support.v4.view.AccessibilityDelegateCompatIcs$AccessibilityDelegateBridge
+android.support.v4.view.KeyEventCompat:
+    127:127:public static int normalizeMetaState(int)
+    131:131:public static boolean metaStateHasModifiers(int,int)
+    135:135:public static boolean metaStateHasNoModifiers(int)
+android.support.v4.view.KeyEventCompat$BaseKeyEventVersionImpl:
+    private static final int META_MODIFIER_MASK
+    private static final int META_ALL_MASK
+android.support.v4.view.KeyEventCompat$HoneycombKeyEventVersionImpl:
+    98:98:public int normalizeMetaState(int)
+android.support.v4.view.KeyEventCompat$KeyEventVersionImpl:
+    public abstract int normalizeMetaState(int)
+android.support.v4.view.KeyEventCompatHoneycomb:
+    26:26:public static int normalizeMetaState(int)
+android.support.v4.view.MenuCompat
+android.support.v4.view.MenuCompat$BaseMenuVersionImpl
+android.support.v4.view.MenuCompat$HoneycombMenuVersionImpl
+android.support.v4.view.MenuCompat$MenuVersionImpl
+android.support.v4.view.MenuItemCompat
+android.support.v4.view.MenuItemCompat$BaseMenuVersionImpl
+android.support.v4.view.MenuItemCompat$HoneycombMenuVersionImpl
+android.support.v4.view.MenuItemCompat$MenuVersionImpl
+android.support.v4.view.MenuItemCompatHoneycomb
+android.support.v4.view.MotionEventCompat:
+    public static final int ACTION_MASK
+    public static final int ACTION_POINTER_DOWN
+    public static final int ACTION_POINTER_UP
+    public static final int ACTION_HOVER_MOVE
+    public static final int ACTION_SCROLL
+    public static final int ACTION_POINTER_INDEX_MASK
+    public static final int ACTION_POINTER_INDEX_SHIFT
+    148:148:public static int getActionMasked(android.view.MotionEvent)
+android.support.v4.view.PagerAdapter:
+    public static final int POSITION_UNCHANGED
+    public static final int POSITION_NONE
+    276:277:public void notifyDataSetChanged()
+android.support.v4.view.PagerTitleStrip:
+    private static final java.lang.String TAG
+    private static final int SIDE_ALPHA
+    private static final int TEXT_SPACING
+android.support.v4.view.VelocityTrackerCompat:
+    91:91:public static float getYVelocity(android.view.VelocityTracker,int)
+android.support.v4.view.VelocityTrackerCompat$BaseVelocityTrackerVersionImpl:
+    44:44:public float getYVelocity(android.view.VelocityTracker,int)
+android.support.v4.view.VelocityTrackerCompat$HoneycombVelocityTrackerVersionImpl:
+    58:58:public float getYVelocity(android.view.VelocityTracker,int)
+android.support.v4.view.VelocityTrackerCompat$VelocityTrackerVersionImpl:
+    public abstract float getYVelocity(android.view.VelocityTracker,int)
+android.support.v4.view.VelocityTrackerCompatHoneycomb:
+    29:29:public static float getYVelocity(android.view.VelocityTracker,int)
+android.support.v4.view.ViewCompat:
+    public static final int OVER_SCROLL_ALWAYS
+    public static final int OVER_SCROLL_IF_CONTENT_SCROLLS
+    public static final int OVER_SCROLL_NEVER
+    153:153:public static boolean canScrollVertically(android.view.View,int)
+    182:183:public static void setOverScrollMode(android.view.View,int)
+    219:220:public static void onPopulateAccessibilityEvent(android.view.View,android.view.accessibility.AccessibilityEvent)
+    252:253:public static void onInitializeAccessibilityEvent(android.view.View,android.view.accessibility.AccessibilityEvent)
+    288:289:public static void onInitializeAccessibilityNodeInfo(android.view.View,android.support.v4.view.accessibility.AccessibilityNodeInfoCompat)
+    303:304:public static void setAccessibilityDelegate(android.view.View,android.support.v4.view.AccessibilityDelegateCompat)
+android.support.v4.view.ViewCompat$BaseViewCompatImpl:
+    62:62:public boolean canScrollVertically(android.view.View,int)
+    69:69:public void setOverScrollMode(android.view.View,int)
+    72:72:public void setAccessibilityDelegate(android.view.View,android.support.v4.view.AccessibilityDelegateCompat)
+    75:75:public void onPopulateAccessibilityEvent(android.view.View,android.view.accessibility.AccessibilityEvent)
+    78:78:public void onInitializeAccessibilityEvent(android.view.View,android.view.accessibility.AccessibilityEvent)
+    81:81:public void onInitializeAccessibilityNodeInfo(android.view.View,android.support.v4.view.accessibility.AccessibilityNodeInfoCompat)
+android.support.v4.view.ViewCompat$GBViewCompatImpl:
+    91:92:public void setOverScrollMode(android.view.View,int)
+android.support.v4.view.ViewCompat$ICSViewCompatImpl:
+    102:102:public boolean canScrollVertically(android.view.View,int)
+    106:107:public void onPopulateAccessibilityEvent(android.view.View,android.view.accessibility.AccessibilityEvent)
+    110:111:public void onInitializeAccessibilityEvent(android.view.View,android.view.accessibility.AccessibilityEvent)
+    114:115:public void onInitializeAccessibilityNodeInfo(android.view.View,android.support.v4.view.accessibility.AccessibilityNodeInfoCompat)
+    118:119:public void setAccessibilityDelegate(android.view.View,android.support.v4.view.AccessibilityDelegateCompat)
+android.support.v4.view.ViewCompat$ViewCompatImpl:
+    public abstract boolean canScrollVertically(android.view.View,int)
+    public abstract void setOverScrollMode(android.view.View,int)
+    public abstract void onInitializeAccessibilityEvent(android.view.View,android.view.accessibility.AccessibilityEvent)
+    public abstract void onPopulateAccessibilityEvent(android.view.View,android.view.accessibility.AccessibilityEvent)
+    public abstract void onInitializeAccessibilityNodeInfo(android.view.View,android.support.v4.view.accessibility.AccessibilityNodeInfoCompat)
+    public abstract void setAccessibilityDelegate(android.view.View,android.support.v4.view.AccessibilityDelegateCompat)
+android.support.v4.view.ViewCompatGingerbread:
+    27:28:public static void setOverScrollMode(android.view.View,int)
+android.support.v4.view.ViewCompatICS:
+    34:34:public static boolean canScrollVertically(android.view.View,int)
+    38:39:public static void setAccessibilityDelegate(android.view.View,java.lang.Object)
+    42:43:public static void onPopulateAccessibilityEvent(android.view.View,android.view.accessibility.AccessibilityEvent)
+    46:47:public static void onInitializeAccessibilityEvent(android.view.View,android.view.accessibility.AccessibilityEvent)
+    50:51:public static void onInitializeAccessibilityNodeInfo(android.view.View,java.lang.Object)
+android.support.v4.view.ViewGroupCompat
+android.support.v4.view.ViewGroupCompat$ViewGroupCompatIcsImpl
+android.support.v4.view.ViewGroupCompat$ViewGroupCompatImpl
+android.support.v4.view.ViewGroupCompat$ViewGroupCompatStubImpl
+android.support.v4.view.ViewGroupCompatIcs
+android.support.v4.view.ViewPager:
+    private static final java.lang.String TAG
+    private static final boolean DEBUG
+    private static final boolean USE_CACHE
+    private static final int DEFAULT_OFFSCREEN_PAGES
+    private static final int MAX_SETTLE_DURATION
+    private static final int MIN_DISTANCE_FOR_FLING
+    private static final int INVALID_POINTER
+    private long mFakeDragBeginTime
+    public static final int SCROLL_STATE_IDLE
+    public static final int SCROLL_STATE_DRAGGING
+    public static final int SCROLL_STATE_SETTLING
+    385:387:public void setCurrentItem(int)
+    462:463:public void setOnPageChangeListener(android.support.v4.view.ViewPager$OnPageChangeListener)
+    485:485:public int getOffscreenPageLimit()
+    506:515:public void setOffscreenPageLimit(int)
+    526:533:public void setPageMargin(int)
+    541:541:public int getPageMargin()
+    550:554:public void setPageMarginDrawable(android.graphics.drawable.Drawable)
+    562:563:public void setPageMarginDrawable(int)
+    596:597:void smoothScrollTo(int,int)
+    1652:1668:public boolean beginFakeDrag()
+    1678:1697:public void endFakeDrag()
+    1707:1735:public void fakeDragBy(float)
+    1747:1747:public boolean isFakeDragging()
+android.support.v4.view.ViewPager$SimpleOnPageChangeListener
+android.support.v4.view.accessibility.AccessibilityEventCompat
+android.support.v4.view.accessibility.AccessibilityEventCompat$AccessibilityEventIcsImpl
+android.support.v4.view.accessibility.AccessibilityEventCompat$AccessibilityEventStubImpl
+android.support.v4.view.accessibility.AccessibilityEventCompat$AccessibilityEventVersionImpl
+android.support.v4.view.accessibility.AccessibilityEventCompatIcs
+android.support.v4.view.accessibility.AccessibilityManagerCompat
+android.support.v4.view.accessibility.AccessibilityManagerCompat$AccessibilityManagerIcsImpl
+android.support.v4.view.accessibility.AccessibilityManagerCompat$AccessibilityManagerIcsImpl$1
+android.support.v4.view.accessibility.AccessibilityManagerCompat$AccessibilityManagerStubImpl
+android.support.v4.view.accessibility.AccessibilityManagerCompat$AccessibilityManagerVersionImpl
+android.support.v4.view.accessibility.AccessibilityManagerCompat$AccessibilityStateChangeListenerCompat
+android.support.v4.view.accessibility.AccessibilityManagerCompatIcs
+android.support.v4.view.accessibility.AccessibilityManagerCompatIcs$1
+android.support.v4.view.accessibility.AccessibilityManagerCompatIcs$AccessibilityStateChangeListenerBridge
+android.support.v4.view.accessibility.AccessibilityNodeInfoCompat
+android.support.v4.view.accessibility.AccessibilityNodeInfoCompat$AccessibilityNodeInfoIcsImpl
+android.support.v4.view.accessibility.AccessibilityNodeInfoCompat$AccessibilityNodeInfoImpl
+android.support.v4.view.accessibility.AccessibilityNodeInfoCompat$AccessibilityNodeInfoStubImpl
+android.support.v4.view.accessibility.AccessibilityNodeInfoCompatIcs
+android.support.v4.view.accessibility.AccessibilityRecordCompat
+android.support.v4.view.accessibility.AccessibilityRecordCompat$AccessibilityRecordIcsImpl
+android.support.v4.view.accessibility.AccessibilityRecordCompat$AccessibilityRecordImpl
+android.support.v4.view.accessibility.AccessibilityRecordCompat$AccessibilityRecordStubImpl
+android.support.v4.view.accessibility.AccessibilityRecordCompatIcs
+android.support.v4.widget.CursorAdapter
+android.support.v4.widget.CursorAdapter$1
+android.support.v4.widget.CursorAdapter$ChangeObserver
+android.support.v4.widget.CursorAdapter$MyDataSetObserver
+android.support.v4.widget.CursorFilter
+android.support.v4.widget.CursorFilter$CursorFilterClient
+android.support.v4.widget.EdgeEffectCompat:
+    204:204:public boolean onAbsorb(int)
+android.support.v4.widget.EdgeEffectCompat$BaseEdgeEffectImpl:
+    82:82:public boolean onAbsorb(java.lang.Object,int)
+android.support.v4.widget.EdgeEffectCompat$EdgeEffectIcsImpl:
+    116:116:public boolean onAbsorb(java.lang.Object,int)
+android.support.v4.widget.EdgeEffectCompat$EdgeEffectImpl:
+    public abstract boolean onAbsorb(java.lang.Object,int)
+android.support.v4.widget.EdgeEffectCompatIcs:
+    57:58:public static boolean onAbsorb(java.lang.Object,int)
+android.support.v4.widget.ResourceCursorAdapter
+android.support.v4.widget.SearchViewCompat
+android.support.v4.widget.SearchViewCompat$OnQueryTextListenerCompat
+android.support.v4.widget.SearchViewCompat$SearchViewCompatHoneycombImpl
+android.support.v4.widget.SearchViewCompat$SearchViewCompatHoneycombImpl$1
+android.support.v4.widget.SearchViewCompat$SearchViewCompatImpl
+android.support.v4.widget.SearchViewCompat$SearchViewCompatStubImpl
+android.support.v4.widget.SearchViewCompatHoneycomb
+android.support.v4.widget.SearchViewCompatHoneycomb$1
+android.support.v4.widget.SearchViewCompatHoneycomb$OnQueryTextListenerCompatBridge
+android.support.v4.widget.SimpleCursorAdapter
+android.support.v4.widget.SimpleCursorAdapter$CursorToStringConverter
+android.support.v4.widget.SimpleCursorAdapter$ViewBinder
+com.android.vending.billing.IMarketBillingService$Stub:
+    private static final java.lang.String DESCRIPTOR
+    static final int TRANSACTION_sendBillingRequest
+    34:34:public android.os.IBinder asBinder()
+com.android.vending.billing.IMarketBillingService$Stub$Proxy:
+    82:82:public java.lang.String getInterfaceDescriptor()
+com.facebook.android.AsyncFacebookRunner
+com.facebook.android.AsyncFacebookRunner$1
+com.facebook.android.AsyncFacebookRunner$2
+com.facebook.android.AsyncFacebookRunner$RequestListener
+com.facebook.android.DialogError:
+    private static final long serialVersionUID
+    44:44:int getErrorCode()
+    48:48:java.lang.String getFailingUrl()
+com.facebook.android.Facebook:
+    public static final java.lang.String REDIRECT_URI
+    public static final java.lang.String CANCEL_URI
+    public static final java.lang.String TOKEN
+    public static final java.lang.String EXPIRES
+    public static final java.lang.String SINGLE_SIGN_ON_DISABLED
+    public static final int FORCE_DIALOG_AUTH
+    private static final java.lang.String LOGIN
+    private static final int DEFAULT_AUTH_ACTIVITY_CODE
+    public static final java.lang.String FB_APP_SIGNATURE
+    114:116:public void authorize(android.app.Activity,com.facebook.android.Facebook$DialogListener)
+    287:293:private boolean validateServiceIntent(android.content.Context,android.content.Intent)
+    482:494:public boolean extendAccessToken(android.content.Context,com.facebook.android.Facebook$ServiceListener)
+    506:509:public boolean extendAccessTokenIfNeeded(android.content.Context,com.facebook.android.Facebook$ServiceListener)
+    518:518:public boolean shouldExtendAccessToken()
+    623:629:public java.lang.String logout(android.content.Context)
+    662:667:public java.lang.String request(android.os.Bundle)
+    771:772:public void dialog(android.content.Context,java.lang.String,com.facebook.android.Facebook$DialogListener)
+    888:889:public void setAppId(java.lang.String)
+    54:54:static android.app.Activity access$100(com.facebook.android.Facebook)
+    54:54:static java.lang.String access$200(com.facebook.android.Facebook)
+com.facebook.android.Facebook$ServiceListener
+com.facebook.android.Facebook$TokenRefreshServiceConnection
+com.facebook.android.Facebook$TokenRefreshServiceConnection$1
+com.facebook.android.FacebookError:
+    private static final long serialVersionUID
+    private java.lang.String mErrorType
+    37:40:public FacebookError(java.lang.String,java.lang.String,int)
+    43:43:public int getErrorCode()
+    47:47:public java.lang.String getErrorType()
+com.facebook.android.FbDialog:
+    static final int FB_BLUE
+    static final int MARGIN
+    static final int PADDING
+    static final java.lang.String DISPLAY_STRING
+    static final java.lang.String FB_ICON
+com.facebook.android.Util:
+    231:235:public static void clearCookies(android.content.Context)
+    258:287:public static org.json.JSONObject parseJson(java.lang.String)
+com.getbonkers.bottlecaps.AsyncNetworkDelegate:
+    public abstract void onOperationFailed(long)
+    public abstract void onOperationComplete(long)
+    public abstract void onOperationProgress(int)
+    public abstract void onCapReconcileComplete(long)
+    public abstract void onBatchCapReconcileComplete(long[])
+com.getbonkers.bottlecaps.Base64:
+    public static final boolean ENCODE
+    public static final boolean DECODE
+    private static final byte EQUALS_SIGN
+    private static final byte NEW_LINE
+    private static final byte WHITE_SPACE_ENC
+    private static final byte EQUALS_SIGN_ENC
+    195:220:private static byte[] encode3to4(byte[],int,int,byte[],int,byte[])
+    233:233:public static java.lang.String encode(byte[])
+    244:244:public static java.lang.String encodeWebSafe(byte[],boolean)
+    260:272:public static java.lang.String encode(byte[],int,int,byte[],boolean)
+    287:331:public static byte[] encode(byte[],int,int,byte[],int)
+    417:418:public static byte[] decodeWebSafe(java.lang.String)
+    431:431:public static byte[] decode(byte[])
+    444:444:public static byte[] decodeWebSafe(byte[])
+    475:475:public static byte[] decodeWebSafe(byte[],int,int)
+com.getbonkers.bottlecaps.Base64DecoderException:
+    private static final long serialVersionUID
+com.getbonkers.bottlecaps.BillingReceiver:
+    private static final java.lang.String TAG
+com.getbonkers.bottlecaps.BillingService:
+    private static final java.lang.String TAG
+    324:325:public void setContext(android.content.Context)
+    401:401:public boolean checkBillingSupported()
+    415:415:public boolean requestPurchase(java.lang.String,java.lang.String)
+    425:425:public boolean restoreTransactions()
+    566:570:public void unbind()
+com.getbonkers.bottlecaps.BillingService$CheckBillingSupported
+com.getbonkers.bottlecaps.BillingService$RequestPurchase
+com.getbonkers.bottlecaps.BillingService$RestoreTransactions
+com.getbonkers.bottlecaps.BottlecapsDatabaseAdapter:
+    public static final java.lang.String KEY_ROWID
+    public static final java.lang.String KEY_SETS_NAME
+    public static final java.lang.String KEY_SETS_ARTIST
+    public static final java.lang.String KEY_SETS_DESCRIPTION
+    public static final java.lang.String KEY_SETS_LASTPLAYED
+    public static final java.lang.String KEY_CAPS_AVAILABLE
+    public static final java.lang.String KEY_CAPS_DESCRIPTION
+    public static final java.lang.String KEY_CAPS_ISSUED
+    public static final java.lang.String KEY_CAPS_NAME
+    public static final java.lang.String KEY_CAPS_SETID
+    public static final java.lang.String KEY_CAPS_SCARCITY
+    public static final java.lang.String KEY_CAPS_COLLECTED
+    public static final java.lang.String KEY_SETTLEMENTS_CAP
+    private static final java.lang.String TAG
+    private static final java.lang.String DATABASE_NAME
+    private static final java.lang.String DATABASE_CAPS_TABLE
+    private static final java.lang.String DATABASE_SETS_TABLE
+    private static final java.lang.String DATABASE_SETTLEMENTS_TABLE
+    private static final int DATABASE_VERSION
+    private static final java.lang.String DATABASE_SETS_CREATE
+    private static final java.lang.String DATABASE_CAPS_CREATE
+    private static final java.lang.String DATABASE_SETTLEMENTS_CREATE
+    213:213:public long[] getNextPlayableSetsTotalingNumberOfCaps(int)
+    262:262:public boolean deleteSet(long)
+com.getbonkers.bottlecaps.CapListAdapter
+com.getbonkers.bottlecaps.CapManager:
+    private java.util.ArrayList sets
+    private int capSetsDownloading
+    528:529:public void removeCapFromPlay(android.content.Context,com.getbonkers.bottlecaps.CapManager$Cap)
+    533:533:public int capsBufferRemaining()
+com.getbonkers.bottlecaps.CapManager$Boost:
+    253:253:public long getStandardDuration()
+com.getbonkers.bottlecaps.CapManager$Cap:
+    public java.lang.String filePath
+com.getbonkers.bottlecaps.CapManager$CapManagerDelegate:
+    public static final int CM_STATUS_NONE
+    public static final int CM_STATUS_LOADING_NET
+    public static final int CM_STATUS_LOADING_DISK
+    public static final int CM_STATUS_BUILDING
+    public static final int CM_STATUS_COMPLETE
+com.getbonkers.bottlecaps.CapManager$FreezeBoost
+com.getbonkers.bottlecaps.CapManager$JokerBoost
+com.getbonkers.bottlecaps.CapManager$Set
+com.getbonkers.bottlecaps.CapManagerLoadingDelegate:
+    public abstract void onWorkingCapSetAvailable()
+com.getbonkers.bottlecaps.CapSetListAdapter:
+    45:46:public void setValues(java.util.List)
+com.getbonkers.bottlecaps.Consts:
+    public static final java.lang.String MARKET_BILLING_SERVICE_ACTION
+    public static final java.lang.String ACTION_CONFIRM_NOTIFICATION
+    public static final java.lang.String ACTION_GET_PURCHASE_INFORMATION
+    public static final java.lang.String ACTION_RESTORE_TRANSACTIONS
+    public static final java.lang.String ACTION_NOTIFY
+    public static final java.lang.String ACTION_RESPONSE_CODE
+    public static final java.lang.String ACTION_PURCHASE_STATE_CHANGED
+    public static final java.lang.String NOTIFICATION_ID
+    public static final java.lang.String INAPP_SIGNED_DATA
+    public static final java.lang.String INAPP_SIGNATURE
+    public static final java.lang.String INAPP_REQUEST_ID
+    public static final java.lang.String INAPP_RESPONSE_CODE
+    public static final java.lang.String BILLING_REQUEST_METHOD
+    public static final java.lang.String BILLING_REQUEST_API_VERSION
+    public static final java.lang.String BILLING_REQUEST_PACKAGE_NAME
+    public static final java.lang.String BILLING_REQUEST_ITEM_ID
+    public static final java.lang.String BILLING_REQUEST_DEVELOPER_PAYLOAD
+    public static final java.lang.String BILLING_REQUEST_NOTIFY_IDS
+    public static final java.lang.String BILLING_REQUEST_NONCE
+    public static final java.lang.String BILLING_RESPONSE_RESPONSE_CODE
+    public static final java.lang.String BILLING_RESPONSE_PURCHASE_INTENT
+    public static final java.lang.String BILLING_RESPONSE_REQUEST_ID
+    public static final boolean DEBUG
+com.getbonkers.bottlecaps.GameBoardActivity:
+    public static final int DIALOG_CAPMANAGER_FAILURE
+    106:107:public void onCapSetsLoadFailure()
+com.getbonkers.bottlecaps.GameBoardActivity$BrainThread:
+    private static final int MAX_FPS
+    private static final int MAX_FRAME_SKIPS
+    private static final int FRAME_PERIOD
+com.getbonkers.bottlecaps.GameBoardActivity$GameBoard:
+    public static final int PIECE_STATE_NORMAL
+    public static final int PIECE_STATE_FADING
+    public static final int PIECE_STATE_TAPPED
+    public static final int PIECE_STATE_HIGHLIGHTED
+    public static final int GAME_DIFFICULTY_EASY
+    public static final int GAME_DIFFICULTY_NORMAL
+    public static final int GAME_LENGTH
+    public static final int GAME_COMBO_DELAY
+    public static final int GAME_TIMER_REMAINING
+    public static final int GAME_TIMER_COMBO
+    public static final int GAME_TIMER_BOOST
+    public static final int GAME_TIMER_BOMB
+    public static final int GAME_TIMER_PAUSE
+    private java.util.ArrayList gameEffects
+    private int pieceHeight
+    private int boardMargins
+    private int[] multiplierResIds
+    public int boostsDisplayed
+    public int maxBoosts
+    private static final int PIECE_FADEOUT_ANIM_SPEED
+    private static final int COMBO_FADEOUT_ANIM_SPEED
+    public static final int SOUND_GOOD
+    public static final int SOUND_BAD
+    public static final int SOUND_TAP
+    android.graphics.drawable.BitmapDrawable multiplier
+com.getbonkers.bottlecaps.GameBoardActivity$GameBoard$GameOngoingEffect
+com.getbonkers.bottlecaps.GameBoardActivity$GameBoard$GamePiece:
+    285:288:public void setFadingState()
+com.getbonkers.bottlecaps.GameResultsActivity:
+    25:25:public void onOperationFailed(long)
+    28:28:public void onOperationComplete(long)
+    31:31:public void onOperationProgress(int)
+    34:34:public void onCapReconcileComplete(long)
+    37:37:public void onBatchCapReconcileComplete(long[])
+com.getbonkers.bottlecaps.GetBonkersAPI:
+    private static final java.lang.String BASE_URL
+    76:77:public static void clearPlayerUUID()
+com.getbonkers.bottlecaps.Player:
+    164:165:public void addCollectedCap(long)
+com.getbonkers.bottlecaps.Player$PlayerDataReconciler:
+    public static final int DATA_EARNED_CAP
+    public static final int DATA_COMPLETED_GOAL
+    public static final int DATA_EARNED_CAP_BATCH
+    56:58:public void addQueueItem(int,long)
+com.getbonkers.bottlecaps.Player$PlayerDataReconciler$DataReconcilerQueueItem:
+    31:34:public Player$PlayerDataReconciler$DataReconcilerQueueItem(com.getbonkers.bottlecaps.Player$PlayerDataReconciler,int,long)
+com.getbonkers.bottlecaps.PurchaseObserver:
+    private static final java.lang.String TAG
+    private final android.app.Activity mActivity
+    private java.lang.reflect.Method mStartIntentSender
+    private java.lang.Object[] mStartIntentSenderArgs
+    33:37:public PurchaseObserver(android.app.Activity,android.os.Handler)
+    public abstract void onBillingSupported(boolean)
+    public abstract void onRequestPurchaseResponse(com.getbonkers.bottlecaps.BillingService$RequestPurchase,com.getbonkers.bottlecaps.Consts$ResponseCode)
+    public abstract void onRestoreTransactionsResponse(com.getbonkers.bottlecaps.BillingService$RestoreTransactions,com.getbonkers.bottlecaps.Consts$ResponseCode)
+    55:62:private void initCompatibilityLayer()
+    65:91:void startBuyPageActivity(android.app.PendingIntent,android.content.Intent)
+com.getbonkers.bottlecaps.R
+com.getbonkers.bottlecaps.R$anim
+com.getbonkers.bottlecaps.R$attr
+com.getbonkers.bottlecaps.R$drawable
+com.getbonkers.bottlecaps.R$id
+com.getbonkers.bottlecaps.R$layout
+com.getbonkers.bottlecaps.R$raw
+com.getbonkers.bottlecaps.R$string
+com.getbonkers.bottlecaps.ResponseHandler:
+    private static final java.lang.String TAG
+    35:36:public static synchronized void register(com.getbonkers.bottlecaps.PurchaseObserver)
+    39:40:public static synchronized void unregister(com.getbonkers.bottlecaps.PurchaseObserver)
+    43:46:public static void checkBillingSupportedResponse(boolean)
+    59:66:public static void buyPageIntentResponse(android.app.PendingIntent,android.content.Intent)
+    113:116:public static void responseCodeReceived(android.content.Context,com.getbonkers.bottlecaps.BillingService$RequestPurchase,com.getbonkers.bottlecaps.Consts$ResponseCode)
+    129:132:public static void responseCodeReceived(android.content.Context,com.getbonkers.bottlecaps.BillingService$RestoreTransactions,com.getbonkers.bottlecaps.Consts$ResponseCode)
+com.getbonkers.bottlecaps.ScoreboardListAdapter:
+    45:46:public void setValues(java.util.List)
+com.getbonkers.bottlecaps.Security:
+    private static final java.lang.String TAG
+    private static final java.lang.String KEY_FACTORY_ALGORITHM
+    private static final java.lang.String SIGNATURE_ALGORITHM
+com.getbonkers.bottlecaps.SplashScreenActivity:
+    public static final int SOUND_CLICK1
+    public static final int SOUND_CLICK2
+    public static final int SOUND_GAMESTART
+com.loopj.android.http.AsyncHttpClient:
+    private static final java.lang.String VERSION
+    private static final int DEFAULT_MAX_CONNECTIONS
+    private static final int DEFAULT_SOCKET_TIMEOUT
+    private static final int DEFAULT_MAX_RETRIES
+    private static final java.lang.String ENCODING
+    private static final java.lang.String HEADER_ACCEPT_ENCODING
+    private static final java.lang.String ENCODING_GZIP
+    public org.apache.http.client.HttpClient getHttpClient()
+    public void setThreadPool(java.util.concurrent.ThreadPoolExecutor)
+    public void setUserAgent(java.lang.String)
+    public void setSSLSocketFactory(org.apache.http.conn.ssl.SSLSocketFactory)
+    public void cancelRequests(android.content.Context,boolean)
+    public void get(android.content.Context,java.lang.String,com.loopj.android.http.AsyncHttpResponseHandler)
+    public void post(java.lang.String,com.loopj.android.http.AsyncHttpResponseHandler)
+    public void put(java.lang.String,com.loopj.android.http.AsyncHttpResponseHandler)
+    public void put(java.lang.String,com.loopj.android.http.RequestParams,com.loopj.android.http.AsyncHttpResponseHandler)
+    public void put(android.content.Context,java.lang.String,com.loopj.android.http.RequestParams,com.loopj.android.http.AsyncHttpResponseHandler)
+    public void put(android.content.Context,java.lang.String,org.apache.http.HttpEntity,java.lang.String,com.loopj.android.http.AsyncHttpResponseHandler)
+    public void delete(java.lang.String,com.loopj.android.http.AsyncHttpResponseHandler)
+    public void delete(android.content.Context,java.lang.String,com.loopj.android.http.AsyncHttpResponseHandler)
+com.loopj.android.http.AsyncHttpResponseHandler:
+    private static final int SUCCESS_MESSAGE
+    private static final int FAILURE_MESSAGE
+    private static final int START_MESSAGE
+    private static final int FINISH_MESSAGE
+com.loopj.android.http.JsonHttpResponseHandler
+com.loopj.android.http.PersistentCookieStore:
+    private static final java.lang.String COOKIE_PREFS
+    private static final java.lang.String COOKIE_NAME_STORE
+    private static final java.lang.String COOKIE_NAME_PREFIX
+com.loopj.android.http.RequestParams:
+    public RequestParams(java.util.Map)
+    public void put(java.lang.String,java.io.File)
+    public void put(java.lang.String,java.io.InputStream)
+    public void put(java.lang.String,java.io.InputStream,java.lang.String)
+    public void put(java.lang.String,java.io.InputStream,java.lang.String,java.lang.String)
+    public void remove(java.lang.String)
+com.loopj.android.http.RequestParams$FileWrapper:
+    public RequestParams$FileWrapper(java.io.InputStream,java.lang.String,java.lang.String)
+com.loopj.android.http.RetryHandler:
+    private static final int RETRY_SLEEP_TIME_MILLIS
+com.loopj.android.http.SerializableCookie:
+    private static final long serialVersionUID
+    private void writeObject(java.io.ObjectOutputStream)
+    private void readObject(java.io.ObjectInputStream)
+com.loopj.android.http.SimpleMultipartEntity:
+    public void addPart(java.lang.String,java.io.File)
+com.loopj.android.image.BitmapImage
+com.loopj.android.image.ContactImage
+com.loopj.android.image.SmartImageTask:
+    private static final int BITMAP_READY
+com.loopj.android.image.SmartImageView:
+    private static final int LOADING_THREADS
+    public void setImageUrl(java.lang.String,java.lang.Integer)
+    public void setImageUrl(java.lang.String,java.lang.Integer,java.lang.Integer)
+    public void setImageContact(long)
+    public void setImageContact(long,java.lang.Integer)
+    public void setImageContact(long,java.lang.Integer,java.lang.Integer)
+    public void setImage(com.loopj.android.image.SmartImage,java.lang.Integer)
+    public static void cancelAllTasks()
+com.loopj.android.image.WebImage:
+    private static final int CONNECT_TIMEOUT
+    private static final int READ_TIMEOUT
+    public static void removeFromCache(java.lang.String)
+com.loopj.android.image.WebImageCache:
+    private static final java.lang.String DISK_CACHE_PATH
+    public void remove(java.lang.String)
+    public void clear()
+org.apache.commons.io.ByteOrderMark
+org.apache.commons.io.CopyUtils
+org.apache.commons.io.DirectoryWalker
+org.apache.commons.io.DirectoryWalker$CancelException
+org.apache.commons.io.EndianUtils
+org.apache.commons.io.FileCleaner
+org.apache.commons.io.FileCleaningTracker
+org.apache.commons.io.FileCleaningTracker$Reaper
+org.apache.commons.io.FileCleaningTracker$Tracker
+org.apache.commons.io.FileDeleteStrategy
+org.apache.commons.io.FileDeleteStrategy$ForceFileDeleteStrategy
+org.apache.commons.io.FileExistsException
+org.apache.commons.io.FileSystemUtils
+org.apache.commons.io.FileUtils
+org.apache.commons.io.FilenameUtils
+org.apache.commons.io.HexDump
+org.apache.commons.io.IOCase
+org.apache.commons.io.IOExceptionWithCause
+org.apache.commons.io.IOUtils:
+    public static final char DIR_SEPARATOR_UNIX
+    public static final char DIR_SEPARATOR_WINDOWS
+    public static final java.lang.String LINE_SEPARATOR_UNIX
+    public static final java.lang.String LINE_SEPARATOR_WINDOWS
+    private static final int DEFAULT_BUFFER_SIZE
+    private static final int SKIP_BUFFER_SIZE
+    private static char[] SKIP_CHAR_BUFFER
+    private static byte[] SKIP_BYTE_BUFFER
+    171:172:public static void closeQuietly(java.io.Reader)
+    197:198:public static void closeQuietly(java.io.Writer)
+    224:225:public static void closeQuietly(java.io.InputStream)
+    252:253:public static void closeQuietly(java.io.OutputStream)
+    280:286:public static void closeQuietly(java.io.Closeable)
+    312:319:public static void closeQuietly(java.net.Socket)
+    343:343:public static java.io.InputStream toBufferedInputStream(java.io.InputStream)
+    360:362:public static byte[] toByteArray(java.io.InputStream)
+    383:387:public static byte[] toByteArray(java.io.InputStream,long)
+    403:423:public static byte[] toByteArray(java.io.InputStream,int)
+    439:441:public static byte[] toByteArray(java.io.Reader)
+    463:465:public static byte[] toByteArray(java.io.Reader,java.lang.String)
+    482:482:public static byte[] toByteArray(java.lang.String)
+    501:503:public static char[] toCharArray(java.io.InputStream)
+    525:527:public static char[] toCharArray(java.io.InputStream,java.lang.String)
+    543:545:public static char[] toCharArray(java.io.Reader)
+    563:563:public static java.lang.String toString(java.io.InputStream)
+    584:586:public static java.lang.String toString(java.io.InputStream,java.lang.String)
+    601:603:public static java.lang.String toString(java.io.Reader)
+    616:616:public static java.lang.String toString(java.net.URI)
+    631:631:public static java.lang.String toString(java.net.URI,java.lang.String)
+    644:644:public static java.lang.String toString(java.net.URL)
+    659:663:public static java.lang.String toString(java.net.URL,java.lang.String)
+    679:679:public static java.lang.String toString(byte[])
+    699:702:public static java.lang.String toString(byte[],java.lang.String)
+    722:723:public static java.util.List readLines(java.io.InputStream)
+    744:748:public static java.util.List readLines(java.io.InputStream,java.lang.String)
+    766:773:public static java.util.List readLines(java.io.Reader)
+    806:806:public static org.apache.commons.io.LineIterator lineIterator(java.io.Reader)
+    841:847:public static org.apache.commons.io.LineIterator lineIterator(java.io.InputStream,java.lang.String)
+    860:860:public static java.io.InputStream toInputStream(java.lang.CharSequence)
+    877:877:public static java.io.InputStream toInputStream(java.lang.CharSequence,java.lang.String)
+    890:891:public static java.io.InputStream toInputStream(java.lang.String)
+    908:909:public static java.io.InputStream toInputStream(java.lang.String,java.lang.String)
+    926:929:public static void write(byte[],java.io.OutputStream)
+    945:948:public static void write(byte[],java.io.Writer)
+    969:976:public static void write(byte[],java.io.Writer,java.lang.String)
+    992:995:public static void write(char[],java.io.Writer)
+    1013:1016:public static void write(char[],java.io.OutputStream)
+    1038:1045:public static void write(char[],java.io.OutputStream,java.lang.String)
+    1059:1062:public static void write(java.lang.CharSequence,java.io.Writer)
+    1079:1082:public static void write(java.lang.CharSequence,java.io.OutputStream)
+    1102:1105:public static void write(java.lang.CharSequence,java.io.OutputStream,java.lang.String)
+    1119:1122:public static void write(java.lang.String,java.io.Writer)
+    1139:1142:public static void write(java.lang.String,java.io.OutputStream)
+    1162:1169:public static void write(java.lang.String,java.io.OutputStream,java.lang.String)
+    1186:1189:public static void write(java.lang.StringBuffer,java.io.Writer)
+    1208:1211:public static void write(java.lang.StringBuffer,java.io.OutputStream)
+    1233:1240:public static void write(java.lang.StringBuffer,java.io.OutputStream,java.lang.String)
+    1258:1270:public static void writeLines(java.util.Collection,java.lang.String,java.io.OutputStream)
+    1290:1306:public static void writeLines(java.util.Collection,java.lang.String,java.io.OutputStream,java.lang.String)
+    1321:1333:public static void writeLines(java.util.Collection,java.lang.String,java.io.Writer)
+    1407:1409:public static void copy(java.io.InputStream,java.io.Writer)
+    1432:1438:public static void copy(java.io.InputStream,java.io.Writer,java.lang.String)
+    1461:1465:public static int copy(java.io.Reader,java.io.Writer)
+    1482:1489:public static long copyLarge(java.io.Reader,java.io.Writer)
+    1513:1518:public static void copy(java.io.Reader,java.io.OutputStream)
+    1545:1554:public static void copy(java.io.Reader,java.io.OutputStream,java.lang.String)
+    1574:1591:public static boolean contentEquals(java.io.InputStream,java.io.InputStream)
+    1611:1628:public static boolean contentEquals(java.io.Reader,java.io.Reader)
+    1648:1669:public static long skip(java.io.InputStream,long)
+    1689:1710:public static long skip(java.io.Reader,long)
+    1729:1736:public static void skipFully(java.io.InputStream,long)
+    1754:1758:public static void skipFully(java.io.Reader,long)
+org.apache.commons.io.LineIterator
+org.apache.commons.io.TaggedIOException
+org.apache.commons.io.ThreadMonitor
+org.apache.commons.io.comparator.AbstractFileComparator
+org.apache.commons.io.comparator.CompositeFileComparator
+org.apache.commons.io.comparator.DefaultFileComparator
+org.apache.commons.io.comparator.DirectoryFileComparator
+org.apache.commons.io.comparator.ExtensionFileComparator
+org.apache.commons.io.comparator.LastModifiedFileComparator
+org.apache.commons.io.comparator.NameFileComparator
+org.apache.commons.io.comparator.PathFileComparator
+org.apache.commons.io.comparator.ReverseComparator
+org.apache.commons.io.comparator.SizeFileComparator
+org.apache.commons.io.filefilter.AbstractFileFilter
+org.apache.commons.io.filefilter.AgeFileFilter
+org.apache.commons.io.filefilter.AndFileFilter
+org.apache.commons.io.filefilter.CanReadFileFilter
+org.apache.commons.io.filefilter.CanWriteFileFilter
+org.apache.commons.io.filefilter.ConditionalFileFilter
+org.apache.commons.io.filefilter.DelegateFileFilter
+org.apache.commons.io.filefilter.DirectoryFileFilter
+org.apache.commons.io.filefilter.EmptyFileFilter
+org.apache.commons.io.filefilter.FalseFileFilter
+org.apache.commons.io.filefilter.FileFileFilter
+org.apache.commons.io.filefilter.FileFilterUtils
+org.apache.commons.io.filefilter.HiddenFileFilter
+org.apache.commons.io.filefilter.IOFileFilter
+org.apache.commons.io.filefilter.MagicNumberFileFilter
+org.apache.commons.io.filefilter.NameFileFilter
+org.apache.commons.io.filefilter.NotFileFilter
+org.apache.commons.io.filefilter.OrFileFilter
+org.apache.commons.io.filefilter.PrefixFileFilter
+org.apache.commons.io.filefilter.RegexFileFilter
+org.apache.commons.io.filefilter.SizeFileFilter
+org.apache.commons.io.filefilter.SuffixFileFilter
+org.apache.commons.io.filefilter.TrueFileFilter
+org.apache.commons.io.filefilter.WildcardFileFilter
+org.apache.commons.io.filefilter.WildcardFilter
+org.apache.commons.io.input.AutoCloseInputStream
+org.apache.commons.io.input.BOMInputStream
+org.apache.commons.io.input.BoundedInputStream
+org.apache.commons.io.input.BrokenInputStream
+org.apache.commons.io.input.CharSequenceReader
+org.apache.commons.io.input.ClassLoaderObjectInputStream
+org.apache.commons.io.input.CloseShieldInputStream
+org.apache.commons.io.input.ClosedInputStream
+org.apache.commons.io.input.CountingInputStream
+org.apache.commons.io.input.DemuxInputStream
+org.apache.commons.io.input.NullInputStream
+org.apache.commons.io.input.NullReader
+org.apache.commons.io.input.ProxyInputStream
+org.apache.commons.io.input.ProxyReader
+org.apache.commons.io.input.ReaderInputStream
+org.apache.commons.io.input.SwappedDataInputStream
+org.apache.commons.io.input.TaggedInputStream
+org.apache.commons.io.input.Tailer
+org.apache.commons.io.input.TailerListener
+org.apache.commons.io.input.TailerListenerAdapter
+org.apache.commons.io.input.TeeInputStream
+org.apache.commons.io.input.XmlStreamReader
+org.apache.commons.io.input.XmlStreamReaderException
+org.apache.commons.io.monitor.FileAlterationListener
+org.apache.commons.io.monitor.FileAlterationListenerAdaptor
+org.apache.commons.io.monitor.FileAlterationMonitor
+org.apache.commons.io.monitor.FileAlterationObserver
+org.apache.commons.io.monitor.FileEntry
+org.apache.commons.io.output.BrokenOutputStream
+org.apache.commons.io.output.ByteArrayOutputStream
+org.apache.commons.io.output.CloseShieldOutputStream
+org.apache.commons.io.output.ClosedOutputStream
+org.apache.commons.io.output.CountingOutputStream
+org.apache.commons.io.output.DeferredFileOutputStream
+org.apache.commons.io.output.DemuxOutputStream
+org.apache.commons.io.output.FileWriterWithEncoding
+org.apache.commons.io.output.LockableFileWriter
+org.apache.commons.io.output.NullOutputStream
+org.apache.commons.io.output.NullWriter
+org.apache.commons.io.output.ProxyOutputStream
+org.apache.commons.io.output.ProxyWriter
+org.apache.commons.io.output.StringBuilderWriter:
+    59:61:public StringBuilderWriter(java.lang.StringBuilder)
+    148:148:public java.lang.StringBuilder getBuilder()
+org.apache.commons.io.output.TaggedOutputStream
+org.apache.commons.io.output.TeeOutputStream
+org.apache.commons.io.output.ThresholdingOutputStream
+org.apache.commons.io.output.WriterOutputStream
+org.apache.commons.io.output.XmlStreamWriter

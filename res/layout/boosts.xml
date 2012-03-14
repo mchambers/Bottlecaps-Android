@@ -1,16 +1,133 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:background="@drawable/bginner">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="@drawable/bginner">
 
-    <ImageView android:id="@+id/boostsHeader"
-               android:layout_width="fill_parent"
-               android:layout_height="wrap_content"
-               android:src="@drawable/innerheader"
-               android:scaleType="fitCenter"
-            />
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+
+                   >
+
+        <ImageView android:id="@+id/boostsHeader"
+                   android:layout_width="fill_parent"
+                   android:layout_height="wrap_content"
+                   android:src="@drawable/innerheader"
+                   android:scaleType="fitCenter"
+                   android:layout_marginBottom="10dp"
+                />
+
+        <TextView android:id="@+id/boostsCaption"
+                  android:text="My Boosts"
+                  android:textSize="24sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/boostsHeader"
+                android:layout_marginLeft="10dp"
+                android:textColor="@android:color/white"
+                android:shadowColor="@android:color/black"
+                android:shadowDy="1"
+                android:shadowRadius="1"
+                />
+
+        <LinearLayout android:id="@+id/boostsAmounts"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:background="@drawable/boostsavailable"
+                      android:layout_centerHorizontal="true"
+                      android:weightSum="1.0"
+                      android:paddingBottom="5dp"
+                      android:layout_marginBottom="10dp"
+                      android:layout_below="@id/boostsCaption"
+                >
+
+            <TextView android:text="0"
+                      android:id="@+id/boostsNitro"
+                      android:textColor="@android:color/black"
+                      android:layout_width="0dp"
+                      android:layout_height="match_parent"
+                      android:layout_weight="0.25"
+                      android:maxLines="2"
+                      android:gravity="center" />
+
+            <TextView android:text="0"
+                      android:id="@+id/boostsJoker"
+                      android:textColor="@android:color/black"
+                      android:layout_width="0dp"
+                      android:layout_height="match_parent"
+                      android:layout_weight="0.25"
+                      android:maxLines="2"
+                      android:gravity="center" />
+
+            <TextView android:text="0"
+                      android:id="@+id/boostsFrenzy"
+                      android:textColor="@android:color/black"
+                      android:layout_width="0dp"
+                      android:layout_height="match_parent"
+                      android:layout_weight="0.25"
+                      android:maxLines="2"
+                      android:gravity="center" />
+
+            <TextView android:text="0"
+                      android:id="@+id/boostsTime"
+                      android:textColor="@android:color/black"
+                      android:layout_width="0dp"
+                      android:layout_height="match_parent"
+                      android:layout_weight="0.25"
+                      android:maxLines="2"
+                      android:gravity="center" />
+
+        </LinearLayout>
+        <!--
+        bagOfBoostsClick
+        barrelOfBoostsClick
+        bucketOfBoostsClick
+        -->
 
 
-</RelativeLayout>
+        <ImageButton android:id="@+id/boostsBagOBoosts"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:src="@drawable/buttonbagoboosts"
+                     android:layout_below="@id/boostsAmounts"
+                     android:background="@android:color/transparent"
+                     android:layout_centerHorizontal="true"
+                     android:onClick="bagOfBoostsClick"
+                     />
+
+        <ImageButton android:id="@+id/boostsBucketOBoosts"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:src="@drawable/buttonbucketoboosts"
+                     android:layout_below="@id/boostsBagOBoosts"
+                     android:layout_alignLeft="@id/boostsBagOBoosts"
+                     android:background="@android:color/transparent"
+                     android:onClick="bucketOfBoostsClick"
+                     />
+
+        <ImageButton android:id="@+id/boostsBarrelOBoosts"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:src="@drawable/buttonbarreloboosts"
+                     android:layout_below="@id/boostsBucketOBoosts"
+                     android:layout_alignLeft="@id/boostsBagOBoosts"
+                     android:background="@android:color/transparent"
+                     android:onClick="barrelOfBoostsClick"
+                     />
+
+        <ImageButton android:id="@+id/boostsRateApp"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:src="@drawable/buttonrateapp"
+                     android:layout_below="@id/boostsBarrelOBoosts"
+                     android:layout_alignLeft="@id/boostsBagOBoosts"
+                     android:background="@android:color/transparent"
+                     android:layout_marginTop="10dp"
+                     android:onClick="rateAppClick"
+                     android:layout_marginBottom="15dp"
+                     />
+    </RelativeLayout>
+
+</ScrollView>

@@ -120,10 +120,6 @@ public class BillingService extends Service implements ServiceConnection {
             mService = null;
         }
 
-        /**
-         * The derived class must implement this method.
-         * @throws RemoteException
-         */
         abstract protected long run() throws RemoteException;
 
         /**

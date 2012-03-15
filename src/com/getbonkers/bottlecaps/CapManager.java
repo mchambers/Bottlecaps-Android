@@ -146,9 +146,6 @@ public class CapManager implements CapManagerLoadingDelegate {
         private void downloadCapSetAssets(long setID)
         {
             Log.d("CapLoader", "Downloading cap set "+setID);
-            // check to see if there's enough space on the phone
-            // if not, check if there's enough space on the SD card
-            // if not, show an error to the user and abort.
 
             requestsOutstanding++;
 
@@ -813,7 +810,7 @@ public class CapManager implements CapManagerLoadingDelegate {
         int numTimeBoosts=p.numberOfBoostsForType(Player.PLAYER_BOOST_TYPE_MORETIME);
         int numNitro=p.numberOfBoostsForType(Player.PLAYER_BOOST_TYPE_NITRO);
         int numJoker=p.numberOfBoostsForType(Player.PLAYER_BOOST_TYPE_JOKER);
-        
+
         for(int i=0; i<numFrenzyBoosts; i++)
         {
             // add frenzies

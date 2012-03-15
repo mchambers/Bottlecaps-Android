@@ -7,12 +7,14 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.AssetFileDescriptor;
 import android.graphics.*;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.ArcShape;
 import android.graphics.drawable.shapes.OvalShape;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
@@ -24,6 +26,8 @@ import android.util.Log;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import java.io.FileDescriptor;
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -394,22 +398,67 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
             });
         }
 
+        private MediaPlayer mp;
         private SoundPool soundPool;
         private HashMap<Integer, Integer> soundPoolMap;
 
         public static final int SOUND_GOOD = 1;
         public static final int SOUND_BAD = 2;
         public static final int SOUND_TAP = 3;
+        public static final int SOUND_MUSIC = 4;
 
-        private void initSounds() {
-             soundPool = new SoundPool(4, AudioManager.STREAM_MUSIC, 100);
-             soundPoolMap = new HashMap<Integer, Integer>();
-             soundPoolMap.put(SOUND_GOOD, soundPool.load(getContext(), R.raw.good, 1));
-            soundPoolMap.put(SOUND_BAD, soundPool.load(getContext(), R.raw.bad, 1));
-            soundPoolMap.put(SOUND_TAP, soundPool.load(getContext(), R.raw.click, 1));
+        private void initSounds()
+        {
+            soundPool = new SoundPool(4, AudioManager.STREAM_NOTIFICATION, 100);
+            soundPoolMap = new HashMap<Integer, Integer>();
+            soundPoolMap.put(SOUND_GOOD, soundPool.load(getContext(), R.raw.good, 2));
+            soundPoolMap.put(SOUND_BAD, soundPool.load(getContext(), R.raw.bad, 2));
+            soundPoolMap.put(SOUND_TAP, soundPool.load(getContext(), R.raw.click, 2));
+            //soundPoolMap.put(SOUND_MUSIC, soundPool.load(getContext(), R.raw.bottlecaps, 1));
+            
+            //soundPool.setLoop(soundPoolMap.get(SOUND_MUSIC), -1);
         }
 
-        public void playSound(int sound) {
+        private void initMusic()
+        {
+           mp=new MediaPlayer();
+
+            AssetFileDescriptor yaayyyySong;
+
+            try {
+                yaayyyySong=getAssets().openFd("bottlecaps.mp3");
+                mp.setDataSource(yaayyyySong.getFileDescriptor(), yaayyyySong.getStartOffset(), yaayyyySong.getLength());
+                mp.prepare();
+                mp.setLooping(true);
+            } catch(IOException e)
+            {
+                Log.d("GameBoardActivity", "Sadface, couldn't initialize the in-game music");
+                e.printStackTrace();
+                mp=null;
+            }
+
+        }
+        
+        public void startMusic()
+        {
+            if(mp!=null)
+                mp.start();
+        }
+        
+        public void stopMusic()
+        {
+            if(mp!=null)
+                mp.stop();
+        }
+        
+        public void pauseMusic()
+        {
+            if(mp!=null)
+                mp.pause();
+        }
+
+        public void playSound(int sound)
+        {
             /* Updated: The next 4 lines calculate the current volume in a scale of 0.0 to 1.0 */
             AudioManager mgr = (AudioManager)getContext().getSystemService(Context.AUDIO_SERVICE);
             float streamVolumeCurrent = mgr.getStreamVolume(AudioManager.STREAM_MUSIC);
@@ -545,6 +594,7 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
 
                                     deltaScore=(int)(Math.pow(currentCombo.size(), 2)+Math.pow(currentCombo.get(0).cap.rarityClass, 2) * currentMomentum * (tweakLevel/2));
                                     currentMomentum+=1/Math.log10(deltaScore)*8;
+
                                     highestMomentum=Math.max(currentMomentum, highestMomentum);
                                     currentScore+=deltaScore;
 
@@ -620,6 +670,7 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
 
         public void surfaceCreated(SurfaceHolder holder) {
             this.initSounds();
+            this.initMusic();
 
             // set up the static paints
             text.setColor(Color.BLACK);
@@ -668,6 +719,8 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
             timerBlue.setBounds(timerRect);
 
             scorePosition=(float)(40*scaleFactor);
+
+            startMusic();
 
             _thread.setRunning(true);
             _thread.start();
@@ -931,6 +984,24 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
             //canvas.drawText(String.valueOf(multiplier)+"X", 50, 50, text);
             //canvas.drawText(String.valueOf(multiplier)+"X", 50, 50, textStroke);
         }
+    }
+
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+
+        if(board!=null)
+            board.pauseMusic();
+    }
+    
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+
+        if(board!=null)
+            board.startMusic();
     }
 
     /** Called when the activity is first created. */

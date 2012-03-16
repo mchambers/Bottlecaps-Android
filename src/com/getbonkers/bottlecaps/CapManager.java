@@ -16,6 +16,8 @@ import org.json.JSONObject;
 
 import java.io.*;
 import java.lang.reflect.Array;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.sql.Time;
 import java.util.*;
 import java.util.zip.ZipEntry;
@@ -50,7 +52,7 @@ public class CapManager implements CapManagerLoadingDelegate {
         public final Stack<CapDownloadManagerQueueItem> queue=new Stack<CapDownloadManagerQueueItem>();
         public CapManagerLoadingDelegate delegate;
 
-        public CapDownloadManager(CapManagerLoadingDelegate dg) {
+        public  CapDownloadManager(CapManagerLoadingDelegate dg) {
             delegate=dg;
         }
 
@@ -64,7 +66,8 @@ public class CapManager implements CapManagerLoadingDelegate {
                     zipF=new ZipInputStream(_context.getAssets().open(setID + ".zip"));
                 else
                 {
-                    zipF=new ZipInputStream(new FileInputStream(Environment.getDownloadCacheDirectory().getPath()+"/"+setID+".zip"));
+                    //zipF=new ZipInputStream(new FileInputStream(Environment.getDownloadCacheDirectory().getPath()+"/"+setID+".zip"));
+                    zipF=new ZipInputStream(new URL("http://data.getbonkers.com/bottlecaps/zips/"+setID+".zip").openConnection().getInputStream());
                 }
 
                 ZipEntry entry;
@@ -159,6 +162,24 @@ public class CapManager implements CapManagerLoadingDelegate {
             else
             {
                 // download it from the server.
+                       /*
+                URL url=new URL("");
+
+                HttpURLConnection urlConn=(HttpURLConnection)url.openConnection();
+                
+                try {
+                    ZipInputStream in=new ZipInputStream(urlConn.getInputStream());
+
+
+                    
+                } catch(Exception e)
+                {
+
+                }
+                finally {
+                    urlConn.disconnect();
+                }
+                    */
                 requestsOutstanding--;
             }
 
@@ -244,8 +265,14 @@ public class CapManager implements CapManagerLoadingDelegate {
 
     public class Boost extends Cap {
         public long timeRemaining;
+        public long interval;
+        public long intervalTimer;
 
         public void performBoostEffects(GameBoardActivity.GameBoard board)
+        {
+        }
+        
+        public void performExpirationEffect(GameBoard board)
         {
         }
 
@@ -266,7 +293,6 @@ public class CapManager implements CapManagerLoadingDelegate {
         public void putCapInPlay(Context context, boolean lowMemoryMode)
         {
             this.resourceId=context.getResources().getIdentifier("boostjoker", "drawable", "com.getbonkers.bottlecaps");
-            this.index=0;
             super.putCapInPlay(context, lowMemoryMode);
         }
 
@@ -285,7 +311,16 @@ public class CapManager implements CapManagerLoadingDelegate {
         @Override
         public void putCapInPlay(Context context, boolean lowMemoryMode)
         {
+            this.resourceId=context.getResources().getIdentifier("boostfreeze", "drawable", "com.getbonkers.bottlecaps");
+            timeRemaining=5000;
+            interval=500;
+            super.putCapInPlay(context, lowMemoryMode);
+        }
 
+        @Override
+        public void performExpirationEffect(GameBoard board)
+        {
+            board.capManager.comboCaps.clear();
         }
 
         @Override
@@ -310,7 +345,6 @@ public class CapManager implements CapManagerLoadingDelegate {
         public void putCapInPlay(Context context, boolean lowMemoryMode)
         {
             this.resourceId=context.getResources().getIdentifier("boostnitro", "drawable", "com.getbonkers.bottlecaps");
-            this.index=0;
             super.putCapInPlay(context, lowMemoryMode);
         }
 
@@ -330,7 +364,6 @@ public class CapManager implements CapManagerLoadingDelegate {
         public void putCapInPlay(Context context, boolean lowMemoryMode)
         {
             this.resourceId=context.getResources().getIdentifier("boostincreasetime", "drawable", "com.getbonkers.bottlecaps");
-            //this.index=0;
             super.putCapInPlay(context, lowMemoryMode);
         }
 

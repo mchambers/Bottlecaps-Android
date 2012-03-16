@@ -29,10 +29,7 @@ import android.widget.Toast;
 import java.io.FileDescriptor;
 import java.io.IOException;
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Random;
-import java.util.Stack;
+import java.util.*;
 
 public class GameBoardActivity extends Activity implements CapManager.CapManagerDelegate
 {
@@ -304,7 +301,9 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
         private ArrayList<GamePiece> gameEffects;
         private final ArrayList<GamePiece> currentCombo=new ArrayList<GamePiece>();
         private final ArrayList<CapManager.Cap> capsCollected=new ArrayList<CapManager.Cap>();
-
+        private CapManager.Cap currentComboType;
+        private ArrayList<CapManager.Boost> boostsInEffect=new ArrayList<CapManager.Boost>();
+        
         private int boardSize;
         private int itemsPerRow;
         private int pieceWidth;
@@ -564,10 +563,14 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
                     playSound(SOUND_TAP);
                     gamePieces.get(pieceIndex).setTappedState();
 
-                    if(gamePieces.get(pieceIndex).cap instanceof CapManager.Boost)
+                    if((gamePieces.get(pieceIndex).cap instanceof CapManager.Boost) && gamePieces.get(pieceIndex).cap.index!=Player.PLAYER_BOOST_TYPE_JOKER)
                     {
                         //Log.d("GameBoard", "Boost tapped");
-                        ((CapManager.Boost)gamePieces.get(pieceIndex).cap).performBoostEffects(this);
+                        
+                        boostsInEffect.add((CapManager.Boost)gamePieces.get(pieceIndex).cap);
+                        
+                        //((CapManager.Boost)gamePieces.get(pieceIndex).cap).performBoostEffects(this);
+
                         capManager.removeBoostFromAvailability((CapManager.Boost)gamePieces.get(pieceIndex).cap);
                         gamePieces.get(pieceIndex).setTerminalFadingState();
                     }
@@ -600,7 +603,7 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
 
                                     highestComboScore=Math.max(highestComboScore, deltaScore);
 
-                                    capsCollected.add(currentCombo.get(0).cap);
+                                    capsCollected.add(currentComboType);
 
                                     //playSound(SOUND_GOOD);
                                     //Log.d("GameBoard", "Score up by "+deltaScore+" (rarity "+currentCombo.get(0).cap.rarityClass+"), New score: "+currentScore+" at momentum "+currentMomentum);
@@ -615,10 +618,13 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
 
                                 currentCombo.clear();
                                 currentCombo.add(gamePieces.get(pieceIndex));
+                                currentComboType=gamePieces.get(pieceIndex).cap;
                             }
                             else
                             {
                                 currentCombo.add(gamePieces.get(pieceIndex));
+
+                                currentComboType=gamePieces.get(pieceIndex).cap;
 
                                 for(int i=0; i<currentCombo.size(); i++)
                                     currentCombo.get(i).remainingLife+=1000;
@@ -823,6 +829,42 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
             {
                 capManager.prepNextCombo(currentMomentum);
                 gameTimers[GAME_TIMER_COMBO]=GAME_COMBO_DELAY;//timerIntervals[GAME_TIMER_COMBO];
+            }
+
+            /*
+            Here's how the boosts thing works:
+
+                    Most boosts are one-and-done.
+                    Their effect fires, their timers are all zero, they get removed.
+
+                    Some boosts have lifespans, of say 5 seconds.
+                    They also have heartbeat timers of say half a second.
+                    In that case, every half a second, the boost effects will be performed.
+
+                    When a boost "in effect" leaves the game, it has a last gasp, the
+                    "boost expiration effect," so it can do any housekeeping. A boost could
+                    generate another of itself, clear the caps buffer, award more points,
+                    etc.
+             */
+
+            // run the "boosts in effect" queue.
+            for(Iterator it=boostsInEffect.iterator(); it.hasNext() ;)
+            {
+                CapManager.Boost boost=(CapManager.Boost)it.next();
+                boost.timeRemaining-=deltaTick;          // decrement the lifecycle timer...
+                boost.intervalTimer-=deltaTick;          // ...and the heartbeat timer.
+                
+                if(boost.intervalTimer<=0)               // if this boost is due to run:
+                {
+                    boost.performBoostEffects(this);     // perform the boost effect.
+                    boost.intervalTimer=boost.interval;  // reset the interval timer.
+                }
+
+                if(boost.timeRemaining<=0)  // if this boost has reached end-of-life
+                {
+                    boost.performExpirationEffect(this);   // one last gasp, if applicable.
+                    it.remove();                           // remove it from the array.
+                }
             }
 
             for(int i=0; i<gamePieces.size(); i++)

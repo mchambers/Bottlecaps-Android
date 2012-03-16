@@ -815,7 +815,7 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
 
             if(gameTimers[GAME_TIMER_BOOST]<=0)
             {
-                capManager.prepNextBoost();
+                capManager.prepNextBoost(this);
                 gameTimers[GAME_TIMER_BOOST]=(Math.max(rand.nextInt(11)+3, 11)) * 1000;
             }
 

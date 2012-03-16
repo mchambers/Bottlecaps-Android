@@ -177,13 +177,20 @@ public class Player {
         validateFacebookConnection();
     }
 
+    public void spendBoost(int type)
+    {
+        SharedPreferences.Editor edit=mPrefs.edit();
+        edit.putInt(PLAYER_BOOST_TYPE_KEYS[type], numberOfBoostsForType(type)-1);
+        edit.commit();
+    }
+
     public void addBoosts(int amount, int type)
     {
         SharedPreferences.Editor edit=mPrefs.edit();
 
         int newAmount=0;
 
-        if(type==-1)
+        if(type==PLAYER_BOOST_TYPE_ALL)
         {
             for(int i=0; i<PLAYER_BOOST_TYPE_KEYS.length; i++)
             {

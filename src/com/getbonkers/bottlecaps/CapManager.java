@@ -24,6 +24,8 @@ import java.util.zip.ZipInputStream;
 
 import org.apache.commons.io.IOUtils;
 
+import com.getbonkers.bottlecaps.GameBoardActivity.GameBoard;
+
 /*
 
 Add time
@@ -241,6 +243,8 @@ public class CapManager implements CapManagerLoadingDelegate {
     }
 
     public class Boost extends Cap {
+        public long timeRemaining;
+
         public void performBoostEffects(GameBoardActivity.GameBoard board)
         {
         }
@@ -249,9 +253,15 @@ public class CapManager implements CapManagerLoadingDelegate {
         {
             return 0;
         }
+
     }
 
     public class JokerBoost extends Boost {
+        public JokerBoost()
+        {
+            this.index=Player.PLAYER_BOOST_TYPE_JOKER;
+        }
+
         @Override
         public void putCapInPlay(Context context, boolean lowMemoryMode)
         {
@@ -266,21 +276,35 @@ public class CapManager implements CapManagerLoadingDelegate {
         }
     }
 
-    public class FreezeBoost extends Boost {
-
+    public class FrenzyBoost extends Boost {
+        public FrenzyBoost()
+        {
+            this.index=Player.PLAYER_BOOST_TYPE_FRENZY;
+        }
+        
         @Override
         public void putCapInPlay(Context context, boolean lowMemoryMode)
         {
 
         }
 
+        @Override
+        public long getStandardDuration()
+        {
+            return 5000;
+        }
+
         public void performBoostEffects(GameBoardActivity.GameBoard board)
         {
-
+            prepNextCombo(board.currentMomentum);
         }
     }
 
     public class MomentumBoost extends Boost {
+        public MomentumBoost()
+        {
+            this.index=Player.PLAYER_BOOST_TYPE_NITRO;
+        }           
 
         @Override
         public void putCapInPlay(Context context, boolean lowMemoryMode)
@@ -297,11 +321,16 @@ public class CapManager implements CapManagerLoadingDelegate {
     }
 
     public class TimeBoost extends Boost {
+        public TimeBoost()
+        {
+            this.index=Player.PLAYER_BOOST_TYPE_MORETIME;
+        }
+        
         @Override
         public void putCapInPlay(Context context, boolean lowMemoryMode)
         {
             this.resourceId=context.getResources().getIdentifier("boostincreasetime", "drawable", "com.getbonkers.bottlecaps");
-            this.index=0;
+            //this.index=0;
             super.putCapInPlay(context, lowMemoryMode);
         }
 
@@ -311,6 +340,7 @@ public class CapManager implements CapManagerLoadingDelegate {
         }
     }
 
+    /*
     public class HighlightCombosBoost extends Boost {
         @Override
         public void putCapInPlay(Context context, boolean lowMemoryMode)
@@ -330,7 +360,7 @@ public class CapManager implements CapManagerLoadingDelegate {
                     board.gamePieces.get(i).setHighlightedState();
             }
         }
-    }
+    }*/
 
     public class Cap {
         public String filePath;
@@ -371,7 +401,7 @@ public class CapManager implements CapManagerLoadingDelegate {
                 if(lowMemoryMode)
                     options.inSampleSize=2;
 
-                if(this.index==0)
+                if(this.resourceId!=0)
                 {
                     this.image=new BitmapDrawable(context.getResources(), BitmapFactory.decodeResource(context.getResources(), this.resourceId, options));
                 }
@@ -425,6 +455,7 @@ public class CapManager implements CapManagerLoadingDelegate {
         }
     }
 
+    /*
     public class Set {
         int id;
         ArrayList<Cap> capsInSet;
@@ -433,7 +464,7 @@ public class CapManager implements CapManagerLoadingDelegate {
         {
             capsInSet=new ArrayList<Cap>();
         }
-    }
+    }   */
 
     private boolean capManagerInit=false;
     Context _context;
@@ -441,7 +472,7 @@ public class CapManager implements CapManagerLoadingDelegate {
     private Stack<Cap> capsBuffer;
     private Stack<Boost> boostsBuffer;
     private Stack<Cap> comboCaps;
-    private ArrayList<Set> sets;
+    //private ArrayList<Set> sets;
     private ArrayList<Cap> allCaps;
     private ArrayList<Boost> boostsAvailable;
     
@@ -451,6 +482,9 @@ public class CapManager implements CapManagerLoadingDelegate {
     private int level;
 
     BottlecapsDatabaseAdapter adapter;
+    Player p;
+
+    Random rand=new Random();
 
     private Cap currentMostPlayedCap;
 
@@ -479,6 +513,8 @@ public class CapManager implements CapManagerLoadingDelegate {
 
         downloadManager=new CapDownloadManager(this);
         ensureCapSetAssetsExist();
+
+        p=new Player(_context);
     }
 
     public void onCapSetLoadComplete()
@@ -750,18 +786,110 @@ public class CapManager implements CapManagerLoadingDelegate {
         Collections.sort(allCaps, new CapMaxProbabilityComparator());
     }     */
 
-    public void prepNextBoost()
+    private final int BOOST_PROB_NONE=0;
+    private final int BOOST_PROB_BASE=10;
+    private final int BOOST_PROB_HALF=5;
+    private final int BOOST_PROB_DOUBLE=20;
+    private final int BOOST_PROB_NEG3X=3;
+
+    HashMap<Integer, Integer> boostAmounts=new HashMap<Integer, Integer>();
+    int[] boostPicker=new int[BOOST_PROB_DOUBLE*4];
+    HashMap<Integer, Integer> boostProb=new HashMap<Integer, Integer>();
+
+    public void prepNextBoost(GameBoard board)
     {
-        if(boostsAvailable.size()>0)
+        int probSum=0;
+
+        int i=0;
+        int j;
+        int boostTypeToPush;
+        Boost theBoost;
+
+        // Set up our default probabilities for each of these boosts
+        boostProb.put(Player.PLAYER_BOOST_TYPE_NITRO, BOOST_PROB_BASE);
+        boostProb.put(Player.PLAYER_BOOST_TYPE_JOKER, BOOST_PROB_BASE);
+        boostProb.put(Player.PLAYER_BOOST_TYPE_FRENZY, BOOST_PROB_NONE);
+        boostProb.put(Player.PLAYER_BOOST_TYPE_MORETIME, BOOST_PROB_HALF);
+
+        // Add up the current probability total
+        probSum+=BOOST_PROB_BASE;
+        probSum+=BOOST_PROB_BASE;
+        probSum+=BOOST_PROB_HALF;
+
+        //  NITRO
+        // 1x if momentum is <=2x, -3x if momentum > 2x, -3x in last 10 seconds
+        if(board.currentMomentum>29 || board.gameTimers[GameBoard.GAME_TIMER_REMAINING]<(10*1000))
         {
-            Random rand=new Random();
-            boostsBuffer.push(boostsAvailable.get(rand.nextInt(boostsAvailable.size())));
+            probSum-=boostProb.put(Player.PLAYER_BOOST_TYPE_NITRO, BOOST_PROB_NEG3X);
+            probSum+=BOOST_PROB_NEG3X;
         }
+
+        // FRENZY
+        // -2x if under 5x
+        if(board.currentMomentum<49)
+        {
+            probSum-=boostProb.put(Player.PLAYER_BOOST_TYPE_FRENZY, BOOST_PROB_HALF);
+            probSum+=BOOST_PROB_HALF;
+        }
+
+        // TIME
+        // -2x, 2x if above 4x in last 10 seconds
+        if(board.currentMomentum>39 && board.gameTimers[GameBoard.GAME_TIMER_REMAINING]<(10*1000))
+        {
+            probSum-=boostProb.put(Player.PLAYER_BOOST_TYPE_MORETIME, BOOST_PROB_DOUBLE);
+            probSum+=BOOST_PROB_DOUBLE;
+        }
+
+        // do the good shit
+        for (int key : boostProb.keySet()) {
+            if(p.numberOfBoostsForType(key)<=0)
+                probSum-=boostProb.put(key, BOOST_PROB_NONE);
+
+            for(j=0; j<boostProb.get(key); j++)
+                boostPicker[i++]=key;
+        }
+
+        // pick a boost and build it
+        if(probSum>0)
+        {
+            try {
+                boostTypeToPush=boostPicker[rand.nextInt(probSum)];
+
+                theBoost=null;
+
+                switch (boostTypeToPush)
+                {
+                    case Player.PLAYER_BOOST_TYPE_FRENZY:
+                        theBoost=new FrenzyBoost();
+                        break;
+                    case Player.PLAYER_BOOST_TYPE_JOKER:
+                        theBoost=new JokerBoost();
+                        break;
+                    case Player.PLAYER_BOOST_TYPE_MORETIME:
+                        theBoost=new TimeBoost();
+                        break;
+                    case Player.PLAYER_BOOST_TYPE_NITRO:
+                        theBoost=new MomentumBoost();
+                        break;
+                }
+            } catch(Exception e)
+            {
+                e.printStackTrace();
+                theBoost=null;
+            }
+        }
+        else
+            theBoost=null;
+
+        if(theBoost!=null)
+            boostsBuffer.push(theBoost);
+        else
+            Log.d("CapManager", "No boost was available to push");
     }
 
     public void removeBoostFromAvailability(Boost boost)
     {
-        boostsAvailable.remove(boost);
+        p.spendBoost(boost.index);
     }
 
     public synchronized void prepNextCombo(double momentum)
@@ -802,6 +930,8 @@ public class CapManager implements CapManagerLoadingDelegate {
 
     public void fillBoostsBuffer()
     {
+
+        /*
         boostsAvailable=new ArrayList<Boost>();
         
         Player p=new Player(_context);
@@ -830,7 +960,9 @@ public class CapManager implements CapManagerLoadingDelegate {
         {
             boostsAvailable.add(new JokerBoost());
         }
+        */
 
+        //YEEAAAHHHHHH
     }
 
     public void fillCapsBuffer()

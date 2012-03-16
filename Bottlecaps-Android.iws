@@ -17,10 +17,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="992850b8-5c72-4ab5-bba6-f85bfa5e4131" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Bottlecaps-Android.iws" afterPath="$PROJECT_DIR$/Bottlecaps-Android.iws" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/CapManager.java" afterPath="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/CapManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/GameBoardActivity.java" afterPath="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/GameBoardActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/Player.java" afterPath="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/Player.java" />
     </list>
     <ignored path="Bottlecaps-Android.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -146,7 +143,7 @@
       <file leaf-file-name="CapManager.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/getbonkers/bottlecaps/CapManager.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="850" column="8" selection-start="26913" selection-end="26913" vertical-scroll-proportion="-1.5920717">
+            <state line="834" column="62" selection-start="26332" selection-end="26332" vertical-scroll-proportion="0.59462917">
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#24923#24941#0" expanded="true" />
@@ -841,7 +838,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/getbonkers/bottlecaps/CapManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="850" column="8" selection-start="26913" selection-end="26913" vertical-scroll-proportion="-1.5920717">
+        <state line="834" column="62" selection-start="26332" selection-end="26332" vertical-scroll-proportion="0.59462917">
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#24923#24941#0" expanded="true" />

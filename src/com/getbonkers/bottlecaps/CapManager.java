@@ -840,24 +840,23 @@ public class CapManager implements CapManagerLoadingDelegate {
             probSum+=BOOST_PROB_DOUBLE;
         }
 
-        // do the good shit
         for (int key : boostProb.keySet()) {
-            if(p.numberOfBoostsForType(key)<=0)
-                probSum-=boostProb.put(key, BOOST_PROB_NONE);
+            if(p.numberOfBoostsForType(key)<=0)                // if our player doesn't own any of these boosts,
+                probSum-=boostProb.put(key, BOOST_PROB_NONE);  // reduce the probability to zero.
 
-            for(j=0; j<boostProb.get(key); j++)
+            for(j=0; j<boostProb.get(key); j++)                // explode the boost probability into the array.
                 boostPicker[i++]=key;
         }
 
-        // pick a boost and build it
+        // if we've got any chance at finding one, pick a boost and build it
         if(probSum>0)
         {
             try {
-                boostTypeToPush=boostPicker[rand.nextInt(probSum)];
-
+                boostTypeToPush=boostPicker[rand.nextInt(probSum)]; // pick a random number and index into the array
+                                                                    // to find which boost we're gonna use.
                 theBoost=null;
 
-                switch (boostTypeToPush)
+                switch (boostTypeToPush)                            // in lieu of a Boost factory
                 {
                     case Player.PLAYER_BOOST_TYPE_FRENZY:
                         theBoost=new FrenzyBoost();
@@ -881,6 +880,7 @@ public class CapManager implements CapManagerLoadingDelegate {
         else
             theBoost=null;
 
+        // if we didn't have any eligible boosts, don't act on the boost buffer
         if(theBoost!=null)
             boostsBuffer.push(theBoost);
         else

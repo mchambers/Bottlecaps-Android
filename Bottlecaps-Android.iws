@@ -17,8 +17,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="992850b8-5c72-4ab5-bba6-f85bfa5e4131" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Bottlecaps-Android.iws" afterPath="$PROJECT_DIR$/Bottlecaps-Android.iws" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/CapManager.java" afterPath="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/CapManager.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/GameBoardActivity.java" afterPath="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/GameBoardActivity.java" />
     </list>
     <ignored path="Bottlecaps-Android.iws" />
@@ -149,7 +147,7 @@
       <file leaf-file-name="Player.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/getbonkers/bottlecaps/Player.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="178" column="4" selection-start="5569" selection-end="5569" vertical-scroll-proportion="0.0">
+            <state line="209" column="4" selection-start="6446" selection-end="6446" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -158,7 +156,7 @@
       <file leaf-file-name="GameBoardActivity.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/getbonkers/bottlecaps/GameBoardActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="785" column="8" selection-start="29224" selection-end="29224" vertical-scroll-proportion="-1.1828644">
+            <state line="49" column="22" selection-start="1424" selection-end="1424" vertical-scroll-proportion="0.3836317">
               <folding>
                 <element signature="e#9774#9785#0" expanded="true" />
                 <element signature="e#9864#9880#0" expanded="true" />
@@ -222,8 +220,8 @@
     <treeState />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="74" />
-    <option name="y" value="47" />
+    <option name="x" value="40" />
+    <option name="y" value="62" />
     <option name="width" value="1592" />
     <option name="height" value="963" />
   </component>
@@ -688,7 +686,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="74" y="47" width="1592" height="963" extended-state="0" />
+    <frame x="40" y="62" width="1592" height="963" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -832,11 +830,6 @@
         <state line="43" column="4" selection-start="2729" selection-end="2729" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/getbonkers/bottlecaps/Player.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="178" column="4" selection-start="5569" selection-end="5569" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/getbonkers/bottlecaps/Security.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="219" column="3" selection-start="9254" selection-end="9254" vertical-scroll-proportion="0.0" />
@@ -853,9 +846,16 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/getbonkers/bottlecaps/Player.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="209" column="4" selection-start="6446" selection-end="6446" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/getbonkers/bottlecaps/GameBoardActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="785" column="8" selection-start="29224" selection-end="29224" vertical-scroll-proportion="-1.1828644">
+        <state line="49" column="22" selection-start="1424" selection-end="1424" vertical-scroll-proportion="0.3836317">
           <folding>
             <element signature="e#9774#9785#0" expanded="true" />
             <element signature="e#9864#9880#0" expanded="true" />

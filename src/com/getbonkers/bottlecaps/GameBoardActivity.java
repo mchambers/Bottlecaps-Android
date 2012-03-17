@@ -703,7 +703,7 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
             double scaleFactor=metrics.density;
 
             timerRect=new Rect(display.getWidth()-(int)(60*scaleFactor), (int)(10*scaleFactor), display.getWidth()-(int)(10*scaleFactor), (int)(60*scaleFactor));
-            multGfxRect=new Rect((int)(10*scaleFactor), (int)(10*scaleFactor), (int)((10+55)*scaleFactor), (int)((10+49)*scaleFactor));
+            multGfxRect=new Rect((int)(10*scaleFactor), (int)(10*scaleFactor), (int)((10+55)*scaleFactor), (int)((10+55)*scaleFactor));
             boardMarginHeight*=scaleFactor;
 
             double totalVerticalPixelsUsed=(pieceWidth*((boardSize/itemsPerRow)))+boardMarginHeight;
@@ -813,6 +813,7 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
 
                 boolean retry=true;
                 _thread.setRunning(false);
+                _thread.stop();
 
                 gameTimers[GAME_TIMER_REMAINING]=999999;
 

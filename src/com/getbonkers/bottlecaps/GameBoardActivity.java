@@ -16,6 +16,7 @@ import android.graphics.drawable.shapes.OvalShape;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
+import android.text.style.EasyEditSpan;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.os.Bundle;
@@ -25,6 +26,14 @@ import android.view.MotionEvent.PointerCoords;
 import android.util.Log;
 import android.widget.FrameLayout;
 import android.widget.Toast;
+import org.pushingpixels.trident.Timeline;
+import org.pushingpixels.trident.TimelinePropertyBuilder;
+import org.pushingpixels.trident.callback.TimelineCallback;
+import org.pushingpixels.trident.ease.Linear;
+import org.pushingpixels.trident.ease.Spline;
+import org.pushingpixels.trident.ease.TimelineEase;
+import org.pushingpixels.trident.interpolator.CorePropertyInterpolators;
+import org.pushingpixels.trident.interpolator.PropertyInterpolator;
 
 import java.io.FileDescriptor;
 import java.io.IOException;
@@ -211,6 +220,10 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
 
         public static final int GAME_DIFFICULTY_EASY=0;
         public static final int GAME_DIFFICULTY_NORMAL=1;
+        
+        public static final int GAME_STATE_NORMAL=0;
+        public static final int GAME_STATE_PAUSED=1;
+        public static final int GAME_STATE_STARTING=2;
 
         public static final int GAME_LENGTH=60000;
         public static final int GAME_COMBO_DELAY=2000;
@@ -220,17 +233,200 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
         public static final int GAME_TIMER_BOOST=2;
         public static final int GAME_TIMER_BOMB=3;
         public static final int GAME_TIMER_PAUSE=4;
-
-        class GameOngoingEffect
+        
+        class GameOverlayAnimation
         {
-            public double remainingLife;
-            public int state;
+            public long animationLength;
 
-            public CapManager.Boost boost;
+            private Display display;
 
-            public GameOngoingEffect()
+            public Timeline timeline;
+
+            public boolean done;
+            
+            protected volatile int top;
+            protected volatile int left;
+            protected volatile int bottom;
+            protected volatile int right;
+
+            protected int width;
+            protected int height;
+
+            public float alpha;
+            
+            private BitmapDrawable drawable;
+
+            protected TimelineCallback _cb;
+
+            protected void disableDefaultCallback()
             {
+                timeline.removeCallback(_cb);
+            }
 
+            public int getTop()
+            {
+                return top;
+            }
+            
+            public void setTop(int v)
+            {
+                top=v;
+            }
+            
+            public int getLeft()
+            {
+                return left;
+            }
+            
+            public void setLeft(int v)
+            {
+                left=v;
+            }
+            
+            public synchronized int getBottom()
+            {
+                return bottom;
+            }
+            
+            public void setBottom(int v)
+            {
+                bottom=v;
+            }
+
+            public int getRight()
+            {
+                return right;
+            }
+
+            public void setRight(int v)
+            {
+                right=v;
+            }
+
+            public GameOverlayAnimation()
+            {
+                display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+                timeline=new Timeline(this);
+
+                _cb=new TimelineCallback() {
+                    @Override
+                    public void onTimelineStateChanged(Timeline.TimelineState timelineState, Timeline.TimelineState timelineState1, float v, float v1) {
+                        if(timelineState == Timeline.TimelineState.DONE)
+                            done=true;
+                    }
+
+                    @Override
+                    public void onTimelinePulse(float v, float v1) {
+                        Log.d("GameOverlayAnimation", "updated top="+top);
+                        //To change body of implemented methods use File | Settings | File Templates.
+                    }
+                };
+
+                timeline.addCallback(_cb);
+            }
+
+            public void start()
+            {
+                timeline.setDuration(animationLength);
+                timeline.play();
+            }
+            
+            public void setBitmap(Bitmap bmp)
+            {
+                width=bmp.getWidth();
+                height=bmp.getHeight();
+
+                right=width;
+                left=0;
+
+                bottom=height;
+                top=0;
+
+                drawable=new BitmapDrawable(bmp);
+            }
+            
+            public void setTopLeftCorner(int t, int l)
+            {
+                top=t;
+                left=l;
+
+                bottom=t+height;
+                right=l+width;
+            }
+            
+            public void draw(Canvas canvas)
+            {
+                drawable.setBounds(new Rect(getLeft(), getTop(), getRight(), getTop()+height));
+                Log.d("GameOverlayAnimation", "Drawing at "+drawable.getBounds().toString());
+                drawable.draw(canvas);
+            }
+        }
+
+        class SlideUpFromBottomAnimation extends GameOverlayAnimation
+        {
+            PropertyInterpolator<Integer> intInterp=null;
+
+            private boolean runSecondStage;
+
+            public SlideUpFromBottomAnimation()
+            {
+                timeline.setEase(new Spline(0.9f));
+
+                CorePropertyInterpolators core=new CorePropertyInterpolators();
+                for(Iterator it=core.getPropertyInterpolators().iterator(); it.hasNext(); )
+                {
+                    PropertyInterpolator<?> interpolator=(PropertyInterpolator<?>)it.next();
+                    if(interpolator.getBasePropertyClass().equals(Integer.class))
+                    {
+                        intInterp=(PropertyInterpolator<Integer>)interpolator;
+                    }
+                }
+
+                this.disableDefaultCallback();
+
+                timeline.addCallback(new TimelineCallback() {
+                    @Override
+                    public void onTimelineStateChanged(Timeline.TimelineState timelineState, Timeline.TimelineState timelineState1, float v, float v1) {
+                        if(timelineState== Timeline.TimelineState.DONE)
+                        {
+                            if(!runSecondStage)
+                            {
+                                runSecondStage=true;
+                                done=false;
+                                timeline.resetDoneFlag();
+
+                                timeline.setInitialDelay(500);
+                                timeline.setDuration(animationLength/2);
+                                timeline.setEase(new Spline(0.5f));
+
+                                timeline.addPropertyToInterpolate(
+                                        Timeline.<Integer> property("top").on(SlideUpFromBottomAnimation.this).from(top).to(-height).interpolatedWith(intInterp));
+
+                                timeline.play();
+                            }
+                            else
+                                done=true;
+                        }
+                    }
+
+                    @Override
+                    public void onTimelinePulse(float v, float v1) {
+                        //To change body of implemented methods use File | Settings | File Templates.
+                    }
+                });
+            }
+
+            public void start()
+            {
+                timeline.setDuration(animationLength/2);
+
+                timeline.addPropertyToInterpolate(
+                        Timeline.<Integer> property("top").on(this).from(this.top).to(((this.top)/2)-(height/2)).interpolatedWith(intInterp));
+
+                //timeline.addPropertyToInterpolate(
+                  //      Timeline.<Integer> property("bottom").on(this).from(this.top).to((this.top-this.bottom)*2).interpolatedWith(intInterp));
+
+                super.start();
             }
         }
 
@@ -298,7 +494,6 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
 
         private BrainThread _thread;
         public ArrayList<GamePiece> gamePieces;
-        private ArrayList<GamePiece> gameEffects;
         private final ArrayList<GamePiece> currentCombo=new ArrayList<GamePiece>();
         private final ArrayList<CapManager.Cap> capsCollected=new ArrayList<CapManager.Cap>();
         private CapManager.Cap currentComboType;
@@ -329,6 +524,8 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
         private int[] multiplierResIds;
         private BitmapDrawable[] multiplierGfx;
         private BitmapDrawable capGlow;
+        
+        private ArrayList<GameOverlayAnimation> currentOverlays=new ArrayList<GameOverlayAnimation>();
 
         private float scorePosition;
 
@@ -526,6 +723,16 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
         public void togglePause()
         {
             gameIsPaused=!gameIsPaused;
+
+            try {
+                if(gameIsPaused)
+                    pauseMusic();
+                else
+                    startMusic();
+            } catch(Exception e)
+            {
+
+            }
         }
 
         private boolean handleTouch(float x, float y)
@@ -556,7 +763,14 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
             int pieceIndex=(int)whichRow*itemsPerRow;
             pieceIndex-=itemsPerRow-whichPiece;
             pieceIndex--;
-
+            
+            SlideUpFromBottomAnimation testAnim=new SlideUpFromBottomAnimation();
+            testAnim.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.captionfrenzy));
+            testAnim.setTopLeftCorner(display.getHeight(), testAnim.getLeft());
+            testAnim.animationLength=500;
+            currentOverlays.add(testAnim);
+            testAnim.start();
+            
             try {
                 if(pieceIndex<gamePieces.size() && !gamePieces.get(pieceIndex).terminalState)
                 {
@@ -634,7 +848,7 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
                 }  
             } catch(ArrayIndexOutOfBoundsException e)
             {
-                Log.d("GameBoard", "TOUCHED IN A NO NO PLACE");
+               // Log.d("GameBoard", "TOUCHED IN A NO NO PLACE");
             }
 
             return true;
@@ -813,7 +1027,7 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
 
                 boolean retry=true;
                 _thread.setRunning(false);
-                _thread.stop();
+//                _thread.stop();
 
                 gameTimers[GAME_TIMER_REMAINING]=999999;
 
@@ -866,6 +1080,13 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
                     boost.performExpirationEffect(this);   // one last gasp, if applicable.
                     it.remove();                           // remove it from the array.
                 }
+            }
+
+            for(Iterator it=currentOverlays.iterator(); it.hasNext() ;)
+            {
+                GameOverlayAnimation anim=(GameOverlayAnimation)it.next();
+                if(anim.done)
+                    it.remove();
             }
 
             for(int i=0; i<gamePieces.size(); i++)
@@ -932,6 +1153,7 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
 
         BitmapDrawable bg;
         BitmapDrawable multiplier;
+        BitmapDrawable cap;
 
         public void drawGameState(Canvas canvas)
         {
@@ -940,8 +1162,6 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
 
             bg.setBounds(new Rect(0, 0, display.getWidth(), display.getHeight()));
             bg.draw(canvas);
-
-            BitmapDrawable cap;//=new BitmapDrawable(getResources(), _scratch);
 
             tp.setColor(Color.GRAY);
             tp.setTextAlign(Paint.Align.LEFT);
@@ -966,7 +1186,7 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
             int curRow=0;
             int itemsThisRow=0;
             int i;
-
+            
             for(i=0; i<gamePieces.size(); i++)
             {
                 if(gamePieces.get(i).cap.isCurrentlyDrawable())
@@ -1026,6 +1246,11 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
             }
             //canvas.drawText(String.valueOf(multiplier)+"X", 50, 50, text);
             //canvas.drawText(String.valueOf(multiplier)+"X", 50, 50, textStroke);
+
+            for(int z=0; z<currentOverlays.size(); z++)
+            {
+                currentOverlays.get(z).draw(canvas);
+            }
         }
     }
 

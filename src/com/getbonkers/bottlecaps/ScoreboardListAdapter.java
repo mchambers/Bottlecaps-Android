@@ -56,8 +56,8 @@ public class ScoreboardListAdapter extends ArrayAdapter<JSONObject> {
         TextView playerRank=(TextView)rowView.findViewById(R.id.scoreboardItemRank);      
         SmartImageView playerAvatar=(SmartImageView)rowView.findViewById(R.id.scoreboardItemAvatar);
         
-        playerName.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/Coolvetica.ttf"));
-        playerScore.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/Coolvetica.ttf"));
+        //playerName.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/Coolvetica.ttf"));
+        //playerScore.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/Coolvetica.ttf"));
         playerRank.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/Coolvetica.ttf"));
 
         JSONObject item;

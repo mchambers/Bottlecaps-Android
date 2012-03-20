@@ -292,7 +292,7 @@ public class CapManager implements CapManagerLoadingDelegate {
         @Override
         public void putCapInPlay(Context context, boolean lowMemoryMode)
         {
-            this.resourceId=context.getResources().getIdentifier("boostjoker", "drawable", "com.getbonkers.bottlecaps");
+            this.resourceId=R.drawable.boostjoker; //context.getResources().getIdentifier("boostjoker", "drawable", "com.getbonkers.bottlecaps");
             super.putCapInPlay(context, lowMemoryMode);
         }
 
@@ -311,7 +311,7 @@ public class CapManager implements CapManagerLoadingDelegate {
         @Override
         public void putCapInPlay(Context context, boolean lowMemoryMode)
         {
-            this.resourceId=context.getResources().getIdentifier("boostfreeze", "drawable", "com.getbonkers.bottlecaps");
+            this.resourceId=R.drawable.boostfrenzy;//context.getResources().getIdentifier("boostfrenzy", "drawable", "com.getbonkers.bottlecaps");
             timeRemaining=5000;
             interval=500;
             super.putCapInPlay(context, lowMemoryMode);
@@ -344,7 +344,7 @@ public class CapManager implements CapManagerLoadingDelegate {
         @Override
         public void putCapInPlay(Context context, boolean lowMemoryMode)
         {
-            this.resourceId=context.getResources().getIdentifier("boostnitro", "drawable", "com.getbonkers.bottlecaps");
+            this.resourceId=R.drawable.boostnitro; //context.getResources().getIdentifier("boostnitro", "drawable", "com.getbonkers.bottlecaps");
             super.putCapInPlay(context, lowMemoryMode);
         }
 
@@ -363,7 +363,7 @@ public class CapManager implements CapManagerLoadingDelegate {
         @Override
         public void putCapInPlay(Context context, boolean lowMemoryMode)
         {
-            this.resourceId=context.getResources().getIdentifier("boostincreasetime", "drawable", "com.getbonkers.bottlecaps");
+            this.resourceId=R.drawable.boostincreasetime;//context.getResources().getIdentifier("boostincreasetime", "drawable", "com.getbonkers.bottlecaps");
             super.putCapInPlay(context, lowMemoryMode);
         }
 
@@ -507,7 +507,7 @@ public class CapManager implements CapManagerLoadingDelegate {
     private Stack<Cap> comboCaps;
     //private ArrayList<Set> sets;
     private ArrayList<Cap> allCaps;
-    private ArrayList<Boost> boostsAvailable;
+    //private ArrayList<Boost> boostsAvailable;
     
     private CapDownloadManager downloadManager;
     private int capSetsDownloading;
@@ -539,7 +539,7 @@ public class CapManager implements CapManagerLoadingDelegate {
 
         capsBuffer=new Stack<Cap>();
         comboCaps=new Stack<Cap>();
-        boostsAvailable=new ArrayList<Boost>();
+        //boostsAvailable=new ArrayList<Boost>();
         boostsBuffer=new Stack<Boost>();
 
         _delegate=delegate;

@@ -548,6 +548,7 @@ public class CapManager implements CapManagerLoadingDelegate {
         ensureCapSetAssetsExist();
 
         p=new Player(_context);
+        p.addBoosts(5, Player.PLAYER_BOOST_TYPE_ALL);
     }
 
     public void onCapSetLoadComplete()

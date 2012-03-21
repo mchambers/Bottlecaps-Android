@@ -357,7 +357,7 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
             public void draw(Canvas canvas)
             {
                 drawable.setBounds(new Rect(getLeft(), getTop(), getRight(), getTop()+height));
-                Log.d("GameOverlayAnimation", "Drawing at "+drawable.getBounds().toString());
+                //Log.d("GameOverlayAnimation", "Drawing at "+drawable.getBounds().toString());
                 drawable.draw(canvas);
             }
         }
@@ -395,7 +395,7 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
                                 done=false;
                                 timeline.resetDoneFlag();
 
-                                timeline.setInitialDelay(500);
+                                timeline.setInitialDelay(200);
                                 timeline.setDuration(animationLength/2);
                                 timeline.setEase(new Spline(0.5f));
 
@@ -411,7 +411,6 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
 
                     @Override
                     public void onTimelinePulse(float v, float v1) {
-                        //To change body of implemented methods use File | Settings | File Templates.
                     }
                 });
             }
@@ -628,8 +627,8 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
                 mp.setLooping(true);
             } catch(IOException e)
             {
-                Log.d("GameBoardActivity", "Sadface, couldn't initialize the in-game music");
-                e.printStackTrace();
+                //Log.d("GameBoardActivity", "Sadface, couldn't initialize the in-game music");
+                //e.printStackTrace();
                 mp=null;
             }
 
@@ -734,6 +733,35 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
 
             }
         }
+        
+        private void doBoostCue(int type)
+        {
+            SlideUpFromBottomAnimation boostAnim;
+
+            boostAnim=new SlideUpFromBottomAnimation();
+
+            switch(type)
+            {
+                case Player.PLAYER_BOOST_TYPE_FRENZY:
+                    boostAnim.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.captionfrenzy));
+                    break;
+                case Player.PLAYER_BOOST_TYPE_JOKER:
+                    boostAnim.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.captionjokers));
+                    break;
+                case Player.PLAYER_BOOST_TYPE_MORETIME:
+                    boostAnim.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.caption10sec));
+                    break;
+                case Player.PLAYER_BOOST_TYPE_NITRO:
+                    boostAnim.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.captionnitro));
+                    break;
+            }
+
+            boostAnim.setTopLeftCorner(display.getHeight(), (display.getWidth() / 2) - (boostAnim.getRight() / 2));
+            boostAnim.animationLength=200;
+
+            currentOverlays.add(boostAnim);
+            boostAnim.start();
+        }
 
         private boolean handleTouch(float x, float y)
         {
@@ -764,13 +792,6 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
             pieceIndex-=itemsPerRow-whichPiece;
             pieceIndex--;
             
-            SlideUpFromBottomAnimation testAnim=new SlideUpFromBottomAnimation();
-            testAnim.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.captionfrenzy));
-            testAnim.setTopLeftCorner(display.getHeight(), testAnim.getLeft());
-            testAnim.animationLength=500;
-            currentOverlays.add(testAnim);
-            testAnim.start();
-            
             try {
                 if(pieceIndex<gamePieces.size() && !gamePieces.get(pieceIndex).terminalState)
                 {
@@ -779,11 +800,10 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
 
                     if((gamePieces.get(pieceIndex).cap instanceof CapManager.Boost) && gamePieces.get(pieceIndex).cap.index!=Player.PLAYER_BOOST_TYPE_JOKER)
                     {
-                        //Log.d("GameBoard", "Boost tapped");
-                        
                         boostsInEffect.add((CapManager.Boost)gamePieces.get(pieceIndex).cap);
-                        
-                        //((CapManager.Boost)gamePieces.get(pieceIndex).cap).performBoostEffects(this);
+
+                        // audio and visual RAZZLE DAZZLE!
+                        doBoostCue(gamePieces.get(pieceIndex).cap.index);
 
                         capManager.removeBoostFromAvailability((CapManager.Boost)gamePieces.get(pieceIndex).cap);
                         gamePieces.get(pieceIndex).setTerminalFadingState();
@@ -792,7 +812,7 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
                     {
                         synchronized (currentCombo)
                         {
-                            if(currentCombo.isEmpty() || !currentCombo.get(0).cap.equals(gamePieces.get(pieceIndex).cap) /*currentCombo.get(0).cap.resourceId!=gamePieces.get(pieceIndex).cap.resourceId*/)
+                            if(currentCombo.isEmpty() || !gamePieces.get(pieceIndex).cap.equals(currentComboType))
                             {
                                 for(int i=0; i<currentCombo.size(); i++)
                                 {
@@ -809,7 +829,7 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
 
                                     double tweakLevel=currentLevel+1.0;
 
-                                    deltaScore=(int)(Math.pow(currentCombo.size(), 2)+Math.pow(currentCombo.get(0).cap.rarityClass, 2) * currentMomentum * (tweakLevel/2));
+                                    deltaScore=(int)(Math.pow(currentCombo.size(), 2)+Math.pow(currentComboType.rarityClass, 2) * currentMomentum * (tweakLevel/2));
                                     currentMomentum+=1/Math.log10(deltaScore)*8;
 
                                     highestMomentum=Math.max(currentMomentum, highestMomentum);
@@ -853,32 +873,6 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
 
             return true;
         }
-           /*
-        private void dumpEvent(MotionEvent event) {
-   String names[] = { "DOWN" , "UP" , "MOVE" , "CANCEL" , "OUTSIDE" ,
-      "POINTER_DOWN" , "POINTER_UP" , "7?" , "8?" , "9?" };
-   StringBuilder sb = new StringBuilder();
-   int action = event.getAction();
-   int actionCode = action & MotionEvent.ACTION_MASK;
-   sb.append("event ACTION_" ).append(names[actionCode]);
-   if (actionCode == MotionEvent.ACTION_POINTER_DOWN
-         || actionCode == MotionEvent.ACTION_POINTER_UP) {
-      sb.append("(pid " ).append(
-      action >> MotionEvent.ACTION_POINTER_ID_SHIFT);
-      sb.append(")" );
-   }
-   sb.append("[" );
-   for (int i = 0; i < event.getPointerCount(); i++) {
-      sb.append("#" ).append(i);
-      sb.append("(pid " ).append(event.getPointerId(i));
-      sb.append(")=" ).append((int) event.getX(i));
-      sb.append("," ).append((int) event.getY(i));
-      if (i + 1 < event.getPointerCount())
-         sb.append(";" );
-   }
-   sb.append("]" );
-   Log.d("GameBoard", sb.toString());
-}        */
 
         public boolean onTouchEvent(MotionEvent event) {
               return super.onTouchEvent(event);

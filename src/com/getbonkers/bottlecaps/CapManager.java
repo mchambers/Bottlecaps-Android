@@ -402,7 +402,11 @@ public class CapManager implements CapManagerLoadingDelegate {
          // verify we have the png for each cap
         Cursor capsInSet=adapter.getCapsInSet(setID);
 
-        if(capsInSet.isLast()) return false;
+        if(capsInSet.isLast()) 
+        {
+            capsInSet.close();
+            return false;
+        }
 
         while(capsInSet.moveToNext())
         {
@@ -417,6 +421,8 @@ public class CapManager implements CapManagerLoadingDelegate {
                 Log.d("CapLoader", "Cap set "+setID+" exists on disk");
             }
         }
+
+        capsInSet.close();
 
         //if(capSetExistsInAssets(setID))
            // return true;

@@ -3,11 +3,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:layout_marginLeft="30dp"
-              android:layout_marginRight="30dp"
               android:focusable="true"
               android:focusableInTouchMode="true"
-              android:background="#57000000"
+              android:background="#C8000000"
               >
 
     <TextView
@@ -15,45 +13,56 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:textSize="34sp"
+            android:textSize="48sp"
             android:textStyle="bold"
-            android:layout_marginTop="60dp"
+            android:layout_marginTop="15dp"
             android:layout_marginBottom="20dp"
             android:id="@+id/pauseCaption"   
             android:textColor="@android:color/white"
             />
 
-    <ImageButton
-            android:src="@drawable/buttonpause1"
-            android:id="@+id/pauseButton1"
-            android:layout_below="@id/pauseCaption"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:padding="0dp"
-            android:background="@android:color/transparent"
-            />
+    <LinearLayout android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_centerHorizontal="true"
+                  android:layout_below="@id/pauseCaption"
+                  android:id="@+id/pauseButtonGroup"
+            >
 
-    <ImageButton
-            android:src="@drawable/buttonpause2"
-            android:id="@+id/pauseButton2"
-            android:layout_below="@id/pauseButton1"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:padding="0dp"
-            android:background="@android:color/transparent"
-            />
+        <ImageButton android:src="@drawable/buttonresume"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:background="@android:color/transparent"
+                     android:onClick="resumeClick"
+                />
 
-    <ImageButton
-            android:src="@drawable/buttonpause3"
-            android:id="@+id/pauseButton3"
-            android:layout_below="@id/pauseButton2"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:padding="0dp"
-            android:background="@android:color/transparent"
-            />
+        <ImageButton android:src="@drawable/buttonquit"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:background="@android:color/transparent"
+                     android:onClick="quitClick"
+                />
+
+    </LinearLayout>
+
+    <TextView android:text="Collect these caps and unlock your next set!"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:textSize="20sp"
+              android:layout_centerHorizontal="true"
+              android:layout_marginTop="20dp"
+              android:layout_marginLeft="30dp"
+              android:layout_marginRight="30dp"
+              android:layout_marginBottom="10dp"
+              android:gravity="center"
+              android:id="@+id/pauseCollectCallout"
+              android:layout_below="@id/pauseButtonGroup"/>
+
+    <ListView android:id="@+id/pauseCapsList"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:layout_marginLeft="30dp"
+              android:layout_marginRight="30dp"
+              android:layout_centerHorizontal="true"
+              android:layout_below="@id/pauseCollectCallout" />
 
 </RelativeLayout>

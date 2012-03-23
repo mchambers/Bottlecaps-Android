@@ -24,6 +24,7 @@ import android.view.MotionEvent.PointerCoords;
 
 import android.util.Log;
 import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 import org.pushingpixels.trident.Timeline;
 import org.pushingpixels.trident.TimelinePropertyBuilder;
@@ -92,10 +93,11 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
                 int difficulty=getIntent().getExtras().getInt("GAME_DIFFICULTY", 1);
 
                 board=new GameBoard(getApplicationContext(), GameBoardActivity.this, capMgr);
-                board.startNewGame(difficulty);
+                board.currentLevel=difficulty;
 
-                FrameLayout frame=new FrameLayout(getApplicationContext());
-
+                  /*
+                RelativeLayout frame=new RelativeLayout(getApplicationContext());
+                frame.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
                 frame.addView(board);
 
                 LayoutInflater inflater = (LayoutInflater) getApplicationContext()
@@ -104,9 +106,9 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
                 pauseOverlay.setVisibility(View.INVISIBLE);
 
                 frame.addView(pauseOverlay);
+                                */
 
-                //requestWindowFeature(Window.FEATURE_NO_TITLE);
-                setContentView(frame);
+                setContentView(board);
             }
         });
     }
@@ -121,12 +123,13 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
 
         if(_paused)
         {
-            pauseOverlay.setVisibility(View.VISIBLE);
+            Intent pause=new Intent(this, PauseDialog.class);
+            startActivity(pause);
         }
-        else
+        /*else
         {
             pauseOverlay.setVisibility(View.INVISIBLE);
-        }
+        } */
     }
 
     class BrainThread extends Thread {
@@ -212,27 +215,6 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
 
     class GameBoard extends SurfaceView implements SurfaceHolder.Callback
     {
-        public static final int PIECE_STATE_NORMAL=0;
-        public static final int PIECE_STATE_FADING=1;
-        public static final int PIECE_STATE_TAPPED=2;
-        public static final int PIECE_STATE_HIGHLIGHTED=3;
-
-        public static final int GAME_DIFFICULTY_EASY=0;
-        public static final int GAME_DIFFICULTY_NORMAL=1;
-        
-        public static final int GAME_STATE_NORMAL=0;
-        public static final int GAME_STATE_PAUSED=1;
-        public static final int GAME_STATE_STARTING=2;
-
-        public static final int GAME_LENGTH=60000;
-        public static final int GAME_COMBO_DELAY=2000;
-
-        public static final int GAME_TIMER_REMAINING=0;
-        public static final int GAME_TIMER_COMBO=1;
-        public static final int GAME_TIMER_BOOST=2;
-        public static final int GAME_TIMER_BOMB=3;
-        public static final int GAME_TIMER_PAUSE=4;
-        
         class GameOverlayAnimation
         {
             public long animationLength;
@@ -367,6 +349,8 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
 
             private boolean runSecondStage;
 
+            public long holdAtMiddleDuration;
+
             public SlideUpFromBottomAnimation()
             {
                 timeline.setEase(new Spline(0.9f));
@@ -394,7 +378,7 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
                                 done=false;
                                 timeline.resetDoneFlag();
 
-                                timeline.setInitialDelay(200);
+                                timeline.setInitialDelay(holdAtMiddleDuration);
                                 timeline.setDuration(animationLength/2);
                                 timeline.setEase(new Spline(0.5f));
 
@@ -417,6 +401,9 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
             public void start()
             {
                 timeline.setDuration(animationLength/2);
+                
+                if(holdAtMiddleDuration==0)
+                    holdAtMiddleDuration=200;
 
                 timeline.addPropertyToInterpolate(
                         Timeline.<Integer> property("top").on(this).from(this.top).to(((this.top)/2)-(height/2)).interpolatedWith(intInterp));
@@ -490,6 +477,42 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
             }
         }
 
+        public static final int PIECE_STATE_NORMAL=0;
+        public static final int PIECE_STATE_FADING=1;
+        public static final int PIECE_STATE_TAPPED=2;
+        public static final int PIECE_STATE_HIGHLIGHTED=3;
+
+        public static final int GAME_DIFFICULTY_EASY=0;
+        public static final int GAME_DIFFICULTY_NORMAL=1;
+
+        public static final int GAME_STATE_NORMAL=0;
+        public static final int GAME_STATE_PAUSED=1;
+        public static final int GAME_STATE_STARTING=2;
+
+        public static final int GAME_LENGTH=60000;
+        public static final int GAME_COMBO_DELAY=2000;
+
+        public static final int GAME_TIMER_REMAINING=0;
+        public static final int GAME_TIMER_COMBO=1;
+        public static final int GAME_TIMER_BOOST=2;
+        public static final int GAME_TIMER_BOMB=3;
+        public static final int GAME_TIMER_PAUSE=4;
+
+        private MediaPlayer mp;
+        private SoundPool soundPool;
+        private HashMap<Integer, Integer> soundPoolMap;
+
+        public static final int SOUND_GOOD = 1;
+        public static final int SOUND_BAD = 2;
+        public static final int SOUND_TAP = 3;
+        public static final int SOUND_READY = 4;
+        public static final int SOUND_GO = 5;
+        public static final int SOUND_FRENZY = 6;
+        public static final int SOUND_BONUSTIME = 7;
+        public static final int SOUND_NITRO = 8;
+        public static final int SOUND_JOKER = 9;
+        public static final int SOUND_END = 10;
+
         private BrainThread _thread;
         public ArrayList<GamePiece> gamePieces;
         private final ArrayList<GamePiece> currentCombo=new ArrayList<GamePiece>();
@@ -513,6 +536,8 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
         public double highestMomentum=0;
         public int highestComboScore;
         public int currentLevel;
+        public int currentGameState;
+        public int currentGameSubState;
 
         /*public long timeRemaining;
         public long nextCombo;           */
@@ -544,6 +569,15 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
         BitmapDrawable timerBlue;
         Rect timerRect;
         Rect multGfxRect;
+
+        Paint tp=new Paint();
+        Paint text=new Paint();
+        Paint textStroke=new Paint();
+        Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+
+        BitmapDrawable bg;
+        BitmapDrawable cap;
+        ShapeDrawable timerShape=new ShapeDrawable();
 
         GameBoardActivity _activity;
 
@@ -592,35 +626,20 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
             });
         }
 
-        private MediaPlayer mp;
-        private SoundPool soundPool;
-        private HashMap<Integer, Integer> soundPoolMap;
-
-        public static final int SOUND_GOOD = 1;
-        public static final int SOUND_BAD = 2;
-        public static final int SOUND_TAP = 3;
-        public static final int SOUND_READY = 4;
-        public static final int SOUND_GO = 5;
-        public static final int SOUND_FRENZY = 6;
-        public static final int SOUND_BONUSTIME = 7;
-        public static final int SOUND_NITRO = 8;
-
         private void initSounds()
         {
             soundPool = new SoundPool(4, AudioManager.STREAM_MUSIC, 100);
             soundPoolMap = new HashMap<Integer, Integer>();
-            //soundPoolMap.put(SOUND_GOOD, soundPool.load(getContext(), R.raw.good, 2));
-            //soundPoolMap.put(SOUND_BAD, soundPool.load(getContext(), R.raw.bad, 2));
+            soundPoolMap.put(SOUND_GOOD, soundPool.load(getContext(), R.raw.cuecombomade, 2));
+            soundPoolMap.put(SOUND_BAD, soundPool.load(getContext(), R.raw.cuecombomistake, 2));
             soundPoolMap.put(SOUND_TAP, soundPool.load(getContext(), R.raw.tap, 2));
             soundPoolMap.put(SOUND_READY, soundPool.load(getContext(), R.raw.startready, 2));
             soundPoolMap.put(SOUND_GO, soundPool.load(getContext(), R.raw.startgo1, 2));
             soundPoolMap.put(SOUND_FRENZY, soundPool.load(getContext(), R.raw.cuefrenzy, 2));
-            soundPoolMap.put(SOUND_BONUSTIME, soundPool.load(getContext(), R.raw.bonustime, 2));
-            soundPoolMap.put(SOUND_NITRO, soundPool.load(getContext(), R.raw.cuenitro, 2));
-
-            //soundPoolMap.put(SOUND_MUSIC, soundPool.load(getContext(), R.raw.bottlecaps, 1));
-            
-            //soundPool.setLoop(soundPoolMap.get(SOUND_MUSIC), -1);
+            soundPoolMap.put(SOUND_BONUSTIME, soundPool.load(getContext(), R.raw.cuebonustime, 2));
+            soundPoolMap.put(SOUND_NITRO, soundPool.load(getContext(), R.raw.cuenitrovo, 2));
+            soundPoolMap.put(SOUND_JOKER, soundPool.load(getContext(), R.raw.cuejoker, 2));
+            soundPoolMap.put(SOUND_END, soundPool.load(getContext(), R.raw.end, 2));
         }
 
         private void initMusic()
@@ -634,9 +653,9 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
                 float streamVolumeCurrent = mgr.getStreamVolume(AudioManager.STREAM_MUSIC);
                 float streamVolumeMax = mgr.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
                 float volume = streamVolumeCurrent / streamVolumeMax;
-                volume=(float)(volume*0.75);
+                volume=(float)(volume*0.60);
 
-                yaayyyySong=getAssets().openFd("bottlecaps.mp3");
+                yaayyyySong=getAssets().openFd("musicgame.mp3");
                 mp.setDataSource(yaayyyySong.getFileDescriptor(), yaayyyySong.getStartOffset(), yaayyyySong.getLength());
                 mp.prepare();
                 mp.setLooping(true);
@@ -684,17 +703,9 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
         {
             Random rand=new Random();
 
-            // pick a random background image.
-            int[] bgResources={R.drawable.gamebg1, R.drawable.gamebg2, R.drawable.gamebg3};
-            bg=new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), bgResources[rand.nextInt(2)]));
-            
             currentLevel=difficulty;
 
             //timeRemaining=GAME_LENGTH;
-            gameTimers[GAME_TIMER_REMAINING]=GAME_LENGTH;
-            gameTimers[GAME_TIMER_COMBO]=GAME_COMBO_DELAY;
-            gameTimers[GAME_TIMER_BOOST]=(Math.max(rand.nextInt(11)+3, 11)) * 1000;
-            timerIntervals[GAME_TIMER_COMBO]=GAME_COMBO_DELAY;
 
             //currentComboInterval=GAME_COMBO_DELAY;
 
@@ -702,27 +713,7 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
             //currentCombo=new ArrayList<GamePiece>();
             currentCombo.clear();
 
-            Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-            int width = display.getWidth();
-
-            switch(difficulty)
-            {
-                case GAME_DIFFICULTY_EASY:
-                    boardSize=12;
-                    itemsPerRow=3;
-                    boardMarginHeight=70;
-                    break;
-                case GAME_DIFFICULTY_NORMAL:
-                    boardSize=20;
-                    itemsPerRow=4;
-                    boardMarginHeight=70;
-                    break;
-            }
-
-            //width-=boardMargins*2;
-
-            pieceWidth=width/itemsPerRow;
-
+            // Prepare the game board.
             for(int i=0; i<boardSize; i++)
             {
                 GamePiece newPiece=new GamePiece();
@@ -733,6 +724,11 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
             }
 
             comboAmounts=new int[10];
+
+            changeGameState(GAME_STATE_STARTING);
+
+            _thread.setRunning(true);
+            _thread.start();
         }
 
         public void togglePause()
@@ -741,15 +737,21 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
 
             try {
                 if(gameIsPaused)
+                {
+                    currentGameState=GAME_STATE_PAUSED;
                     pauseMusic();
+                }
                 else
+                {
+                    currentGameState=GAME_STATE_NORMAL;
                     startMusic();
+                }
             } catch(Exception e)
             {
 
             }
         }
-        
+
         private void doBoostCue(int type)
         {
             SlideUpFromBottomAnimation boostAnim;
@@ -764,9 +766,15 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
                     break;
                 case Player.PLAYER_BOOST_TYPE_JOKER:
                     boostAnim.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.captionjokers));
+                    playSound(SOUND_JOKER);
                     break;
                 case Player.PLAYER_BOOST_TYPE_MORETIME:
                     boostAnim.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.caption10sec));
+                    playSound(SOUND_BONUSTIME);
+                    
+                    if(currentGameSubState>0) // winding down
+                        currentGameSubState=0;
+
                     break;
                 case Player.PLAYER_BOOST_TYPE_NITRO:
                     boostAnim.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.captionnitro));
@@ -783,6 +791,9 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
 
         private boolean handleTouch(float x, float y)
         {
+            if(currentGameState==GAME_STATE_STARTING)
+                return true;
+
             // check for button intersection
             if(x>timerRect.left && x<timerRect.right && y>timerRect.top && y<timerRect.bottom)
             {
@@ -830,6 +841,9 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
                     {
                         synchronized (currentCombo)
                         {
+                            if(gamePieces.get(pieceIndex).cap instanceof CapManager.Boost && gamePieces.get(pieceIndex).cap.index==Player.PLAYER_BOOST_TYPE_JOKER)
+                                doBoostCue(Player.PLAYER_BOOST_TYPE_JOKER);
+
                             if(currentCombo.isEmpty() || !gamePieces.get(pieceIndex).cap.equals(currentComboType))
                             {
                                 for(int i=0; i<currentCombo.size(); i++)
@@ -857,12 +871,12 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
 
                                     capsCollected.add(currentComboType);
 
-                                    //playSound(SOUND_GOOD);
+                                    playSound(SOUND_GOOD);
                                     //Log.d("GameBoard", "Score up by "+deltaScore+" (rarity "+currentCombo.get(0).cap.rarityClass+"), New score: "+currentScore+" at momentum "+currentMomentum);
                                 }
-                                else
+                                else if(currentCombo.size()==1)
                                 {
-                                    //playSound(SOUND_BAD);
+                                    playSound(SOUND_BAD);
                                     currentMomentum*=(1-currentMomentum/100);
                                 }
 
@@ -901,8 +915,36 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
         }
 
         public void surfaceCreated(SurfaceHolder holder) {
+            Random rand=new Random();
+
             this.initSounds();
             this.initMusic();
+
+            // pick a random background image.
+            int[] bgResources={R.drawable.gamebg1, R.drawable.gamebg2, R.drawable.gamebg3};
+            bg=new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), bgResources[rand.nextInt(2)]));
+            bg.setBounds(new Rect(0, 0, display.getWidth(), display.getHeight()));
+
+            Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+            int width = display.getWidth();
+
+            switch(currentLevel)
+            {
+                case GAME_DIFFICULTY_EASY:
+                    boardSize=12;
+                    itemsPerRow=3;
+                    boardMarginHeight=70;
+                    break;
+                case GAME_DIFFICULTY_NORMAL:
+                    boardSize=20;
+                    itemsPerRow=4;
+                    boardMarginHeight=70;
+                    break;
+            }
+
+            //width-=boardMargins*2;
+
+            pieceWidth=width/itemsPerRow;
 
             // set up the static paints
             text.setColor(Color.BLACK);
@@ -911,6 +953,9 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
             text.setShadowLayer((float)0.5, 0, 1, Color.BLACK);
             text.setTextSize(64 * getApplicationContext().getResources().getDisplayMetrics().density);
             text.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/Pacifico.ttf"));
+
+            tp.setColor(Color.GRAY);
+            tp.setTextAlign(Paint.Align.LEFT);
 
             textStroke.setColor(Color.WHITE);
             textStroke.setStyle(Paint.Style.STROKE);
@@ -929,8 +974,20 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
             double scaleFactor=metrics.density;
 
             timerRect=new Rect(display.getWidth()-(int)(60*scaleFactor), (int)(10*scaleFactor), display.getWidth()-(int)(10*scaleFactor), (int)(60*scaleFactor));
-            multGfxRect=new Rect((int)(10*scaleFactor), (int)(10*scaleFactor), (int)((10+55)*scaleFactor), (int)((10+55)*scaleFactor));
+            multGfxRect=new Rect((int)(10*scaleFactor), (int)(10*scaleFactor), (int)((10+70)*scaleFactor), (int)((10+51)*scaleFactor));
+
+            timerShape.setBounds(timerRect.left+6, timerRect.top+5, timerRect.right-6, timerRect.bottom-5);
+            timerShape.getPaint().setColor(Color.BLACK);
+            timerShape.getPaint().setAntiAlias(true);
+
             boardMarginHeight*=scaleFactor;
+
+            // set the bounds for all the multipler graphics
+            for(int i=0; i<multiplierGfx.length; i++)
+            {
+                if(multiplierGfx[i]!=null)
+                    multiplierGfx[i].setBounds(multGfxRect);
+            }
 
             double totalVerticalPixelsUsed=(pieceWidth*((boardSize/itemsPerRow)))+boardMarginHeight;
             if(totalVerticalPixelsUsed<metrics.heightPixels)
@@ -952,10 +1009,7 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
 
             scorePosition=(float)(40*scaleFactor);
 
-            startMusic();
-
-            _thread.setRunning(true);
-            _thread.start();
+            startNewGame(currentLevel);
         }
 
         public void surfaceDestroyed(SurfaceHolder holder) {
@@ -1010,14 +1064,27 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
             }
         }
 
+        private void fireTimeBasedCues()
+        {
+            if(gameTimers[GAME_TIMER_REMAINING]<=2200 && currentGameSubState==0)
+            {
+                currentGameSubState++;
+                playSound(SOUND_END);
+            }
+        }
+
         private void updateGameBoard()
         {
             Random rand=new Random();
 
             if(gameIsPaused) return;
 
+            fireTimeBasedCues();
+
             if(gameTimers[GAME_TIMER_REMAINING]<=0)
             {
+                stopMusic();
+
                 // queue the collected caps for reconciliation
                 BottlecapsDatabaseAdapter adapter=new BottlecapsDatabaseAdapter(getApplicationContext());
 
@@ -1036,14 +1103,13 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
                 resultsIntent.putExtra("GAME_RESULTS_LEVEL", currentLevel);
 
                 startActivity(resultsIntent);
+                finish();
 
                 boolean retry=true;
                 _thread.setRunning(false);
 //                _thread.stop();
 
                 gameTimers[GAME_TIMER_REMAINING]=999999;
-
-                finish();
             }
 
             if(gameTimers[GAME_TIMER_BOOST]<=0)
@@ -1075,30 +1141,36 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
              */
 
             // run the "boosts in effect" queue.
-            for(Iterator it=boostsInEffect.iterator(); it.hasNext() ;)
+            if(!boostsInEffect.isEmpty())
             {
-                CapManager.Boost boost=(CapManager.Boost)it.next();
-                boost.timeRemaining-=deltaTick;          // decrement the lifecycle timer...
-                boost.intervalTimer-=deltaTick;          // ...and the heartbeat timer.
-                
-                if(boost.intervalTimer<=0)               // if this boost is due to run:
+                for(Iterator it=boostsInEffect.iterator(); it.hasNext() ;)
                 {
-                    boost.performBoostEffects(this);     // perform the boost effect.
-                    boost.intervalTimer=boost.interval;  // reset the interval timer.
-                }
-
-                if(boost.timeRemaining<=0)  // if this boost has reached end-of-life
-                {
-                    boost.performExpirationEffect(this);   // one last gasp, if applicable.
-                    it.remove();                           // remove it from the array.
+                    CapManager.Boost boost=(CapManager.Boost)it.next();
+                    boost.timeRemaining-=deltaTick;          // decrement the lifecycle timer...
+                    boost.intervalTimer-=deltaTick;          // ...and the heartbeat timer.
+                    
+                    if(boost.intervalTimer<=0)               // if this boost is due to run:
+                    {
+                        boost.performBoostEffects(this);     // perform the boost effect.
+                        boost.intervalTimer=boost.interval;  // reset the interval timer.
+                    }
+    
+                    if(boost.timeRemaining<=0)  // if this boost has reached end-of-life
+                    {
+                        boost.performExpirationEffect(this);   // one last gasp, if applicable.
+                        it.remove();                           // remove it from the array.
+                    }
                 }
             }
-
-            for(Iterator it=currentOverlays.iterator(); it.hasNext() ;)
+            
+            if(!currentOverlays.isEmpty())
             {
-                GameOverlayAnimation anim=(GameOverlayAnimation)it.next();
-                if(anim.done)
-                    it.remove();
+                for(Iterator it=currentOverlays.iterator(); it.hasNext() ;)
+                {
+                    GameOverlayAnimation anim=(GameOverlayAnimation)it.next();
+                    if(anim.done)
+                        it.remove();
+                }
             }
 
             for(int i=0; i<gamePieces.size(); i++)
@@ -1150,44 +1222,105 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
             }
         }
 
+        private void changeGameState(int nextState)
+        {
+            Random rand=new Random();
+
+            currentGameState=nextState;
+
+            switch(nextState)
+            {
+                case GAME_STATE_STARTING:
+                    gameTimers[GAME_TIMER_REMAINING]=2000;
+                    gameTimers[GAME_TIMER_COMBO]=0;
+                    gameTimers[GAME_TIMER_BOOST]=0;
+                    timerIntervals[GAME_TIMER_COMBO]=0;
+                    
+                    SlideUpFromBottomAnimation ready=new SlideUpFromBottomAnimation();
+                    ready.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.ready));
+                    ready.setTopLeftCorner(display.getHeight(), (display.getWidth() / 2) - (ready.getRight() / 2));
+                    ready.animationLength=1000;
+                    ready.holdAtMiddleDuration=500;
+                    
+                    currentOverlays.add(ready);
+
+                    playSound(SOUND_READY);
+                    ready.start();
+
+                    break;
+                case GAME_STATE_NORMAL:
+                    currentGameSubState=0;
+
+                    startMusic();
+
+                    lastTick=0;
+
+                    gameTimers[GAME_TIMER_REMAINING]=GAME_LENGTH;
+                    gameTimers[GAME_TIMER_COMBO]=GAME_COMBO_DELAY;
+                    gameTimers[GAME_TIMER_BOOST]=(Math.max(rand.nextInt(11)+3, 11)) * 1000;
+                    timerIntervals[GAME_TIMER_COMBO]=GAME_COMBO_DELAY;
+
+                    currentMomentum=1.0;
+
+                    break;
+                case GAME_STATE_PAUSED:
+                    break;
+            }
+        }
+
         private void updateGameState()
         {
             this.runTimers();
-            this.updateGameBoard();
+
+            switch(currentGameState)
+            {
+                case GAME_STATE_NORMAL:
+                    this.updateGameBoard();
+                    break;
+                case GAME_STATE_STARTING:
+                    if(gameTimers[GAME_TIMER_REMAINING]<500 && currentGameSubState==0)
+                    {
+                        SlideUpFromBottomAnimation go=new SlideUpFromBottomAnimation();
+                        go.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.go));
+                        go.setTopLeftCorner(display.getHeight(), (display.getWidth() / 2) - (go.getRight() / 2));
+                        go.animationLength=300;
+                        go.holdAtMiddleDuration=200;
+
+                        currentOverlays.add(go);
+
+                        go.start();
+
+                        playSound(SOUND_GO);
+
+                        currentGameSubState++;
+                    }
+                    
+                    if(gameTimers[GAME_TIMER_REMAINING]<=0)
+                    {
+                        changeGameState(GAME_STATE_NORMAL);
+                    }
+                    
+                    break;
+                case GAME_STATE_PAUSED:
+                    break;
+            }
 
             lastTick=System.currentTimeMillis();
         }
-        
-        Paint tp=new Paint();
-        Paint text=new Paint();
-        Paint textStroke=new Paint();
-        Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-
-        BitmapDrawable bg;
-        BitmapDrawable multiplier;
-        BitmapDrawable cap;
 
         public void drawGameState(Canvas canvas)
         {
             //Bitmap _scratch = BitmapFactory.decodeResource(getResources(), R.drawable.set1_1);
             canvas.drawColor(Color.WHITE);
 
-            bg.setBounds(new Rect(0, 0, display.getWidth(), display.getHeight()));
             bg.draw(canvas);
-
-            tp.setColor(Color.GRAY);
-            tp.setTextAlign(Paint.Align.LEFT);
 
             // draw the timer.
             double timerArc=(double)gameTimers[GAME_TIMER_REMAINING]/60000;
             timerArc=(1-timerArc)*360;
             ArcShape timer=new ArcShape(0, (float)timerArc);
 
-            ShapeDrawable timerShape=new ShapeDrawable(timer);
-            timerShape.setBounds(timerRect.left+6, timerRect.top+5, timerRect.right-6, timerRect.bottom-5);
-            timerShape.getPaint().setColor(Color.BLACK);
-            timerShape.getPaint().setAntiAlias(true);
-
+            timerShape.setShape(timer);
             timerBlue.draw(canvas);
             timerShape.draw(canvas);
             timerCover.draw(canvas);
@@ -1253,7 +1386,6 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
 
             if(multiplierGfx[multiplier]!=null)
             {
-                multiplierGfx[multiplier].setBounds(multGfxRect);
                 multiplierGfx[multiplier].draw(canvas);
             }
             //canvas.drawText(String.valueOf(multiplier)+"X", 50, 50, text);
@@ -1281,7 +1413,16 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
         super.onResume();
 
         if(board!=null)
-            board.startMusic();
+        {
+            if(board.gameIsPaused)
+            {
+                togglePause(null);
+            }
+            else
+            {
+                board.startMusic();
+            }
+        }
     }
 
     /** Called when the activity is first created. */

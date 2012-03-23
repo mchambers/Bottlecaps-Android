@@ -44,7 +44,7 @@ public class BottlecapsDatabaseAdapter {
     private static final String DATABASE_SETS_TABLE = "sets";
     private static final String DATABASE_SETTLEMENTS_TABLE = "settlements";
 
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
 
     private static final String DATABASE_SETS_CREATE =
             "create table sets (_id integer unique primary key, "
@@ -143,6 +143,22 @@ public class BottlecapsDatabaseAdapter {
         values.put(KEY_SETS_DESCRIPTION, description);
         return db.insertWithOnConflict(DATABASE_SETS_TABLE, null, values, SQLiteDatabase.CONFLICT_REPLACE);
     }
+    
+    public ArrayList<Long> getUncollectedCommonCaps()
+    {
+        ArrayList<Long> caps=new ArrayList<Long>();
+        
+        Cursor capsCursor=db.query(DATABASE_CAPS_TABLE, new String[] { KEY_ROWID }, KEY_CAPS_COLLECTED+"<=0 AND "+KEY_CAPS_SCARCITY+"<2", null, null, null, null);
+
+        while(capsCursor.moveToNext())
+        {
+            caps.add(capsCursor.getLong(capsCursor.getColumnIndex(KEY_ROWID)));
+        }
+        
+        capsCursor.close();
+        
+        return caps;
+    }
 
     public long numberOfUniqueCapsCollected()
     {
@@ -232,6 +248,7 @@ public class BottlecapsDatabaseAdapter {
         values.put(KEY_CAPS_NAME, name);
         values.put(KEY_CAPS_DESCRIPTION, description);
         values.put(KEY_CAPS_SCARCITY, scarcity);
+        values.put(KEY_CAPS_COLLECTED, 0);
         return db.insertWithOnConflict(DATABASE_CAPS_TABLE, null, values, SQLiteDatabase.CONFLICT_REPLACE);
     }
 
@@ -254,7 +271,6 @@ public class BottlecapsDatabaseAdapter {
     public Cursor getCapsInSet(long setID)
     {
         return db.query(DATABASE_CAPS_TABLE, new String[] { KEY_ROWID, KEY_CAPS_SCARCITY, KEY_CAPS_AVAILABLE, KEY_CAPS_DESCRIPTION, KEY_CAPS_ISSUED, KEY_CAPS_NAME, KEY_CAPS_SETID}, KEY_CAPS_SETID+"="+setID, null, null, null, null);
-
     }
 
     public boolean deleteSet(long setID)

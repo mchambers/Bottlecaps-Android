@@ -32,11 +32,13 @@ public class CapDownloadManager implements Runnable {
     public final Stack<CapDownloadManagerQueueItem> queue=new Stack<CapDownloadManagerQueueItem>();
     public CapManagerLoadingDelegate delegate;
 
-    public  CapDownloadManager(Context ctx, CapManagerLoadingDelegate dg) {
+    public CapDownloadManager(Context ctx, CapManagerLoadingDelegate dg) {
         delegate=dg;
         _context=ctx;
 
         adapter=new BottlecapsDatabaseAdapter(ctx);
+
+        adapter.open();
     }
 
     private boolean loadCapSetFromZip(long setID, boolean storedInAssets)
@@ -118,9 +120,11 @@ public class CapDownloadManager implements Runnable {
                         Log.d("CapManager", "Cap: " + caps.getJSONObject(i).getString("name"));
                     }
                 } catch (JSONException e) {
-
+                    Log.d("CapDownloadManager", "JSON Exception: Failed to store cap set "+setID+"in database");
+                    e.printStackTrace();
                 } catch (Exception e) {
-
+                    Log.d("CapDownloadManager", "General Exception: Failed to store cap set "+setID+"in database");
+                    e.printStackTrace();
                 }
 
                 requestsOutstanding--;

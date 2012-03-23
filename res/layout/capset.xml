@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-
+     <!--
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/bginner"
-            >
+            >     -->
 
-<RelativeLayout
-              android:layout_width="fill_parent"
-              android:layout_height="wrap_content"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bginner"
               >
 
     <ImageView android:id="@+id/capSetHeader"
@@ -22,7 +23,7 @@
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"
                android:layout_below="@id/capSetHeader"
-               android:text=""
+               android:text="Cap Set Name"
                android:textSize="24sp"
                android:layout_marginLeft="15dp"
                android:textColor="@android:color/white"
@@ -31,96 +32,199 @@
                android:shadowRadius="1"
                />
 
-    <RelativeLayout android:id="@+id/capSetDetailsOuter"
-                  android:layout_width="wrap_content"
+    <LinearLayout android:id="@+id/capSetDetails"
+                  android:layout_width="fill_parent"
                   android:layout_height="wrap_content"
-                  android:background="@drawable/setdetails"
+                  android:weightSum="1.0"
                   android:layout_below="@id/capSetName"
-                  android:layout_marginLeft="8dp"
-                  android:weightSum="2.0">
+                  android:layout_marginLeft="10dp"
+                  android:layout_marginRight="10dp"
+            >
 
-        <LinearLayout android:id="@+id/capSetDetailsContent"
+        <LinearLayout
+                android:layout_weight="0.5"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/mycapsleft">
+
+            <TextView android:id="@+id/capSetCollected"
+                      android:text="0"
                       android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
-                      android:layout_below="@id/capSetName"
-                      android:layout_marginLeft="8dp"
-                    android:weightSum="2.0">
-
-            <TextView android:id="@+id/capSetDetailsTotal"
-                      android:layout_width="wrap_content"
-                      android:layout_height="wrap_content"
-                      android:text=""
-                      android:layout_marginLeft="10dp"
-                    android:textSize="52sp"
-                    android:textColor="@android:color/black"
-                    android:layout_weight="1.5" />
-
-            <TextView android:layout_width="wrap_content"
-                      android:layout_height="wrap_content"
-                      android:text=""
-                      android:layout_weight="0.5"
+                      android:gravity="left"
+                      android:textSize="40sp"
                       android:textColor="@android:color/black"
-                      android:id="@+id/capSetNumberDetails"
-                      />
-
-        </LinearLayout>
-
-        <LinearLayout android:layout_width="wrap_content"
-                      android:layout_height="wrap_content"
-                      android:layout_below="@id/capSetDetailsContent"
-                >
-
-            <TextView android:layout_width="wrap_content"
-                      android:layout_height="wrap_content"
-                      android:text=""
-                      android:textSize="10sp"
-                      android:paddingLeft="10dp"
-                      android:id="@+id/capSetDetailsAuthor"
+                      android:layout_gravity="center"
                     />
 
-            <TextView android:layout_width="wrap_content"
-                      android:layout_height="wrap_content"
-                      android:text=""
-                      android:textSize="10sp"
-                      android:paddingLeft="10dp"
-                      android:id="@+id/capSetDetailsDate"
-                      />
+            <TextView android:text="caps collected"
+                      android:layout_width="wrap_content"
+                      android:layout_height="match_parent"
+                      android:gravity="left"
+                      android:layout_gravity="center"
+                      android:textColor="@android:color/black"
+                      android:padding="10dp"
+                    />
 
         </LinearLayout>
-    </RelativeLayout>
+
+        <LinearLayout
+                android:layout_weight="0.5"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/mycapsright">
+
+            <TextView android:id="@+id/capSetTotal"
+                      android:text="0"
+                      android:layout_width="wrap_content"
+                      android:layout_height="match_parent"
+                      android:gravity="right"
+                      android:textSize="40sp"
+                      android:textColor="@android:color/black"
+                      android:layout_gravity="center"
+
+                    />
+
+            <TextView android:text="total caps"
+                      android:layout_width="wrap_content"
+                      android:layout_height="match_parent"
+                      android:gravity="right"
+                      android:textColor="@android:color/black"
+                      android:padding="10dp"
+                      android:layout_gravity="center"
+
+                    />
+
+        </LinearLayout>
+
+    </LinearLayout>
 
     <TextView android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:text="This Set Is Locked"
-              android:textSize="15sp"
+              android:textSize="24sp"
+              android:layout_marginTop="5dp"
               android:background="@drawable/locked"
               android:gravity="center"
               android:paddingBottom="10dp"
-              android:layout_alignLeft="@id/capSetDetailsOuter"
               android:layout_below="@id/capSetName"
+              android:layout_centerHorizontal="true"
               android:textColor="@android:color/white"
+              android:visibility="gone"
             />
     
     <Button android:layout_width="wrap_content"
                  android:layout_height="wrap_content"
                  android:background="@drawable/greenslim"
                  android:text="Unlock This Set"
+                 android:textSize="24sp"
                  android:gravity="center"
-                 android:layout_alignLeft="@id/capSetDetailsOuter"
+                 android:layout_marginTop="5dp"
+                 android:layout_centerHorizontal="true"
                  android:layout_below="@id/capSetName"
                  android:textColor="@android:color/white"
+                 android:onClick="unlockThisSet"
+                 android:visibility="gone"
                  />
+
+    <LinearLayout  android:id="@+id/capsetsHeaderSelector"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_below="@id/capSetDetails"
+                   android:layout_centerHorizontal="true"
+                   android:layout_marginTop="4dp"
+            >
+
+        <RelativeLayout android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+            <ImageView android:src="@drawable/selectorlon"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:onClick="capDetailsClick"
+                       android:id="@+id/capsetsHeaderLeftSelector"
+                    />
+
+            <TextView android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:text="Cap Details"
+                      android:layout_alignTop="@id/capsetsHeaderLeftSelector"
+                      android:textColor="@android:color/white"
+                      android:padding="5dp"
+                      android:layout_centerInParent="true"
+                      android:id="@+id/capsetsHeaderLeftSelectorCaption"
+                      android:textSize="20sp"
+                      android:shadowColor="@android:color/black"
+                      android:shadowDy="1"
+                      android:shadowRadius="1.0"
+                    />
+
+        </RelativeLayout>
+
+        <RelativeLayout android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+            <ImageView android:src="@drawable/selectorroff"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:onClick="artistDetailsClick"
+                       android:id="@+id/capsetsHeaderRightSelector"
+                    />
+
+            <TextView android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:text="Artist Details"
+                      android:textColor="@android:color/white"
+                      android:layout_alignTop="@id/capsetsHeaderRightSelector"
+                      android:layout_centerInParent="true"
+                      android:padding="5dp"
+                      android:id="@+id/capsetsHeaderRightSelectorCaption"
+                      android:textSize="20sp"
+                      android:shadowColor="@android:color/black"
+                      android:shadowDy="1"
+                      android:shadowRadius="1.0"
+                    />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <ImageView android:id="@+id/capsetsHeaderSelectorArrow"
+               android:src="@drawable/selectorarrow"
+               android:layout_height="wrap_content"
+               android:layout_width="wrap_content"
+               android:layout_below="@id/capsetsHeaderSelector"
+               android:layout_marginLeft="30dp"
+               android:layout_marginTop="-10dp"
+               android:layout_alignLeft="@id/capsetsHeaderSelector" />
+
+    <android.support.v4.view.ViewPager
+            android:id="@+id/capSetPager"
+            android:layout_width="wrap_content"
+            android:layout_marginLeft="7dp"
+            android:layout_marginRight="7dp"
+            android:paddingLeft="3dp"
+            android:paddingRight="3dp"
+            android:layout_marginTop="5dp"
+            android:layout_height="217dp"
+            android:layout_weight="0"
+            android:background="@drawable/setdetailsbg"
+            android:layout_below="@id/capsetsHeaderSelector"
+            android:layout_centerHorizontal="true">
+
+    </android.support.v4.view.ViewPager>
 
     <LinearLayout android:id="@+id/capSetQuoteContent"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
-                  android:layout_below="@id/capSetDetailsOuter"
+                  android:layout_below="@id/capsetsHeaderSelector"
                   android:background="@drawable/quote"
                   android:layout_marginLeft="8dp"
                   android:layout_marginRight="8dp"
                   android:paddingBottom="12dp"
-                  >
-        
+                  android:visibility="gone"
+            >
+
         <TextView android:id="@+id/capSetQuoteText"
                   android:layout_width="fill_parent"
                   android:layout_height="wrap_content"
@@ -128,22 +232,10 @@
                   android:shadowColor="@android:color/black"
                   android:shadowDy="1"
                   android:shadowRadius="1"
-                android:textColor="@android:color/white" />
+                  android:textColor="@android:color/white" />
     </LinearLayout>
 
-    <android.support.v4.view.ViewPager
-            android:id="@+id/capSetPager"
-            android:layout_width="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_height="217dp"
-            android:layout_weight="0"
-            android:background="@drawable/setdetailsbg"
-            android:layout_below="@id/capSetQuoteContent"
-            android:layout_centerHorizontal="true">
-
-    </android.support.v4.view.ViewPager>
 </RelativeLayout>
-
+      <!--
 </ScrollView>
+            -->

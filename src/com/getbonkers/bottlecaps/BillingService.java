@@ -329,8 +329,9 @@ public class BillingService extends Service implements ServiceConnection {
     }
 
     @Override
-    public void onStart(Intent intent, int startId) {
+    public int onStartCommand(Intent intent, int flags, int startId) {
         handleCommand(intent, startId);
+        return START_STICKY_COMPATIBILITY;
     }
 
     /**

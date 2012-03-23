@@ -16,7 +16,6 @@ import android.graphics.drawable.shapes.OvalShape;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
-import android.text.style.EasyEditSpan;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.os.Bundle;
@@ -52,7 +51,7 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
     
     public static final int DIALOG_CAPMANAGER_FAILURE=1;
 
-    protected Dialog onCreateDialog(int id) {
+    protected Dialog onCreateDialog(int id, Bundle bundle) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
@@ -342,7 +341,7 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
                 bottom=height;
                 top=0;
 
-                drawable=new BitmapDrawable(bmp);
+                drawable=new BitmapDrawable(getResources(), bmp);
             }
             
             public void setTopLeftCorner(int t, int l)
@@ -560,19 +559,19 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
 
             multiplierGfx=new BitmapDrawable[] {
                     null,
-                    new BitmapDrawable(BitmapFactory.decodeResource(getResources(), R.drawable.mult1)),
-                    new BitmapDrawable(BitmapFactory.decodeResource(getResources(), R.drawable.mult2)),
-                    new BitmapDrawable(BitmapFactory.decodeResource(getResources(), R.drawable.mult3)),
-                    new BitmapDrawable(BitmapFactory.decodeResource(getResources(), R.drawable.mult4)),
-                    new BitmapDrawable(BitmapFactory.decodeResource(getResources(), R.drawable.mult5)),
-                    new BitmapDrawable(BitmapFactory.decodeResource(getResources(), R.drawable.mult6)),
-                    new BitmapDrawable(BitmapFactory.decodeResource(getResources(), R.drawable.mult7)),
-                    new BitmapDrawable(BitmapFactory.decodeResource(getResources(), R.drawable.mult8)),
-                    new BitmapDrawable(BitmapFactory.decodeResource(getResources(), R.drawable.mult9)),
-                    new BitmapDrawable(BitmapFactory.decodeResource(getResources(), R.drawable.mult10))
+                    new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.mult1)),
+                    new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.mult2)),
+                    new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.mult3)),
+                    new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.mult4)),
+                    new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.mult5)),
+                    new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.mult6)),
+                    new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.mult7)),
+                    new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.mult8)),
+                    new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.mult9)),
+                    new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.mult10))
             };
 
-            capGlow=new BitmapDrawable(BitmapFactory.decodeResource(getResources(), R.drawable.glow));
+            capGlow=new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.glow));
 
             gameTimers=new long[] { 0, 0, 0, 0, 0 };
             timerIntervals=new long[] {0, 0, 0, 0, 0 };
@@ -600,15 +599,25 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
         public static final int SOUND_GOOD = 1;
         public static final int SOUND_BAD = 2;
         public static final int SOUND_TAP = 3;
-        public static final int SOUND_MUSIC = 4;
+        public static final int SOUND_READY = 4;
+        public static final int SOUND_GO = 5;
+        public static final int SOUND_FRENZY = 6;
+        public static final int SOUND_BONUSTIME = 7;
+        public static final int SOUND_NITRO = 8;
 
         private void initSounds()
         {
-            soundPool = new SoundPool(4, AudioManager.STREAM_NOTIFICATION, 100);
+            soundPool = new SoundPool(4, AudioManager.STREAM_MUSIC, 100);
             soundPoolMap = new HashMap<Integer, Integer>();
-            soundPoolMap.put(SOUND_GOOD, soundPool.load(getContext(), R.raw.good, 2));
-            soundPoolMap.put(SOUND_BAD, soundPool.load(getContext(), R.raw.bad, 2));
-            soundPoolMap.put(SOUND_TAP, soundPool.load(getContext(), R.raw.click, 2));
+            //soundPoolMap.put(SOUND_GOOD, soundPool.load(getContext(), R.raw.good, 2));
+            //soundPoolMap.put(SOUND_BAD, soundPool.load(getContext(), R.raw.bad, 2));
+            soundPoolMap.put(SOUND_TAP, soundPool.load(getContext(), R.raw.tap, 2));
+            soundPoolMap.put(SOUND_READY, soundPool.load(getContext(), R.raw.startready, 2));
+            soundPoolMap.put(SOUND_GO, soundPool.load(getContext(), R.raw.startgo1, 2));
+            soundPoolMap.put(SOUND_FRENZY, soundPool.load(getContext(), R.raw.cuefrenzy, 2));
+            soundPoolMap.put(SOUND_BONUSTIME, soundPool.load(getContext(), R.raw.bonustime, 2));
+            soundPoolMap.put(SOUND_NITRO, soundPool.load(getContext(), R.raw.cuenitro, 2));
+
             //soundPoolMap.put(SOUND_MUSIC, soundPool.load(getContext(), R.raw.bottlecaps, 1));
             
             //soundPool.setLoop(soundPoolMap.get(SOUND_MUSIC), -1);
@@ -621,10 +630,17 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
             AssetFileDescriptor yaayyyySong;
 
             try {
+                AudioManager mgr = (AudioManager)getContext().getSystemService(Context.AUDIO_SERVICE);
+                float streamVolumeCurrent = mgr.getStreamVolume(AudioManager.STREAM_MUSIC);
+                float streamVolumeMax = mgr.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+                float volume = streamVolumeCurrent / streamVolumeMax;
+                volume=(float)(volume*0.75);
+
                 yaayyyySong=getAssets().openFd("bottlecaps.mp3");
                 mp.setDataSource(yaayyyySong.getFileDescriptor(), yaayyyySong.getStartOffset(), yaayyyySong.getLength());
                 mp.prepare();
                 mp.setLooping(true);
+                mp.setVolume(volume, volume);
             } catch(IOException e)
             {
                 //Log.d("GameBoardActivity", "Sadface, couldn't initialize the in-game music");
@@ -744,6 +760,7 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
             {
                 case Player.PLAYER_BOOST_TYPE_FRENZY:
                     boostAnim.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.captionfrenzy));
+                    playSound(SOUND_FRENZY);
                     break;
                 case Player.PLAYER_BOOST_TYPE_JOKER:
                     boostAnim.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.captionjokers));
@@ -753,6 +770,7 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
                     break;
                 case Player.PLAYER_BOOST_TYPE_NITRO:
                     boostAnim.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.captionnitro));
+                    playSound(SOUND_NITRO);
                     break;
             }
 
@@ -903,8 +921,8 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
             textStroke.setStrokeWidth(1.0f);
             textStroke.setAntiAlias(true);
 
-            timerCover=new BitmapDrawable(BitmapFactory.decodeResource(getResources(), R.drawable.timerpauselayer));
-            timerBlue=new BitmapDrawable(BitmapFactory.decodeResource(getResources(), R.drawable.timerbluelayer));
+            timerCover=new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.timerpauselayer));
+            timerBlue=new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.timerbluelayer));
 
             DisplayMetrics metrics;
             metrics=this.getResources().getDisplayMetrics();
@@ -1278,6 +1296,7 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
         int difficulty=getIntent().getExtras().getInt("GAME_DIFFICULTY", 1);
 
         capMgr=new CapManager(getApplicationContext(), difficulty, this);
+        capMgr.ensureCapSetAssetsExist();
         //capMgr.fillCapsBuffer();
 
     }

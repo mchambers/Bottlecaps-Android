@@ -125,7 +125,7 @@ public class CapSetsActivity extends Activity {
 
         if(capsToNext>0)
         {
-            ((TextView)v.findViewById(R.id.capsetsHeaderUnlocks)).setText("Collect "+capsToNext+" more caps to unlock a set!");
+            ((TextView)v.findViewById(R.id.capsetsHeaderUnlocks)).setText("Collect "+capsToNext+" more Common caps to unlock a set!");
         }
         else
         {

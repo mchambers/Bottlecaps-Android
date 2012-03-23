@@ -1,11 +1,17 @@
 package com.getbonkers.bottlecaps;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+
+import java.util.HashMap;
+import java.util.Random;
 
 /**
  * Created by IntelliJ IDEA.
@@ -38,6 +44,27 @@ public class GameResultsActivity extends Activity implements AsyncNetworkDelegat
 
     @Override
     public void onQueueRunComplete() {}
+
+    private SoundPool soundPool;
+    //private HashMap<Integer, Integer> soundPoolMap;
+
+    private void playClosingSting()
+    {
+        int[] soundIds=new int[] { R.raw.afterbuttermybiscuits, R.raw.afterdills, R.raw.afterget, R.raw.aftergigantic, 
+        R.raw.aftergravy, R.raw.afterpocket };
+
+        soundPool = new SoundPool(4, AudioManager.STREAM_MUSIC, 100);
+
+        Random rand=new Random();
+
+        AudioManager mgr = (AudioManager)this.getSystemService(Context.AUDIO_SERVICE);
+        float streamVolumeCurrent = mgr.getStreamVolume(AudioManager.STREAM_MUSIC);
+        float streamVolumeMax = mgr.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        float volume = streamVolumeCurrent / streamVolumeMax;
+
+        Integer sound=soundPool.load(this, soundIds[rand.nextInt(soundIds.length-1)], 1);
+        soundPool.play(sound, volume, volume, 1, 0, 1f);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -76,6 +103,7 @@ public class GameResultsActivity extends Activity implements AsyncNetworkDelegat
 
         player.reconcileCollectedCaps(GameResultsActivity.this);
 
+        playClosingSting();
     }
 
     @Override

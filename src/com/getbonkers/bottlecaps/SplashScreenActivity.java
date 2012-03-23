@@ -40,9 +40,9 @@ public class SplashScreenActivity extends Activity {
     private void initSounds() {
         soundPool = new SoundPool(3, AudioManager.STREAM_MUSIC, 100);
         soundPoolMap = new HashMap<Integer, Integer>();
-        soundPoolMap.put(SOUND_CLICK1, soundPool.load(this, R.raw.button1click1, 1));
-        soundPoolMap.put(SOUND_CLICK2, soundPool.load(this, R.raw.button1click2, 1));
-        soundPoolMap.put(SOUND_GAMESTART, soundPool.load(this, R.raw.gamestart, 1));
+        soundPoolMap.put(SOUND_CLICK1, soundPool.load(this, R.raw.buttonclickvar1, 1));
+        soundPoolMap.put(SOUND_CLICK2, soundPool.load(this, R.raw.buttonclickvar2, 1));
+        //soundPoolMap.put(SOUND_GAMESTART, soundPool.load(this, R.raw.gamestart, 1));
     }
 
     public void playSound(int sound) {
@@ -138,18 +138,18 @@ public class SplashScreenActivity extends Activity {
         }
     }
 
-    public void onKidsModeClick(View v)
+    public void onNormalModeClick(View v)
     {
         //if(!readyToGo) return;
         playSound(SOUND_CLICK1);
 
-        startGame(0);
+        startGame(1);
     }
 
-    public void onPlayButtonClick(View v)
+    public void onEasyModeClick(View v)
     {
         playSound(SOUND_CLICK1);
 
-        startGame(1);
+        startGame(0);
     }
 }

@@ -42,7 +42,7 @@
                   >
 
         <ImageView android:id="@+id/splashPlayKidsMode"
-                android:onClick="onKidsModeClick"
+                android:onClick="onNormalModeClick"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 android:scaleType="fitXY"
@@ -54,11 +54,11 @@
         <!--                 android:layout_weight="0.45" -->
 
         <ImageView android:id="@+id/splashPlayButton"
-                android:onClick="onPlayButtonClick"
+                android:onClick="onEasyModeClick"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:scaleType="fitXY"
-                android:src="@drawable/buttonhard"
+                android:src="@drawable/buttoneasy"
                 android:layout_alignParentBottom="true"
                 android:layout_toRightOf="@id/splashPlayKidsMode"
                  />

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:weightSum="1.0">
+
+    <RelativeLayout android:layout_weight="0.5"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    >
+
+        <TextView android:text="Common"
+                  android:layout_centerHorizontal="true"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:id="@+id/capPagerCap1Rarity"
+                  android:layout_marginTop="5dp"
+                />
+
+        <com.loopj.android.image.SmartImageView
+                   android:layout_width="150dp"
+                   android:layout_height="150dp"
+                   android:layout_centerHorizontal="true"
+                   android:id="@+id/capPagerCap1Image"
+                   android:layout_below="@id/capPagerCap1Rarity"
+                   />
+
+        <TextView android:text="Unlimited"
+                  android:layout_centerHorizontal="true"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_below="@id/capPagerCap1Image"
+                  android:textSize="20sp"
+                />
+
+    </RelativeLayout>
+
+    <RelativeLayout android:layout_weight="0.5"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+            >
+
+        <TextView android:text="Common"
+                  android:layout_centerHorizontal="true"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:id="@+id/capPagerCap2Rarity"
+                  android:layout_marginTop="5dp"
+                />
+
+        <com.loopj.android.image.SmartImageView
+                   android:layout_width="150dp"
+                   android:layout_height="150dp"
+                   android:layout_centerHorizontal="true"
+                   android:id="@+id/capPagerCap2Image"
+                   android:layout_below="@id/capPagerCap2Rarity"
+                />
+
+        <TextView android:text="Unlimited"
+                  android:layout_centerHorizontal="true"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_below="@id/capPagerCap2Image"
+                  android:textSize="20sp"
+                  />
+
+    </RelativeLayout>
+
+</LinearLayout>

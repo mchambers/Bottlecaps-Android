@@ -1007,7 +1007,7 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
             timerCover.setBounds(timerRect);
             timerBlue.setBounds(timerRect);
 
-            scorePosition=(float)(40*scaleFactor);
+            scorePosition=(float)(50*scaleFactor);
 
             startNewGame(currentLevel);
         }
@@ -1085,15 +1085,21 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
             {
                 stopMusic();
 
-                // queue the collected caps for reconciliation
-                BottlecapsDatabaseAdapter adapter=new BottlecapsDatabaseAdapter(getApplicationContext());
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        BottlecapsDatabaseAdapter adapter=new BottlecapsDatabaseAdapter(getApplicationContext());
 
-                adapter.open();
-                for(int x=0; x<capsCollected.size(); x++)
-                {
-                    adapter.addCapSettlement(capsCollected.get(x).index);
-                }
-                adapter.close();
+                        adapter.open();
+                        for(int x=0; x<capsCollected.size(); x++)
+                        {
+                            adapter.addCapSettlement(capsCollected.get(x).index);
+                        }
+                        adapter.close();
+                    }
+                }).start();
+
+                // queue the collected caps for reconciliation
 
                 Intent resultsIntent=new Intent(getBaseContext(), GameResultsActivity.class);
 

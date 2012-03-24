@@ -222,8 +222,25 @@ public class CapManager implements CapManagerLoadingDelegate {
             {
                 BitmapFactory.Options options=new BitmapFactory.Options();
 
-                if(lowMemoryMode)
+                /*
+                int density=_context.getResources().getDisplayMetrics().densityDpi;
+
+                options.inDensity=160;
+                options.inTargetDensity=density;
+                  */
+
+                if(_context.getResources().getDisplayMetrics().density<1.5)
                     options.inSampleSize=2;
+
+                if(lowMemoryMode)
+                {
+                    if(options.inSampleSize>0)
+                        options.inSampleSize*=2;
+                    else
+                        options.inSampleSize=2;
+                }
+
+                options.inScaled=true;
 
                 if(this.resourceId!=0)
                 {
@@ -233,10 +250,10 @@ public class CapManager implements CapManagerLoadingDelegate {
                 {
                     String file=_context.getFilesDir().getPath()+"/"+this.index+".png";
 
-                    if(lowMemoryMode)
-                        this.image=new BitmapDrawable(_context.getResources(), BitmapFactory.decodeFile(_context.getFilesDir().getPath()+"/"+this.index+".png", options));
-                    else
-                        this.image=new BitmapDrawable(_context.getResources(), file);
+                    //if(lowMemoryMode)
+                    this.image=new BitmapDrawable(_context.getResources(), BitmapFactory.decodeFile(file, options));
+                    //else
+                    //    this.image=new BitmapDrawable(_context.getResources(), file, options);
                 }
                 //                    options.inSampleSize=4;
                 //this.image=new BitmapDrawable(context.getResources(), BitmapFactory.decodeResource(context.getResources(), this.resourceId, options));

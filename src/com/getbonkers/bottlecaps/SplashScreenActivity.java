@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import android.util.JsonReader;
 import android.view.View;
+import android.widget.ImageView;
+import com.flurry.android.FlurryAgent;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import android.util.Log;
@@ -32,6 +34,8 @@ public class SplashScreenActivity extends Activity {
 
     private SoundPool soundPool;
     private HashMap<Integer, Integer> soundPoolMap;
+    
+    private Player p;
 
     public static final int SOUND_CLICK1 = 1;
     public static final int SOUND_CLICK2 = 2;
@@ -46,6 +50,8 @@ public class SplashScreenActivity extends Activity {
     }
 
     public void playSound(int sound) {
+        if(!p.hasAudioEnabled()) return;
+
         /* Updated: The next 4 lines calculate the current volume in a scale of 0.0 to 1.0 */
         AudioManager mgr = (AudioManager)this.getSystemService(Context.AUDIO_SERVICE);
         float streamVolumeCurrent = mgr.getStreamVolume(AudioManager.STREAM_MUSIC);
@@ -56,15 +62,46 @@ public class SplashScreenActivity extends Activity {
         soundPool.play(soundPoolMap.get(sound), volume, volume, 1, 0, 1f);
     }
 
+    public void toggleAudio(View v)
+    {
+        p.setAudioEnabled(!p.hasAudioEnabled());
+        refreshAudioButton();
+    }
+
+    private void refreshAudioButton()
+    {
+        int newRes;
+        
+        if(!p.hasAudioEnabled())
+            newRes=R.drawable.soundoff;
+        else
+            newRes=R.drawable.soundon;
+
+        ((ImageView)findViewById(R.id.splashMuteButton)).setImageResource(newRes);
+    }
+
+    @Override
+    public void onStop()
+    {
+        super.onStop();
+        FlurryAgent.onEndSession(this);
+    }
+
+
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        FlurryAgent.onStartSession(this, "LG9MLAYBEKLAFWLBMDAJ");
+
         setContentView(R.layout.splashscreen);
 
         initSounds();
         
+        p=new Player(this);
+        refreshAudioButton();
+
         GetBonkersAPI.initPersistentCookieStore(getApplicationContext());
 
         RequestParams params=new RequestParams();
@@ -122,10 +159,10 @@ public class SplashScreenActivity extends Activity {
     
     private void startGame(int difficulty)
     {
-        boolean showTutorial=true;
-
-        if(showTutorial)
+        if(!p.hasSeenTutorial(TutorialActivity.MODE_DEFAULT))
         {
+            p.setHasSeenTutorial(TutorialActivity.MODE_DEFAULT);
+
             Intent tutorialIntent=new Intent(this, TutorialActivity.class);
             tutorialIntent.putExtra("GAME_DIFFICULTY", difficulty);
             this.startActivity(tutorialIntent);

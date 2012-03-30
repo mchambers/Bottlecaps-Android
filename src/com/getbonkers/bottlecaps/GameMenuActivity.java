@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import com.flurry.android.FlurryAgent;
 
 /**
  * Created by IntelliJ IDEA.
@@ -13,9 +14,17 @@ import android.view.View;
  * To change this template use File | Settings | File Templates.
  */
 public class GameMenuActivity extends Activity {
+    @Override
+    public void onStop()
+    {
+        super.onStop();
+        FlurryAgent.onEndSession(this);
+    }
+
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        FlurryAgent.onStartSession(this, "LG9MLAYBEKLAFWLBMDAJ");
         setContentView(R.layout.main);
     }
     
@@ -27,13 +36,14 @@ public class GameMenuActivity extends Activity {
     public void onMyCapsButtonPressed(View v) {
         boolean runTutorial;
         Intent i;
+        
+        Player p=new Player(this);
 
-        runTutorial=true;
-
-        if(runTutorial)
+        if(!p.hasSeenTutorial(TutorialActivity.MODE_CAPMANAGER))
         {
+            p.setHasSeenTutorial(TutorialActivity.MODE_CAPMANAGER);
             i=new Intent(this, TutorialActivity.class);
-            i.putExtra("mode", 1);
+            i.putExtra("mode", TutorialActivity.MODE_CAPMANAGER);
         }
         else
         {

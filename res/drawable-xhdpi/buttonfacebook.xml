@@ -3,13 +3,13 @@
           android:constantSize="true" >
 
     <item
-            android:drawable="@drawable/loginfacebookpressed"
+            android:drawable="@drawable/fbconnecton"
             android:state_pressed="true"
 
             />
 
     <item
-            android:drawable="@drawable/loginfacebook"
+            android:drawable="@drawable/fbconnect"
             android:state_pressed="false"
             />
 

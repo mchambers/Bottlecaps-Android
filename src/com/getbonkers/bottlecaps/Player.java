@@ -170,11 +170,51 @@ public class Player {
     {
         _context=context;
         _db=new BottlecapsDatabaseAdapter(_context);
-        _db.open();
 
         mPrefs = _context.getSharedPreferences("BottlecapsPlayer", Context.MODE_PRIVATE);
 
         validateFacebookConnection();
+    }
+    
+    public int getNumberOfCapsCollected()
+    {
+        _db.openReadOnly();
+        int caps=(int)_db.numberOfUniqueCapsCollected();
+        _db.close();
+        return caps;
+    }
+    
+    public int getTotalNumberOfCaps()
+    {
+        _db.openReadOnly();
+        int caps=(int)_db.numberOfCapsInDatabase();
+        _db.close();
+        return caps;
+    }
+    
+    public boolean hasSeenTutorial(int mode)
+    {
+        return mPrefs.getBoolean("seenTutorial"+mode, false);
+    }
+    
+    public void setHasSeenTutorial(int mode)
+    {
+        SharedPreferences.Editor edit=mPrefs.edit();
+
+        edit.putBoolean("seenTutorial"+mode, true);
+        edit.commit();
+    }
+
+    public boolean hasAudioEnabled()
+    {
+        return mPrefs.getBoolean("audioEnabled", true);
+    }
+
+    public void setAudioEnabled(boolean v)
+    {
+        SharedPreferences.Editor edit=mPrefs.edit();
+        edit.putBoolean("audioEnabled", v);
+        edit.commit();
     }
 
     public void spendBoost(int type)
@@ -215,7 +255,9 @@ public class Player {
 
     public void addCollectedCap(long capID)
     {
+        _db.open();
         _db.addCapSettlement(capID);
+        _db.close();
     }
 
          /*
@@ -227,10 +269,14 @@ public class Player {
     
     public int capsToNextUnlock()
     {
-        long earnedCaps=_db.numberOfUniqueCapsCollected();
-        long availableCaps=_db.numberOfCapsInDatabase();
+        //long earnedCaps=_db.numberOfUniqueCapsCollected();
+        //long availableCaps=_db.numberOfCapsInDatabase();
+        //return (int)((Math.floor(availableCaps*0.75))-earnedCaps);
 
-        return (int)((Math.floor(availableCaps*0.75))-earnedCaps);
+        _db.open();
+        int uncol=_db.numberOfUncollectedCommonCaps();
+        _db.close();
+        return uncol;
     }
 
             /*
@@ -271,9 +317,39 @@ public class Player {
     {
         return facebook.isSessionValid();
     }
+    
+    public long getHighScore()
+    {
+        return mPrefs.getLong("highscore", 0);
+    }
+    
+    public int getBiggestCombo()
+    {
+        return mPrefs.getInt("biggestcombo", 0);
+    }
+    
+    public void postBiggestCombo(int biggestCombo)
+    {
+        int curBigCombo=getBiggestCombo();
+
+        if(curBigCombo<biggestCombo)
+        {
+            SharedPreferences.Editor edit=mPrefs.edit();
+            edit.putInt("biggestcombo", biggestCombo);
+            edit.commit();
+        }
+    }
 
     public void postScore(long score)
     {
+        long hiScore=mPrefs.getLong("highscore", 0);
+        if(hiScore<score)
+        {
+            SharedPreferences.Editor edit=mPrefs.edit();
+            edit.putLong("highscore", score);
+            edit.commit();
+        }
+
         if(facebook.isSessionValid())
         {
             try {
@@ -299,6 +375,8 @@ public class Player {
     {
         PlayerDataReconciler reconciler=new PlayerDataReconciler(completionDelegate);
 
+        _db.open();
+
         Cursor settlements=_db.getOutstandingCapSettlements();
         long[] batchIds=new long[settlements.getCount()];
         int i=0;
@@ -309,6 +387,8 @@ public class Player {
         settlements.close();
 
         _db.clearCapSettlements();
+
+        _db.close();
 
         reconciler.addBatchQueueItem(PlayerDataReconciler.DATA_EARNED_CAP_BATCH, batchIds);
 

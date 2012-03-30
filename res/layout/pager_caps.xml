@@ -10,7 +10,7 @@
                     android:layout_height="match_parent"
                     >
 
-        <TextView android:text="Common"
+        <TextView android:text=""
                   android:layout_centerHorizontal="true"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
@@ -19,19 +19,22 @@
                 />
 
         <com.loopj.android.image.SmartImageView
-                   android:layout_width="150dp"
-                   android:layout_height="150dp"
+                   android:layout_width="125dp"
+                   android:layout_height="125dp"
                    android:layout_centerHorizontal="true"
                    android:id="@+id/capPagerCap1Image"
                    android:layout_below="@id/capPagerCap1Rarity"
                    />
 
-        <TextView android:text="Unlimited"
+        <TextView android:text=""
                   android:layout_centerHorizontal="true"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:layout_below="@id/capPagerCap1Image"
                   android:textSize="20sp"
+                  android:layout_marginTop="6dp"
+                  android:gravity="center"
+                  android:id="@+id/capPagerCap1Availability"
                 />
 
     </RelativeLayout>
@@ -41,7 +44,7 @@
                     android:layout_height="match_parent"
             >
 
-        <TextView android:text="Common"
+        <TextView android:text=""
                   android:layout_centerHorizontal="true"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
@@ -50,19 +53,22 @@
                 />
 
         <com.loopj.android.image.SmartImageView
-                   android:layout_width="150dp"
-                   android:layout_height="150dp"
+                   android:layout_width="125dp"
+                   android:layout_height="125dp"
                    android:layout_centerHorizontal="true"
                    android:id="@+id/capPagerCap2Image"
                    android:layout_below="@id/capPagerCap2Rarity"
                 />
 
-        <TextView android:text="Unlimited"
+        <TextView android:text=""
                   android:layout_centerHorizontal="true"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:layout_below="@id/capPagerCap2Image"
                   android:textSize="20sp"
+                  android:layout_marginTop="6dp"
+                  android:gravity="center"
+                  android:id="@+id/capPagerCap2Availability"
                   />
 
     </RelativeLayout>

@@ -3,13 +3,13 @@
           android:constantSize="true" >
 
     <item
-            android:drawable="@drawable/menubuyboostson"
+            android:drawable="@drawable/menumyboostson"
             android:state_pressed="true"
 
             />
 
     <item
-            android:drawable="@drawable/menubuyboosts"
+            android:drawable="@drawable/menumyboosts"
             android:state_pressed="false"
             />
 

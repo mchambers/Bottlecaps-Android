@@ -111,6 +111,7 @@
               android:layout_centerHorizontal="true"
               android:textColor="@android:color/white"
               android:visibility="gone"
+              android:id="@+id/capsetLockedIndicator"
             />
     
     <Button android:layout_width="wrap_content"
@@ -125,6 +126,7 @@
                  android:textColor="@android:color/white"
                  android:onClick="unlockThisSet"
                  android:visibility="gone"
+                 android:id="@+id/capsetUnlockButton"
                  />
 
     <LinearLayout  android:id="@+id/capsetsHeaderSelector"

@@ -161,31 +161,13 @@ public class CapDownloadManager implements Runnable {
         if(capSetExistsInAssets(setID))
         {
             loadCapSetFromZip(setID, true);
-            requestsOutstanding--;
         }
         else
         {
-            // download it from the server.
-            /*
-        URL url=new URL("");
-
-        HttpURLConnection urlConn=(HttpURLConnection)url.openConnection();
-
-        try {
-            ZipInputStream in=new ZipInputStream(urlConn.getInputStream());
-
-
-
-        } catch(Exception e)
-        {
-
+            loadCapSetFromZip(setID, false);
         }
-        finally {
-            urlConn.disconnect();
-        }
-            */
-            requestsOutstanding--;
-        }
+
+        requestsOutstanding--;
 
         /*
       StatFs stat = new StatFs(Environment.getExternalStorageDirectory().getPath());
@@ -196,8 +178,6 @@ public class CapDownloadManager implements Runnable {
       long phoneBytesAvailable = (long)phoneStat.getBlockSize() * (long)phoneStat.getAvailableBlocks();
       long phoneSpaceAvailable = (long) (phoneBytesAvailable / (1024.f * 1024.f));
         */
-
-
     }
 
     public void queueSetAssetsForDownload(long setID)

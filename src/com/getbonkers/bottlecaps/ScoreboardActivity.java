@@ -13,6 +13,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import com.flurry.android.FlurryAgent;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -21,6 +22,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import com.facebook.android.*;
 import com.facebook.android.Facebook.*;
+
+import java.text.NumberFormat;
 import java.util.ArrayList;
 
 /**
@@ -117,71 +120,79 @@ ASIFormDataRequest *request = [ASIFormDataRequest requestWithURL:url];
             @Override
             public void onComplete(Bundle values) {
                 // tell GetBonkers about the new FBID
-                SharedPreferences.Editor editor = mPrefs.edit();
+                final SharedPreferences.Editor editor = mPrefs.edit();
                 editor.putString("access_token", facebook.getAccessToken());
                 editor.putLong("access_expires", facebook.getAccessExpires());
                 editor.commit();
 
-                JSONObject meResponse;
-                String appAccessToken;
-                RequestParams params=new RequestParams();
+                final RequestParams params=new RequestParams();
 
-                try {
-                    meResponse=new JSONObject(facebook.request("me"));
-                    //facebook.setAccessToken(null);
-                    //facebook.setAccessExpires(0);
-
-                    Facebook appTokenGetter=new Facebook(facebook.getAppId());
-
-                    Bundle appTokenParams=new Bundle();
-                    appTokenParams.putString("client_id", "220182624731035");
-                    appTokenParams.putString("client_secret", "4eaad26ffa800e232438647bbc8af28f");
-                    appTokenParams.putString("grant_type", "client_credentials");
-
-                    appAccessToken=appTokenGetter.request("oauth/access_token", appTokenParams);
-
-                    editor.putString("app_access_token", appAccessToken.replace("access_token=", ""));
-
-                    Log.d("ScoreboardActivity", "Received app access token: " + appAccessToken);
-
-                    editor.putString("facebook_id", meResponse.getString("id"));
-                    editor.commit();
-
-                    params.put("facebook_id", meResponse.getString("id"));
-                    params.put("name", meResponse.getString("name"));
-                    params.put("avatar", "http://graph.facebook.com/"+meResponse.getString("id")+"/picture");
-                } catch(Exception e)
-                {
-                    e.printStackTrace();
-                }
-
-                GetBonkersAPI.post("/admin/players/"+GetBonkersAPI.getPlayerUUID(getApplicationContext()), params, getApplicationContext(), new AsyncHttpResponseHandler() {
+                new Thread(new Runnable() {
                     @Override
-                    public void onSuccess(String response)
-                    {
-                        runOnUiThread(new Runnable() {
+                    public void run() {
+                        JSONObject meResponse;
+                        String appAccessToken;
+                        
+                        try {
+                            meResponse=new JSONObject(facebook.request("me"));
+
+                            Facebook appTokenGetter=new Facebook(facebook.getAppId());
+
+                            Bundle appTokenParams=new Bundle();
+                            appTokenParams.putString("client_id", "220182624731035");
+                            appTokenParams.putString("client_secret", "4eaad26ffa800e232438647bbc8af28f");
+                            appTokenParams.putString("grant_type", "client_credentials");
+
+                            appAccessToken=appTokenGetter.request("oauth/access_token", appTokenParams);
+
+                            editor.putString("app_access_token", appAccessToken.replace("access_token=", ""));
+
+                            Log.d("ScoreboardActivity", "Received app access token: " + appAccessToken);
+
+                            editor.putString("facebook_id", meResponse.getString("id"));
+                            editor.commit();
+
+                            params.put("facebook_id", meResponse.getString("id"));
+                            params.put("name", meResponse.getString("name"));
+                            params.put("avatar", "http://graph.facebook.com/"+meResponse.getString("id")+"/picture");
+                        }
+                        catch(Exception e)
+                        {
+
+                        }
+
+                        GetBonkersAPI.post("/admin/players/"+GetBonkersAPI.getPlayerUUID(getApplicationContext()), params, getApplicationContext(), new AsyncHttpResponseHandler() {
                             @Override
-                            public void run() {
+                            public void onSuccess(String response)
+                            {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        wait.dismiss();
+                                        if(mode==1)
+                                        {
+                                            finish();
+                                        }
+                                        else
+                                        {
+                                            updateScoreboard();
+                                            rightSelectorTapped(null);
+                                        }
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onFailure(Throwable error)
+                            {
                                 wait.dismiss();
-                                if(mode==1)
-                                {
-                                    finish();
-                                }
-                                else
-                                {
-                                    updateScoreboard();
-                                    rightSelectorTapped(null);
-                                }
                             }
                         });
+
                     }
-                    
-                    @Override
-                    public void onFailure(Throwable error)
-                    {
-                        wait.dismiss();
-                    }
-                });
+                }).start();
+
+
             }
 
             @Override
@@ -205,7 +216,11 @@ ASIFormDataRequest *request = [ASIFormDataRequest requestWithURL:url];
     {
         RequestParams params=new RequestParams("friends", fbFriendList);
 
-        GetBonkersAPI.post("/admin/players/" + GetBonkersAPI.getPlayerUUID(this) + "/rank", params, this, new AsyncHttpResponseHandler() {
+        String url="/admin/players/" + GetBonkersAPI.getPlayerUUID(this) + "/rank";
+        Log.d("ScoreboardActivity", fbFriendList);
+        Log.d("ScoreboardActivity", url);
+
+        GetBonkersAPI.post(url, params, getApplicationContext(), new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(String response) {
                 try {
@@ -234,12 +249,15 @@ ASIFormDataRequest *request = [ASIFormDataRequest requestWithURL:url];
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            Player p=new Player(ScoreboardActivity.this);
+
                             TextView myRank = (TextView) findViewById(R.id.scoreboardMyScoreRank);
                             TextView myScore = (TextView) findViewById(R.id.scoreboardMyScoreScore);
 
                             try {
-                                myRank.setText(String.valueOf(myScoreData.getLong("rank")));
-                            } catch (JSONException e) {
+                                myRank.setText(NumberFormat.getInstance().format(p.getBiggestCombo()));
+                                myScore.setText(NumberFormat.getInstance().format(p.getHighScore()));
+                            } catch (Exception e) {
 
                             }
 
@@ -301,9 +319,17 @@ ASIFormDataRequest *request = [ASIFormDataRequest requestWithURL:url];
     }
 
     @Override
+    public void onStop()
+    {
+        super.onStop();
+        FlurryAgent.onEndSession(this);
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        FlurryAgent.onStartSession(this, "LG9MLAYBEKLAFWLBMDAJ");
 
         setContentView(R.layout.scoreboard);
 

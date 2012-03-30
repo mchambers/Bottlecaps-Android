@@ -97,6 +97,13 @@ public class BottlecapsDatabaseAdapter {
         }
     }
 
+    public BottlecapsDatabaseAdapter openReadOnly()
+    {
+        if(db!=null) db.close();
+        db=DBHelper.getReadableDatabase();
+        return this;
+    }
+
     //---opens the database---
     public BottlecapsDatabaseAdapter open() throws SQLException
     {
@@ -142,6 +149,30 @@ public class BottlecapsDatabaseAdapter {
         values.put(KEY_SETS_NAME, setName);
         values.put(KEY_SETS_DESCRIPTION, description);
         return db.insertWithOnConflict(DATABASE_SETS_TABLE, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+    }
+    
+    public int numberOfUncollectedCommonCaps()
+    {
+        Cursor capsCursor=db.query(DATABASE_CAPS_TABLE, new String[] { KEY_ROWID }, KEY_CAPS_COLLECTED+"<=0 AND "+KEY_CAPS_SCARCITY+"<2", null, null, null, null);
+
+        capsCursor.moveToFirst();
+        int count=capsCursor.getCount();
+        capsCursor.close();
+
+        return count;
+    }
+
+    public Cursor getUncollectedCommonCapsAsCursor()
+    {
+        return db.query(DATABASE_CAPS_TABLE, new String[] { KEY_ROWID, KEY_CAPS_AVAILABLE, KEY_CAPS_ISSUED, KEY_CAPS_SCARCITY }, KEY_CAPS_COLLECTED+"<=0 AND "+KEY_CAPS_SCARCITY+"<2", null, null, null, null);
+          /*
+        while(capsCursor.moveToNext())
+        {
+            caps.add(capsCursor.getLong(capsCursor.getColumnIndex(KEY_ROWID)));
+        }
+
+        capsCursor.close();
+         */
     }
     
     public ArrayList<Long> getUncollectedCommonCaps()
@@ -236,6 +267,11 @@ public class BottlecapsDatabaseAdapter {
         long id=ret.getLong(ret.getColumnIndex(KEY_ROWID));
         ret.close();
         return id;
+    }
+    
+    public Cursor getCap(long capID)
+    {
+        return db.query(DATABASE_CAPS_TABLE, new String[] { KEY_ROWID, KEY_CAPS_COLLECTED, KEY_CAPS_SCARCITY, KEY_CAPS_AVAILABLE }, KEY_ROWID+"="+capID, null, null, null, null);
     }
     
     public long insertCapIntoSet(long setID, long capID, int available, int issued, String name, String description, int scarcity)

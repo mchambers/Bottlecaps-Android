@@ -2,11 +2,8 @@ package com.getbonkers.bottlecaps;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteCursor;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
-import android.os.Environment;
-import android.os.StatFs;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -14,18 +11,8 @@ import com.loopj.android.http.RequestParams;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.*;
-import java.lang.reflect.Array;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.sql.Time;
 import java.util.*;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
-
-import org.apache.commons.io.IOUtils;
 
 import com.getbonkers.bottlecaps.GameBoardActivity.GameBoard;
 
@@ -81,10 +68,10 @@ public class CapManager implements CapManagerLoadingDelegate {
         }
 
         @Override
-        public void putCapInPlay(Context context, boolean lowMemoryMode)
+        public void putCapInPlay(Context context)
         {
             this.resourceId=R.drawable.boostjoker; //context.getResources().getIdentifier("boostjoker", "drawable", "com.getbonkers.bottlecaps");
-            super.putCapInPlay(context, lowMemoryMode);
+            super.putCapInPlay(context);
         }
 
         public boolean equals(Cap o)
@@ -100,12 +87,12 @@ public class CapManager implements CapManagerLoadingDelegate {
         }
         
         @Override
-        public void putCapInPlay(Context context, boolean lowMemoryMode)
+        public void putCapInPlay(Context context)
         {
             this.resourceId=R.drawable.boostfrenzy;//context.getResources().getIdentifier("boostfrenzy", "drawable", "com.getbonkers.bottlecaps");
             timeRemaining=5000;
             interval=500;
-            super.putCapInPlay(context, lowMemoryMode);
+            super.putCapInPlay(context);
         }
 
         @Override
@@ -133,10 +120,10 @@ public class CapManager implements CapManagerLoadingDelegate {
         }           
 
         @Override
-        public void putCapInPlay(Context context, boolean lowMemoryMode)
+        public void putCapInPlay(Context context)
         {
             this.resourceId=R.drawable.boostnitro; //context.getResources().getIdentifier("boostnitro", "drawable", "com.getbonkers.bottlecaps");
-            super.putCapInPlay(context, lowMemoryMode);
+            super.putCapInPlay(context);
         }
 
         public void performBoostEffects(GameBoardActivity.GameBoard board)
@@ -152,10 +139,10 @@ public class CapManager implements CapManagerLoadingDelegate {
         }
         
         @Override
-        public void putCapInPlay(Context context, boolean lowMemoryMode)
+        public void putCapInPlay(Context context)
         {
             this.resourceId=R.drawable.boostincreasetime;//context.getResources().getIdentifier("boostincreasetime", "drawable", "com.getbonkers.bottlecaps");
-            super.putCapInPlay(context, lowMemoryMode);
+            super.putCapInPlay(context);
         }
 
         public void performBoostEffects(GameBoardActivity.GameBoard board)
@@ -216,7 +203,7 @@ public class CapManager implements CapManagerLoadingDelegate {
             return false;
         }
 
-        public void putCapInPlay(Context context, boolean lowMemoryMode)
+        public void putCapInPlay(Context context)
         {
             if(numberInPlay<=0)
             {
@@ -232,15 +219,12 @@ public class CapManager implements CapManagerLoadingDelegate {
                 if(_context.getResources().getDisplayMetrics().density<1.5)
                     options.inSampleSize=2;
 
-                if(lowMemoryMode)
-                {
-                    if(options.inSampleSize>0)
-                        options.inSampleSize*=2;
-                    else
-                        options.inSampleSize=2;
-                }
-
                 options.inScaled=true;
+
+                options.outWidth=pieceSize;
+                options.outHeight=pieceSize;
+
+                options.inTempStorage=_decodeBuffer;
 
                 if(this.resourceId!=0)
                 {
@@ -333,14 +317,18 @@ public class CapManager implements CapManagerLoadingDelegate {
 
     private CapManagerDelegate _delegate;
     private boolean lowMemoryMode=false;
+    
+    protected byte[] _decodeBuffer=new byte[16*1024];
+
+    public int pieceSize;
 
     public CapManager(Context context, int difficulty, final CapManagerDelegate delegate)
     {
         _context=context;
 
         adapter=new BottlecapsDatabaseAdapter(context);
-        adapter.open();
-        
+        adapter.openReadOnly();
+
         level = difficulty;
 
         combosDelivered=new int[10];
@@ -377,23 +365,24 @@ public class CapManager implements CapManagerLoadingDelegate {
 
     public void putCapInPlay(Context context, Cap cap)
     {
-        double totalMemoryUsed = (Runtime.getRuntime().totalMemory() + android.os.Debug.getNativeHeapAllocatedSize());
-        int percentUsed = (int)(totalMemoryUsed / Runtime.getRuntime().maxMemory() * 100);
+        //double totalMemoryUsed = (Runtime.getRuntime().totalMemory() + android.os.Debug.getNativeHeapAllocatedSize());
+        //int percentUsed = (int)(totalMemoryUsed / Runtime.getRuntime().maxMemory() * 100);
 
-        lowMemoryMode=(percentUsed>90); // down-rez this cap image if we're close to running out of memory
+        //lowMemoryMode=(percentUsed>90); // down-rez this cap image if we're close to running out of memory
 
         try {
-            cap.putCapInPlay(context, lowMemoryMode);
+            cap.putCapInPlay(context);
         } catch(OutOfMemoryError e)
         {
             //the VM has requested we stop hemorrhaging resources.
-            lowMemoryMode=true;
+            //lowMemoryMode=true;
             try {
-                cap.putCapInPlay(context, lowMemoryMode);
+                cap.putCapInPlay(context);
             } catch(OutOfMemoryError e2) {
                 throw e2; // :-/
             }
         }
+
         if(currentMostPlayedCap==null || cap.numberInPlay>currentMostPlayedCap.numberInPlay)
             currentMostPlayedCap=cap;
     }
@@ -470,21 +459,40 @@ public class CapManager implements CapManagerLoadingDelegate {
     public void buildWorkingSet()
     {
         long setID;
-        int targetCapAmount=125;
-        int maxNumberOfSets=7;
-        int actualSetAmount=0;
+        int targetCapAmount=50;
         int actualCapAmount=0;
         boolean getAnotherSet=true;
+        Cursor set;
+        boolean firstPass=true;
+        
+        BottlecapsDatabaseAdapter writableDb=new BottlecapsDatabaseAdapter(_context);
+        writableDb.open();
 
         allCaps=new ArrayList<Cap>();
 
+        /*
+            working cap set makeup:
+            1) all of the uncollected common caps
+            2) if total caps is less than 50, pull in complete sets at random until we exceed 50 caps
+         */
+
         while(getAnotherSet)
         {
-            setID=adapter.getRandomSetID();
-            adapter.updateSetLastPlayed(setID, new Date());
-            Cursor set=adapter.getCapsInSet(setID);
-            actualCapAmount+=set.getCount();
-
+            if(firstPass)  // we were checking for allCaps.isEmpty, but that could potentially have an endless loop.
+            {
+                set=adapter.getUncollectedCommonCapsAsCursor();
+                actualCapAmount+=set.getCount();
+                firstPass=false;
+            }
+            else
+            {
+                setID=adapter.getRandomSetID();
+                
+                writableDb.updateSetLastPlayed(setID, new Date());
+                set=adapter.getCapsInSet(setID);
+                actualCapAmount+=set.getCount();
+            }
+                                 // KEY_CAPS_AVAILABLE, KEY_CAPS_ISSUED, KEY_CAPS_SCARCITY, KEY_ROWID
             while(set.moveToNext())
             {
                 Cap c=new Cap();
@@ -497,13 +505,16 @@ public class CapManager implements CapManagerLoadingDelegate {
 
                 if(capAssetExistsOnDisk(c.index))
                     allCaps.add(c);
+                else
+                    actualCapAmount--; // fix the cap amount count
             }
 
-            actualSetAmount++;
-            if(actualCapAmount>=targetCapAmount || actualSetAmount>=maxNumberOfSets) getAnotherSet=false;
+            if(actualCapAmount>=targetCapAmount) getAnotherSet=false;
             
             set.close();
         }
+
+        writableDb.close();
 
         Collections.sort(allCaps, new CapTotalAvailableComparator());
 
@@ -640,7 +651,7 @@ public class CapManager implements CapManagerLoadingDelegate {
     private final int BOOST_PROB_DOUBLE=20;
     private final int BOOST_PROB_NEG3X=3;
 
-    HashMap<Integer, Integer> boostAmounts=new HashMap<Integer, Integer>();
+    //HashMap<Integer, Integer> boostAmounts=new HashMap<Integer, Integer>();
     int[] boostPicker=new int[BOOST_PROB_DOUBLE*4];
     HashMap<Integer, Integer> boostProb=new HashMap<Integer, Integer>();
 
@@ -731,8 +742,8 @@ public class CapManager implements CapManagerLoadingDelegate {
         // if we didn't have any eligible boosts, don't act on the boost buffer
         if(theBoost!=null)
             boostsBuffer.push(theBoost);
-        else
-            Log.d("CapManager", "No boost was available to push");
+        //else
+          //  Log.d("CapManager", "No boost was available to push");
     }
 
     public void removeBoostFromAvailability(Boost boost)
@@ -873,8 +884,15 @@ public class CapManager implements CapManagerLoadingDelegate {
         {
             cap=capsBuffer.pop();
 
-            if(capsBuffer.size()==0)
-                this.fillCapsBuffer();
+            if(capsBuffer.size()<15)
+            {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        fillCapsBuffer();
+                    }
+                }).start();
+            }
         }
 
         //Log.d("CapManager", "Next cap is: "+cap.index+" (set "+cap.setNumber+") forCombo: "+String.valueOf(forCombo) );

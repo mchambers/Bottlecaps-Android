@@ -18,17 +18,24 @@ public class PauseDialog extends Activity {
     {
         super.onCreate(savedInstance);
 
+        setContentView(R.layout.pause_overlay);
+
         BottlecapsDatabaseAdapter db=new BottlecapsDatabaseAdapter(this);
         db.open();
 
         capsRemaining=db.getUncollectedCommonCaps();
+        if(capsRemaining.size()<=0)
+        {
+            findViewById(R.id.pauseCollectCallout).setVisibility(View.GONE);
+        }
+        else
+        {
+            adapter=new PauseScreenCapListAdapter(this, capsRemaining);
+            ((ListView)findViewById(R.id.pauseCapsList)).setAdapter(adapter);
+            adapter.notifyDataSetChanged();
+        }
 
-        adapter=new PauseScreenCapListAdapter(this, capsRemaining);
-
-        setContentView(R.layout.pause_overlay);
-        
-        ((ListView)findViewById(R.id.pauseCapsList)).setAdapter(adapter);
-        adapter.notifyDataSetChanged();
+        db.close();
     }
     
     public void resumeClick(View v)

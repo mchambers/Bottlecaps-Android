@@ -18,6 +18,10 @@
               android:layout_below="@id/scoreboardHeader"
               android:id="@+id/scoreboardHeaderCaption"
               android:textSize="28sp"
+              android:textColor="@android:color/white"
+              android:shadowColor="@android:color/black"
+              android:shadowDy="1"
+              android:shadowRadius="1"
               android:layout_marginLeft="15dp" />
 
     <LinearLayout android:id="@+id/scoreboardMyHighScore"
@@ -29,37 +33,53 @@
                   android:layout_marginRight="10dp"
             >
 
-        <LinearLayout
+        <RelativeLayout
                 android:layout_weight="0.5"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:background="@drawable/mycapsleft">
 
             <TextView android:id="@+id/scoreboardMyScoreScore"
                       android:text="0"
-                      android:layout_width="match_parent"
-                      android:layout_height="match_parent"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
                       android:layout_gravity="center"
                       android:textSize="40sp"
+                      android:textColor="@android:color/black"
                     />
+            
+            <TextView android:layout_below="@id/scoreboardMyScoreScore"
+                      android:text="High Score"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:textSize="12sp"
+                      android:textColor="@android:color/black"/>
 
-        </LinearLayout>
+        </RelativeLayout>
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_weight="0.5"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:background="@drawable/mycapsright">
 
             <TextView android:id="@+id/scoreboardMyScoreRank"
                   android:text="0"
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
                   android:gravity="center"
                   android:textSize="40sp"
+                  android:textColor="@android:color/black"
                 />
 
-        </LinearLayout>
+            <TextView android:layout_below="@id/scoreboardMyScoreRank"
+                      android:text="Biggest Combo"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:textSize="12sp"
+                      android:textColor="@android:color/black"/>
+
+        </RelativeLayout>
 
     </LinearLayout>
 

@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 
 import android.widget.TextView;
+import com.flurry.android.FlurryAgent;
 import com.getbonkers.bottlecaps.BillingService.*;
 import com.getbonkers.bottlecaps.Consts.*;
 
@@ -137,12 +138,20 @@ public class BoostsActivity extends Activity {
         time.setText(player.numberOfBoostsForType(Player.PLAYER_BOOST_TYPE_MORETIME) + "\nTime");
         joker.setText(player.numberOfBoostsForType(Player.PLAYER_BOOST_TYPE_JOKER) + "\nJoker");
     }
+    
+    @Override
+    public void onStop()
+    {
+        super.onStop();
+        FlurryAgent.onEndSession(this);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-
+        FlurryAgent.onStartSession(this, "LG9MLAYBEKLAFWLBMDAJ");
+        
         setContentView(R.layout.boosts);
 
         handler=new Handler();

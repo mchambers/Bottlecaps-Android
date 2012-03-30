@@ -8,6 +8,7 @@ package com.getbonkers.bottlecaps;
  * To change this template use File | Settings | File Templates.
  */
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,8 +67,13 @@ public class ScoreboardListAdapter extends ArrayAdapter<JSONObject> {
 
         try {
             playerRank.setText(String.valueOf(item.getInt("rank")));
-            playerScore.setText(String.valueOf(item.getLong("score")));
-            playerName.setText(item.getString("name"));
+            playerScore.setText(NumberFormat.getInstance().format(item.getLong("score")));
+            
+            if(item.getString("name")==null || item.getString("name").equals("null"))
+                playerName.setText("Anonymous");
+            else
+                playerName.setText(item.getString("name"));
+
             playerAvatar.setImageUrl(item.getString("avatar"));
         } catch(JSONException e)
         {

@@ -192,6 +192,7 @@
         <root url="jar://$PROJECT_DIR$/libs/commons-io-2.1.jar!/" />
         <root url="jar://$PROJECT_DIR$/../../android-sdk-macosx/extras/android/support/v4/android-support-v4.jar!/" />
         <root url="jar://$PROJECT_DIR$/trident.jar!/" />
+        <root url="jar://$PROJECT_DIR$/libs/FlurryAgent.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />

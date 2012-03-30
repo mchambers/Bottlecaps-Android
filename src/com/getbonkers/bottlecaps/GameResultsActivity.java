@@ -9,6 +9,7 @@ import android.media.SoundPool;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import com.flurry.android.FlurryAgent;
 
 import java.util.HashMap;
 import java.util.Random;
@@ -58,12 +59,34 @@ public class GameResultsActivity extends Activity implements AsyncNetworkDelegat
         Random rand=new Random();
 
         AudioManager mgr = (AudioManager)this.getSystemService(Context.AUDIO_SERVICE);
-        float streamVolumeCurrent = mgr.getStreamVolume(AudioManager.STREAM_MUSIC);
-        float streamVolumeMax = mgr.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-        float volume = streamVolumeCurrent / streamVolumeMax;
+        final float streamVolumeCurrent = mgr.getStreamVolume(AudioManager.STREAM_MUSIC);
+        final float streamVolumeMax = mgr.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        final float volume = streamVolumeCurrent / streamVolumeMax;
 
-        Integer sound=soundPool.load(this, soundIds[rand.nextInt(soundIds.length-1)], 1);
-        soundPool.play(sound, volume, volume, 1, 0, 1f);
+        final Integer sound=soundPool.load(this, soundIds[rand.nextInt(soundIds.length-1)], 1);
+        
+        soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
+            public void onLoadComplete(android.media.SoundPool soundPool, int i, int i1)
+            {
+                soundPool.play(sound, volume, volume, 1, 0, 1f);
+            }
+        });
+    }
+
+    @Override
+    public void onStop()
+    {
+        super.onStop();
+        FlurryAgent.onEndSession(this);
+    }
+
+    @Override
+    public void onStart()
+    {
+        super.onStart();
+
+        //player.reconcileCollectedCaps(GameResultsActivity.this);
+        playClosingSting();
     }
 
     @Override
@@ -72,9 +95,11 @@ public class GameResultsActivity extends Activity implements AsyncNetworkDelegat
         int capsCollectedInt;
         int biggestComboInt;
 
-        player=new Player(getApplicationContext());
+        player=new Player(this);
 
         super.onCreate(savedInstanceState);
+        FlurryAgent.onStartSession(this, "LG9MLAYBEKLAFWLBMDAJ");
+
         //requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.gameresults);
 
@@ -82,6 +107,8 @@ public class GameResultsActivity extends Activity implements AsyncNetworkDelegat
         capsCollectedInt=getIntent().getExtras().getInt("GAME_RESULTS_CAPSCOLLECTED");
         biggestComboInt=getIntent().getExtras().getInt("GAME_RESULTS_BIGGESTCOMBO");
         level=getIntent().getExtras().getInt("GAME_RESULTS_LEVEL");
+
+        player.postBiggestCombo(biggestComboInt);
 
         TextView score=(TextView)findViewById(R.id.resultsScore);
         TextView capsCollected=(TextView)findViewById(R.id.resultsCapsCollected);
@@ -100,10 +127,6 @@ public class GameResultsActivity extends Activity implements AsyncNetworkDelegat
         score.setText(String.valueOf(scoreInt));
         capsCollected.setText(String.valueOf(capsCollectedInt));
         biggestCombo.setText(String.valueOf(biggestComboInt));
-
-        player.reconcileCollectedCaps(GameResultsActivity.this);
-
-        playClosingSting();
     }
 
     @Override

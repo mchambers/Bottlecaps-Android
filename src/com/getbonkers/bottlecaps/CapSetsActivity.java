@@ -15,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import com.flurry.android.FlurryAgent;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import org.json.JSONArray;
@@ -87,6 +88,13 @@ public class CapSetsActivity extends Activity {
     }
 
     @Override
+    public void onStop()
+    {
+        super.onStop();
+        FlurryAgent.onEndSession(this);
+    }
+    
+    @Override
     public void onCreate(Bundle savedInstanceState)
     {
         Player p;
@@ -94,6 +102,8 @@ public class CapSetsActivity extends Activity {
         p=new Player(this);
 
         super.onCreate(savedInstanceState);
+        FlurryAgent.onStartSession(this, "LG9MLAYBEKLAFWLBMDAJ");
+        
         setContentView(R.layout.capsets);
 
         lv=(ListView)findViewById(R.id.capSetsListView);
@@ -114,6 +124,9 @@ public class CapSetsActivity extends Activity {
 
         leftSelector=(ImageView)v.findViewById(R.id.capsetsHeaderLeftSelector);
         rightSelector=(ImageView)v.findViewById(R.id.capsetsHeaderRightSelector);
+
+        ((TextView)v.findViewById(R.id.capsetsHeaderTotalCaps)).setText(String.valueOf(p.getTotalNumberOfCaps()));
+        ((TextView)v.findViewById(R.id.capsetsHeaderCapsCollected)).setText(String.valueOf(p.getNumberOfCapsCollected()));
 
         ((TextView)v.findViewById(R.id.capsetsHeaderMyCapsCaption)).setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/Pacifico.ttf"));
         ((TextView)v.findViewById(R.id.capsetsHeaderLeftSelectorCaption)).setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/Coolvetica.ttf"));

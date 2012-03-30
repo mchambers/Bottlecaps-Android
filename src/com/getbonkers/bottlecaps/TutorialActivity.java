@@ -11,9 +11,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import com.flurry.android.FlurryAgent;
 
 public class TutorialActivity extends FragmentActivity {
-
+    public static final int MODE_DEFAULT=0;
+    public static final int MODE_CAPMANAGER=1;
+    public static final int MODE_ALL=2;
+    
     public class TutorialPagerAdapter extends FragmentPagerAdapter {
         public class TutorialPageFragment extends Fragment {
             private int imgResource;
@@ -44,18 +48,18 @@ public class TutorialActivity extends FragmentActivity {
 
             mMode=mode;
 
-            if(mode==0)
+            if(mode==MODE_DEFAULT)
             {
-                mResources=new int[] { R.drawable.help1, R.drawable.help2, R.drawable.help3, R.drawable.help4 };
+                mResources=new int[] { R.drawable.help1, R.drawable.help2, R.drawable.help3 };
             }
-            else if(mode==1)
+            else if(mode==MODE_CAPMANAGER)
             {
-                mResources=new int[] { R.drawable.help5, R.drawable.help6 };
+                mResources=new int[] { R.drawable.help4, R.drawable.help5 };
             }
-            else
+            else if(mode==MODE_ALL)
             {
                 mResources=new int[] { R.drawable.help1, R.drawable.help2, R.drawable.help3, R.drawable.help4, 
-                                        R.drawable.help5, R.drawable.help6 };
+                                        R.drawable.help5 };
             }
         }
 
@@ -88,14 +92,14 @@ public class TutorialActivity extends FragmentActivity {
         
         switch(mode)
         {
-            case 0:
+            case MODE_DEFAULT:
                 i=new Intent(this, GameBoardActivity.class);
                 i.putExtra("GAME_DIFFICULTY", difficulty);
                 break;
-            case 1:
+            case MODE_CAPMANAGER:
                 i=new Intent(this, CapSetsActivity.class);
                 break;
-            case 2:
+            case MODE_ALL:
             default:
                 i=null;
         }
@@ -105,10 +109,19 @@ public class TutorialActivity extends FragmentActivity {
 
         finish();
     }
+    
+    @Override
+    public void onStop()
+    {
+        super.onStop();
+        FlurryAgent.onEndSession(this);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FlurryAgent.onStartSession(this, "LG9MLAYBEKLAFWLBMDAJ");
+
         setContentView(R.layout.tutorial);
 
         mode=getIntent().getExtras().getInt("mode");

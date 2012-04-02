@@ -40,11 +40,13 @@ public class PauseDialog extends Activity {
     
     public void resumeClick(View v)
     {
+        setResult(RESULT_OK);
         finish();
     }
     
     public void quitClick(View v)
     {
-
+        setResult(RESULT_CANCELED);
+        finish();
     }
 }

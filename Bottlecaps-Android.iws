@@ -17,41 +17,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="992850b8-5c72-4ab5-bba6-f85bfa5e4131" name="Default" comment="track caps collected.">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/res/drawable-xhdpi/icon.png" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/res/drawable-xhdpi/help6.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/res/drawable/icon512.png" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/drawable-xhdpi/help1.jpg" afterPath="$PROJECT_DIR$/res/drawable-xhdpi/help1.jpg" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/drawable-xhdpi/help2.jpg" afterPath="$PROJECT_DIR$/res/drawable-xhdpi/help2.jpg" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/drawable-xhdpi/help3.jpg" afterPath="$PROJECT_DIR$/res/drawable-xhdpi/help3.jpg" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/drawable-xhdpi/help4.jpg" afterPath="$PROJECT_DIR$/res/drawable-xhdpi/help4.jpg" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/drawable-xhdpi/help5.jpg" afterPath="$PROJECT_DIR$/res/drawable-xhdpi/help5.jpg" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/drawable-xhdpi/home.jpg" afterPath="$PROJECT_DIR$/res/drawable-xhdpi/home.jpg" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/AndroidManifest.xml" afterPath="$PROJECT_DIR$/AndroidManifest.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Bottlecaps-Android.ipr" afterPath="$PROJECT_DIR$/Bottlecaps-Android.ipr" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Bottlecaps-Android.iws" afterPath="$PROJECT_DIR$/Bottlecaps-Android.iws" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gen/com/getbonkers/bottlecaps/R.java" afterPath="$PROJECT_DIR$/gen/com/getbonkers/bottlecaps/R.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/drawable-xhdpi/buttonfacebook.xml" afterPath="$PROJECT_DIR$/res/drawable-xhdpi/buttonfacebook.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/drawable-xhdpi/buttonmenubuyboosts.xml" afterPath="$PROJECT_DIR$/res/drawable-xhdpi/buttonmenubuyboosts.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/layout/capset.xml" afterPath="$PROJECT_DIR$/res/layout/capset.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/layout/capsets_header.xml" afterPath="$PROJECT_DIR$/res/layout/capsets_header.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/layout/pager_caps.xml" afterPath="$PROJECT_DIR$/res/layout/pager_caps.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/layout/scoreboard.xml" afterPath="$PROJECT_DIR$/res/layout/scoreboard.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/layout/splashscreen.xml" afterPath="$PROJECT_DIR$/res/layout/splashscreen.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/BoostsActivity.java" afterPath="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/BoostsActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/BottlecapsDatabaseAdapter.java" afterPath="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/BottlecapsDatabaseAdapter.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/CapDownloadManager.java" afterPath="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/CapDownloadManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/CapManager.java" afterPath="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/CapManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/CapSetActivity.java" afterPath="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/CapSetActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/CapSetsActivity.java" afterPath="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/CapSetsActivity.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/GameBoardActivity.java" afterPath="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/GameBoardActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/GameMenuActivity.java" afterPath="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/GameMenuActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/GameResultsActivity.java" afterPath="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/GameResultsActivity.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/PauseDialog.java" afterPath="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/PauseDialog.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/Player.java" afterPath="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/Player.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/ScoreboardActivity.java" afterPath="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/ScoreboardActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/ScoreboardListAdapter.java" afterPath="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/ScoreboardListAdapter.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/SplashScreenActivity.java" afterPath="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/SplashScreenActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/TutorialActivity.java" afterPath="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/TutorialActivity.java" />
     </list>
     <ignored path="Bottlecaps-Android.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -138,10 +106,19 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ScoreboardListAdapter.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="ScoreboardListAdapter.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/getbonkers/bottlecaps/ScoreboardListAdapter.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="67" column="39" selection-start="2362" selection-end="2362" vertical-scroll-proportion="0.45698926">
+            <state line="58" column="8" selection-start="1966" selection-end="1966" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PauseDialog.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/com/getbonkers/bottlecaps/PauseDialog.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="14" column="4" selection-start="321" selection-end="321" vertical-scroll-proportion="0.21146953">
               <folding />
             </state>
           </provider>
@@ -195,7 +172,7 @@
       <file leaf-file-name="GameBoardActivity.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/getbonkers/bottlecaps/GameBoardActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="1441" column="8" selection-start="53810" selection-end="53810" vertical-scroll-proportion="0.0">
+            <state line="119" column="4" selection-start="3989" selection-end="3989" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -216,8 +193,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/SplashScreenActivity.java" />
-        <option value="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/GameBoardActivity.java" />
         <option value="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/BottlecapsDatabaseAdapter.java" />
         <option value="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/CapManager.java" />
         <option value="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/TutorialActivity.java" />
@@ -232,6 +207,8 @@
         <option value="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/CapSetsActivity.java" />
         <option value="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/ScoreboardActivity.java" />
         <option value="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/ScoreboardListAdapter.java" />
+        <option value="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/GameBoardActivity.java" />
+        <option value="$PROJECT_DIR$/src/com/getbonkers/bottlecaps/PauseDialog.java" />
       </list>
     </option>
   </component>
@@ -246,8 +223,8 @@
     <treeState />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="128" />
-    <option name="y" value="55" />
+    <option name="x" value="21" />
+    <option name="y" value="48" />
     <option name="width" value="1513" />
     <option name="height" value="946" />
   </component>
@@ -812,7 +789,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="128" y="55" width="1513" height="946" extended-state="0" />
+    <frame x="21" y="48" width="1513" height="946" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -896,11 +873,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/com/facebook/android/Facebook.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="625" column="34" selection-start="25543" selection-end="25551" vertical-scroll-proportion="0.3324468" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/res/drawable-xhdpi/buttonhard.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state line="12" column="19" selection-start="0" selection-end="396" vertical-scroll-proportion="0.0" />
@@ -956,11 +928,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/getbonkers/bottlecaps/GameBoardActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="1441" column="8" selection-start="53810" selection-end="53810" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/getbonkers/bottlecaps/GameResultsActivity.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="114" column="7" selection-start="3449" selection-end="3449" vertical-scroll-proportion="0.0">
@@ -991,7 +958,21 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/getbonkers/bottlecaps/ScoreboardListAdapter.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="67" column="39" selection-start="2362" selection-end="2362" vertical-scroll-proportion="0.45698926">
+        <state line="58" column="8" selection-start="1966" selection-end="1966" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/getbonkers/bottlecaps/GameBoardActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="119" column="4" selection-start="3989" selection-end="3989" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/getbonkers/bottlecaps/PauseDialog.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="14" column="4" selection-start="321" selection-end="321" vertical-scroll-proportion="0.21146953">
           <folding />
         </state>
       </provider>

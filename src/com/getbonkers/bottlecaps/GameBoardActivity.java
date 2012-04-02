@@ -117,6 +117,16 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
     public void onCapSetsLoadFailure() {
         dialog.dismiss();
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        if(resultCode==RESULT_CANCELED)
+        {
+            board._thread.setRunning(false);
+            finish();
+        }
+    }
     
     public void togglePause(View v) {
         _paused=!_paused;
@@ -125,7 +135,8 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
         if(_paused)
         {
             Intent pause=new Intent(this, PauseDialog.class);
-            startActivity(pause);
+            startActivityForResult(pause, 0);
+            //startActivity(pause);
         }
         /*else
         {

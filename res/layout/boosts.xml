@@ -50,6 +50,7 @@
                       android:layout_height="match_parent"
                       android:layout_weight="0.25"
                       android:maxLines="2"
+                      android:textSize="16sp"
                       android:gravity="center" />
 
             <TextView android:text="0"
@@ -59,6 +60,7 @@
                       android:layout_height="match_parent"
                       android:layout_weight="0.25"
                       android:maxLines="2"
+                      android:textSize="16sp"
                       android:gravity="center" />
 
             <TextView android:text="0"
@@ -68,6 +70,7 @@
                       android:layout_height="match_parent"
                       android:layout_weight="0.25"
                       android:maxLines="2"
+                      android:textSize="16sp"
                       android:gravity="center" />
 
             <TextView android:text="0"
@@ -77,6 +80,7 @@
                       android:layout_height="match_parent"
                       android:layout_weight="0.25"
                       android:maxLines="2"
+                      android:textSize="16sp"
                       android:gravity="center" />
 
         </LinearLayout>

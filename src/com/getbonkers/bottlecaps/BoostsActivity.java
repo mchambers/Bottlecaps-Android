@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -64,15 +65,15 @@ public class BoostsActivity extends Activity {
 
                 if(itemId.equals(PRODUCT_BAG_OF_BOOSTS))
                 {
-                    player.addBoosts(5, Player.PLAYER_BOOST_TYPE_ALL);
+                    player.addBoosts(25, Player.PLAYER_BOOST_TYPE_ALL);
                 }
                 else if(itemId.equals(PRODUCT_BUCKET_OF_BOOSTS))
                 {
-                    player.addBoosts(15, Player.PLAYER_BOOST_TYPE_ALL);
+                    player.addBoosts(75, Player.PLAYER_BOOST_TYPE_ALL);
                 }
                 else if(itemId.equals(PRODUCT_BARREL_OF_BOOSTS))
                 {
-                    player.addBoosts(25, Player.PLAYER_BOOST_TYPE_ALL);
+                    player.addBoosts(150, Player.PLAYER_BOOST_TYPE_ALL);
                 }
 
                 refreshBoostCounts();
@@ -154,6 +155,12 @@ public class BoostsActivity extends Activity {
         
         setContentView(R.layout.boosts);
 
+        ((TextView)findViewById(R.id.boostsCaption)).setTypeface(Typeface.createFromAsset(getAssets(), "fonts/Pacifico.ttf"));
+        ((TextView)findViewById(R.id.boostsNitro)).setTypeface(Typeface.createFromAsset(getAssets(), "fonts/Coolvetica.ttf"));
+        ((TextView)findViewById(R.id.boostsFrenzy)).setTypeface(Typeface.createFromAsset(getAssets(), "fonts/Coolvetica.ttf"));
+        ((TextView)findViewById(R.id.boostsTime)).setTypeface(Typeface.createFromAsset(getAssets(), "fonts/Coolvetica.ttf"));
+        ((TextView)findViewById(R.id.boostsJoker)).setTypeface(Typeface.createFromAsset(getAssets(), "fonts/Coolvetica.ttf"));
+
         handler=new Handler();
         observer=new BoostsPurchaseObserver(handler);
 
@@ -195,6 +202,7 @@ public class BoostsActivity extends Activity {
 
         try {
             startActivity(marketIntent);
+            player.addBoosts(Player.PLAYER_BOOST_TYPE_ALL, 5);
         } catch(Exception e)
         {
             // the Android Market is unavailable. try the Amazon Appstore instead?

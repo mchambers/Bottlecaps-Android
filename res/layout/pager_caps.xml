@@ -34,6 +34,7 @@
                   android:textSize="20sp"
                   android:layout_marginTop="6dp"
                   android:gravity="center"
+                  android:includeFontPadding="false"
                   android:id="@+id/capPagerCap1Availability"
                 />
 
@@ -68,6 +69,7 @@
                   android:textSize="20sp"
                   android:layout_marginTop="6dp"
                   android:gravity="center"
+                  android:includeFontPadding="false"
                   android:id="@+id/capPagerCap2Availability"
                   />
 

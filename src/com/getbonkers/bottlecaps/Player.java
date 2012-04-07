@@ -175,6 +175,19 @@ public class Player {
 
         validateFacebookConnection();
     }
+
+    public boolean getUserHasRatedApp()
+    {
+        return mPrefs.getBoolean("ratedApp", false);
+    }
+
+    public void setUserHasRatedApp()
+    {
+        SharedPreferences.Editor edit=mPrefs.edit();
+
+        edit.putBoolean("ratedApp", true);
+        edit.commit();
+    }
     
     public int getNumberOfCapsCollected()
     {

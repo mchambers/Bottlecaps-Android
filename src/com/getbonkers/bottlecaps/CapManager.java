@@ -2,6 +2,7 @@ package com.getbonkers.bottlecaps;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.DisplayMetrics;
@@ -189,7 +190,7 @@ public class CapManager implements CapManagerLoadingDelegate {
 
         public int numberInPlay;
 
-        public BitmapDrawable image;
+        public Bitmap image;
 
         public boolean equals(Cap o)
         {
@@ -199,48 +200,53 @@ public class CapManager implements CapManagerLoadingDelegate {
 
         public boolean isCurrentlyDrawable()
         {
-            if(image!=null && image.getBitmap()!=null && !image.getBitmap().isRecycled()) return true;
+            if(image!=null && !image.isRecycled()) return true;
             return false;
         }
 
         public void putCapInPlay(Context context)
         {
+            String file=null;
+
             if(numberInPlay<=0)
             {
-                BitmapFactory.Options options=new BitmapFactory.Options();
+                BitmapFactory.Options bmpFactoryOptions = new BitmapFactory.Options();
+                //bmpFactoryOptions.inJustDecodeBounds = true;
+                //bmpFactoryOptions.inTempStorage=_decodeBuffer;
 
-                /*
-                int density=_context.getResources().getDisplayMetrics().densityDpi;
-
-                options.inDensity=160;
-                options.inTargetDensity=density;
-                  */
-
-                if(_context.getResources().getDisplayMetrics().density<1.5)
-                    options.inSampleSize=2;
-
-                options.inScaled=true;
-
-                options.outWidth=pieceSize;
-                options.outHeight=pieceSize;
-
-                options.inTempStorage=_decodeBuffer;
-
+                //Bitmap tempDecode;
+                 /*
                 if(this.resourceId!=0)
                 {
-                    this.image=new BitmapDrawable(context.getResources(), BitmapFactory.decodeResource(context.getResources(), this.resourceId, options));
+                    BitmapFactory.decodeResource(context.getResources(), this.resourceId, bmpFactoryOptions);
                 }
                 else
                 {
-                    String file=_context.getFilesDir().getPath()+"/"+this.index+".png";
-
-                    //if(lowMemoryMode)
-                    this.image=new BitmapDrawable(_context.getResources(), BitmapFactory.decodeFile(file, options));
-                    //else
-                    //    this.image=new BitmapDrawable(_context.getResources(), file, options);
+                    file=_context.getFilesDir().getPath()+"/"+this.index+".png";
+                    BitmapFactory.decodeFile(file, bmpFactoryOptions);
                 }
-                //                    options.inSampleSize=4;
-                //this.image=new BitmapDrawable(context.getResources(), BitmapFactory.decodeResource(context.getResources(), this.resourceId, options));
+
+                /*
+                int widthRatio = (int)Math.ceil(bmpFactoryOptions.outWidth/(float)pieceSize);
+
+                if (widthRatio > 1)
+                {
+                    bmpFactoryOptions.inSampleSize = widthRatio;
+                } */
+
+                //bmpFactoryOptions.inJustDecodeBounds=false;
+
+                Bitmap tempIn;
+                if(this.resourceId!=0)
+                    tempIn=BitmapFactory.decodeResource(context.getResources(), this.resourceId, bmpFactoryOptions);
+                else
+                {
+                    file=_context.getFilesDir().getPath()+"/"+this.index+".png";
+                    tempIn=BitmapFactory.decodeFile(file, bmpFactoryOptions);
+                }
+                
+                this.image=Bitmap.createScaledBitmap(tempIn, pieceSize, pieceSize, false);
+                tempIn.recycle();
             }
             this.numberInPlay++;
         }
@@ -253,7 +259,7 @@ public class CapManager implements CapManagerLoadingDelegate {
                 if(numberInPlay<=0)
                 {
                     try {
-                        image.getBitmap().recycle();
+                        image.recycle();
                     } catch (NullPointerException e)
                     {
                         // oops;
@@ -372,15 +378,9 @@ public class CapManager implements CapManagerLoadingDelegate {
 
         try {
             cap.putCapInPlay(context);
-        } catch(OutOfMemoryError e)
+        } catch(Exception e)
         {
-            //the VM has requested we stop hemorrhaging resources.
-            //lowMemoryMode=true;
-            try {
-                cap.putCapInPlay(context);
-            } catch(OutOfMemoryError e2) {
-                throw e2; // :-/
-            }
+            e.printStackTrace();
         }
 
         if(currentMostPlayedCap==null || cap.numberInPlay>currentMostPlayedCap.numberInPlay)

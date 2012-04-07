@@ -128,6 +128,9 @@ public class CapSetsActivity extends Activity {
         ((TextView)v.findViewById(R.id.capsetsHeaderTotalCaps)).setText(String.valueOf(p.getTotalNumberOfCaps()));
         ((TextView)v.findViewById(R.id.capsetsHeaderCapsCollected)).setText(String.valueOf(p.getNumberOfCapsCollected()));
 
+        ((TextView)v.findViewById(R.id.capsetsHeaderCapsCollected)).setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/Coolvetica.ttf"));
+        ((TextView)v.findViewById(R.id.capsetsHeaderTotalCaps)).setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/Coolvetica.ttf"));
+
         ((TextView)v.findViewById(R.id.capsetsHeaderMyCapsCaption)).setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/Pacifico.ttf"));
         ((TextView)v.findViewById(R.id.capsetsHeaderLeftSelectorCaption)).setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/Coolvetica.ttf"));
         ((TextView)v.findViewById(R.id.capsetsHeaderRightSelectorCaption)).setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/Coolvetica.ttf"));

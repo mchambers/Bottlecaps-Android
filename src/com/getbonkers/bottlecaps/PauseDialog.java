@@ -1,9 +1,11 @@
 package com.getbonkers.bottlecaps;
 
 import android.app.Activity;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +22,8 @@ public class PauseDialog extends Activity {
 
         setContentView(R.layout.pause_overlay);
 
+        ((TextView)findViewById(R.id.pauseCaption)).setTypeface(Typeface.createFromAsset(getAssets(), "fonts/Pacifico.ttf"));
+        
         BottlecapsDatabaseAdapter db=new BottlecapsDatabaseAdapter(this);
         db.open();
 

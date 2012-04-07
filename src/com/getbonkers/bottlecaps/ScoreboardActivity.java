@@ -360,6 +360,11 @@ ASIFormDataRequest *request = [ASIFormDataRequest requestWithURL:url];
         ((TextView)findViewById(R.id.scoreboardHeaderLeftSelectorCaption)).setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/Coolvetica.ttf"));
         ((TextView)findViewById(R.id.scoreboardHeaderRightSelectorCaption)).setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/Coolvetica.ttf"));
 
+        ((TextView)findViewById(R.id.scoreboardMyScoreRank)).setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/Coolvetica.ttf"));
+        ((TextView)findViewById(R.id.scoreboardMyScoreScore)).setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/Coolvetica.ttf"));
+
+        ((TextView)findViewById(R.id.scoreboardHeaderCaption)).setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/Pacifico.ttf"));
+
         leftSelector=(ImageView)findViewById(R.id.scoreboardHeaderLeftSelector);
         rightSelector=(ImageView)findViewById(R.id.scoreboardHeaderRightSelector);
 

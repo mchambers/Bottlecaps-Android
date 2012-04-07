@@ -54,22 +54,27 @@
                 android:layout_weight="0.5"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:gravity="right"
                 android:background="@drawable/mycapsright">
 
             <TextView android:id="@+id/capsetsHeaderTotalCaps"
                       android:text="0"
                       android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
-                      android:gravity="center"
+                      android:gravity="right"
+                      android:layout_alignParentRight="true"
                       android:textSize="40sp"
                       android:textColor="@android:color/black"
                     />
 
             <TextView android:layout_below="@id/capsetsHeaderTotalCaps"
-                      android:text="Total Caps"
+                      android:text="Sets Completed"
                       android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
                       android:textSize="12sp"
+                      android:gravity="right"
+                      android:layout_alignParentRight="true"
                       android:textColor="@android:color/black"/>
 
         </RelativeLayout>
@@ -97,7 +102,7 @@
 
             <TextView android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
-                      android:text="Unlocked"
+                      android:text="Unlocked Sets"
                       android:layout_alignTop="@id/capsetsHeaderLeftSelector"
                       android:textColor="@android:color/white"
                       android:padding="5dp"
@@ -123,7 +128,7 @@
 
             <TextView android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
-                      android:text="Locked"
+                      android:text="Locked Sets"
                       android:textColor="@android:color/white"
                       android:layout_alignTop="@id/capsetsHeaderRightSelector"
                       android:layout_centerInParent="true"
@@ -152,7 +157,7 @@
 
     <TextView android:id="@+id/capsetsHeaderUnlocks"
               android:background="@drawable/greenslim"
-              android:text="Collect 9 more caps to unlock a set!"
+              android:text=""
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:gravity="center"

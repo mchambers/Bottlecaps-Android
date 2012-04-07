@@ -3,7 +3,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
-              android:background="@drawable/bginner">
+              android:focusable="true"
+              android:focusableInTouchMode="true"
+              android:background="#C8000000"
+              >
 
     <TextView
             android:text="Final Score"
@@ -25,9 +28,9 @@
         android:gravity="center"
         android:textSize="22pt"
         android:layout_below="@id/resultsTitle"
-        android:textColor="@android:color/white"
-        android:text="99100"
-        android:shadowColor="@android:color/black"
+        android:textColor="#3091E3"
+        android:text=""
+        android:shadowColor="@android:color/white"
         android:shadowRadius="1"
         android:shadowDy="1"
             android:id="@+id/resultsScore"/>

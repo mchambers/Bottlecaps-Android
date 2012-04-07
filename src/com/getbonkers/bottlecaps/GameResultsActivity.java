@@ -110,15 +110,16 @@ public class GameResultsActivity extends Activity implements AsyncNetworkDelegat
 
         player.postBiggestCombo(biggestComboInt);
 
+        ((TextView)findViewById(R.id.resultsTitle)).setTypeface(Typeface.createFromAsset(getAssets(), "fonts/Pacifico.ttf"));
+
         TextView score=(TextView)findViewById(R.id.resultsScore);
         TextView capsCollected=(TextView)findViewById(R.id.resultsCapsCollected);
         TextView biggestCombo=(TextView)findViewById(R.id.resultsBestCombo);
         TextView bestComboCaption=(TextView)findViewById(R.id.resultsBestComboCaption);
         TextView capsCollectedCaption=(TextView)findViewById(R.id.resultsCapsCollectedCaption);
 
-        /*
-        score.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/Pacifico.ttf"));
-        capsCollected.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/Pacifico.ttf"));
+        score.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/Coolvetica.ttf"));
+        /*capsCollected.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/Pacifico.ttf"));
         biggestCombo.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/Pacifico.ttf"));
         bestComboCaption.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/Pacifico.ttf"));
         capsCollectedCaption.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/Pacifico.ttf"));
@@ -163,6 +164,7 @@ public class GameResultsActivity extends Activity implements AsyncNetworkDelegat
                 }
             }).start();
         }
+        setResult(RESULT_CANCELED);
         finish();
     }
 
@@ -174,10 +176,11 @@ public class GameResultsActivity extends Activity implements AsyncNetworkDelegat
     
     public void onRestartButtonClick(View v)
     {
+        setResult(RESULT_CANCELED);
+        finish();
+
         Intent playIntent = new Intent(this, GameBoardActivity.class);
         playIntent.putExtra("GAME_DIFFICULTY", level);
         this.startActivity(playIntent);
-        
-        finish();
     }
 }

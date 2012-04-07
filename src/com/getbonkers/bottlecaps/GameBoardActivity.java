@@ -123,7 +123,12 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
     {
         if(resultCode==RESULT_CANCELED)
         {
-            board._thread.setRunning(false);
+            try {
+                board._thread.setRunning(false);
+            } catch(Exception e)
+            {
+
+            }
             finish();
         }
     }
@@ -249,7 +254,8 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
 
             public float alpha;
             
-            private BitmapDrawable drawable;
+            //private BitmapDrawable drawable;
+            private Bitmap bitmap;
             private String text;
             private Paint textPaint;
             private Paint textStrokePaint;
@@ -370,7 +376,8 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
                 bottom=height;
                 top=0;
 
-                drawable=new BitmapDrawable(getResources(), bmp);
+                //drawable=new BitmapDrawable(getResources(), bmp);
+                bitmap=bmp;
             }
             
             public void setTopLeftCorner(int t, int l)
@@ -384,9 +391,11 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
             
             private void drawBitmap(Canvas canvas)
             {
-                drawable.setBounds(new Rect(getLeft(), getTop(), getRight(), getTop()+height));
+                canvas.drawBitmap(bitmap, left, top, null);
+
+                //drawable.setBounds(new Rect(getLeft(), getTop(), getRight(), getTop()+height));
                 //Log.d("GameOverlayAnimation", "Drawing at "+drawable.getBounds().toString());
-                drawable.draw(canvas);
+                //drawable.draw(canvas);
             }
             
             private void drawText(Canvas canvas)
@@ -398,7 +407,7 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
             
             public void draw(Canvas canvas)
             {
-                if(drawable!=null)
+                if(bitmap!=null)
                     drawBitmap(canvas);
                 if(text!=null)
                     drawText(canvas);
@@ -613,7 +622,7 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
         
         private int[] multiplierResIds;
         private BitmapDrawable[] multiplierGfx;
-        private BitmapDrawable capGlow;
+        private Bitmap capGlow;
         private Bitmap[] boostCueGfx;
         
         private ArrayList<GameOverlayAnimation> currentOverlays=new ArrayList<GameOverlayAnimation>();
@@ -635,18 +644,20 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
 
         BitmapDrawable timerCover;
         BitmapDrawable timerBlue;
+        BitmapDrawable timerBg;
         Rect timerRect;
         Rect multGfxRect;
 
         Paint tp=new Paint();
         Paint text=new Paint();
         Paint textStroke=new Paint();
+        Paint capPaint=new Paint();
         Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
 
         Paint pointsPaint=new Paint();
         Paint pointsStroke=new Paint();
 
-        BitmapDrawable bg;
+        Bitmap bg;
         BitmapDrawable cap;
         ShapeDrawable timerShape=new ShapeDrawable();
 
@@ -685,8 +696,6 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
                     BitmapFactory.decodeResource(getResources(), R.drawable.captionfrenzy),
                     BitmapFactory.decodeResource(getResources(), R.drawable.caption10sec)
             };
-
-            capGlow=new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.glow));
 
             gameTimers=new long[] { 0, 0, 0, 0, 0 };
             timerIntervals=new long[] {0, 0, 0, 0, 0 };
@@ -942,7 +951,7 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
             try {
                 if(pieceIndex<gamePieces.size() && !gamePieces.get(pieceIndex).terminalState)
                 {
-                    playSound(SOUND_TAP);
+                    //playSound(SOUND_TAP);
                     gamePieces.get(pieceIndex).setTappedState();
 
                     if((gamePieces.get(pieceIndex).cap instanceof CapManager.Boost) && gamePieces.get(pieceIndex).cap.index!=Player.PLAYER_BOOST_TYPE_JOKER)
@@ -1035,6 +1044,9 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
         public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
             // TODO Auto-generated method stub
         }
+        
+        private Rect bgRect;
+        double scaleFactor;
 
         public void surfaceCreated(SurfaceHolder holder) {
             Random rand=new Random();
@@ -1044,9 +1056,14 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
 
             // pick a random background image.
             int[] bgResources={R.drawable.gamebg1, R.drawable.gamebg2, R.drawable.gamebg3};
-            bg=new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), bgResources[rand.nextInt(2)]));
-            bg.setBounds(new Rect(0, 0, display.getWidth(), display.getHeight()));
+            
+            Bitmap tempBg=BitmapFactory.decodeResource(getResources(), bgResources[rand.nextInt(2)]);
+            bg=Bitmap.createScaledBitmap(tempBg, display.getWidth(), display.getHeight(), false);
+            tempBg.recycle();
 
+            //bg=BitmapFactory.decodeResource(getResources(), bgResources[rand.nextInt(2)]);
+            bgRect=new Rect(0, 0, display.getWidth(), display.getHeight());
+            
             Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
             int width = display.getWidth();
 
@@ -1066,7 +1083,18 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
 
             //width-=boardMargins*2;
 
+            DisplayMetrics metrics;
+            metrics=this.getResources().getDisplayMetrics();
+            scaleFactor=metrics.density;
+
             pieceWidth=width/itemsPerRow;
+            pieceHeight=width/itemsPerRow;
+
+            Bitmap tempGlow=BitmapFactory.decodeResource(getResources(), R.drawable.glow);
+            capGlow=Bitmap.createScaledBitmap(tempGlow, (int)(pieceWidth+(12*scaleFactor)), (int)(pieceHeight+(12*scaleFactor)), false);
+            tempGlow.recycle();
+
+            //capGlow=BitmapFactory.decodeResource(getResources(), R.drawable.glow);
 
             // set up the static paints
             text.setColor(Color.BLACK);
@@ -1085,29 +1113,27 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
             //textStroke.setShadowLayer((float)0.5, 0, 1, Color.BLACK);
             textStroke.setTextSize(64 * getApplicationContext().getResources().getDisplayMetrics().density);
             textStroke.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/Pacifico.ttf"));
-            textStroke.setStrokeWidth(1.0f);
+            textStroke.setStrokeWidth((float)(2.0f * scaleFactor));
             textStroke.setAntiAlias(true);
 
             pointsPaint.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/Coolvetica.ttf"));
-            pointsPaint.setTextSize(40.0f*getResources().getDisplayMetrics().density);
+            pointsPaint.setTextSize(50.0f*getResources().getDisplayMetrics().density);
             pointsPaint.setColor(Color.WHITE);
 
             pointsStroke.setTypeface(pointsPaint.getTypeface());
             pointsStroke.setTextSize(pointsPaint.getTextSize());
-            pointsStroke.setStrokeWidth(1.0f);
+            pointsStroke.setStrokeWidth((float)(2.0f * scaleFactor));
             pointsStroke.setColor(Color.BLACK);
             pointsStroke.setStyle(Paint.Style.STROKE);
 
-            timerCover=new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.timerpauselayer));
+            //timerCover=new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.timerpauselayer));
             timerBlue=new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.timerbluelayer));
-
-            DisplayMetrics metrics;
-            metrics=this.getResources().getDisplayMetrics();
-            double scaleFactor=metrics.density;
+            timerBg=new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.timerbg));
 
             timerRect=new Rect(display.getWidth()-(int)(60*scaleFactor), (int)(10*scaleFactor), display.getWidth()-(int)(10*scaleFactor), (int)(60*scaleFactor));
             multGfxRect=new Rect((int)(10*scaleFactor), (int)(10*scaleFactor), (int)((10+70)*scaleFactor), (int)((10+51)*scaleFactor));
 
+            timerBg.setBounds(timerRect);
             timerShape.setBounds(timerRect.left+6, timerRect.top+5, timerRect.right-6, timerRect.bottom-5);
             timerShape.getPaint().setColor(Color.BLACK);
             timerShape.getPaint().setAntiAlias(true);
@@ -1121,7 +1147,7 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
                     multiplierGfx[i].setBounds(multGfxRect);
             }
 
-            double totalVerticalPixelsUsed=(pieceWidth*((boardSize/itemsPerRow)))+boardMarginHeight;
+            double totalVerticalPixelsUsed=(pieceHeight*((boardSize/itemsPerRow)))+boardMarginHeight;
             if(totalVerticalPixelsUsed<metrics.heightPixels)
             {
                 // vertically center board underneath the header
@@ -1136,8 +1162,8 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
                 boardMarginWidth+=pieceAdjustment;
             }
 
-            timerCover.setBounds(timerRect);
-            timerBlue.setBounds(timerRect);
+            //timerCover.setBounds(timerRect);
+            timerBlue.setBounds(timerRect.left+6, timerRect.top+5, timerRect.right-6, timerRect.bottom-5);
 
             scorePosition=(float)(50*scaleFactor);
 
@@ -1243,8 +1269,8 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
                 resultsIntent.putExtra("GAME_RESULTS_BIGGESTCOMBO", highestComboScore);
                 resultsIntent.putExtra("GAME_RESULTS_LEVEL", currentLevel);
 
-                startActivity(resultsIntent);
-                finish();
+                startActivityForResult(resultsIntent, 0);
+                //finish();
 
                 boolean retry=true;
                 _thread.setRunning(false);
@@ -1456,7 +1482,7 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
             //Bitmap _scratch = BitmapFactory.decodeResource(getResources(), R.drawable.set1_1);
             canvas.drawColor(Color.WHITE);
 
-            bg.draw(canvas);
+            canvas.drawBitmap(bg, bgRect.left, bgRect.top, null);
 
             // draw the timer.
             double timerArc=(double)gameTimers[GAME_TIMER_REMAINING]/60000;
@@ -1464,9 +1490,11 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
             ArcShape timer=new ArcShape(0, (float)timerArc);
 
             timerShape.setShape(timer);
+
+            timerBg.draw(canvas);
             timerBlue.draw(canvas);
             timerShape.draw(canvas);
-            timerCover.draw(canvas);
+            //timerCover.draw(canvas);
 
             // draw the game board.
             int x=0;
@@ -1479,47 +1507,23 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
             {
                 if(gamePieces.get(i).cap.isCurrentlyDrawable())
                 {
-                    cap=gamePieces.get(i).cap.image;
-
-                    /*x=((pieceWidth)*(i%itemsPerRow))+boardMarginWidth;//+(pieceWidth/2);
-                    y=((pieceWidth)*curRow)+boardMarginHeight;*/
-
                     x=gamePieces.get(i).x;
                     y=gamePieces.get(i).y;
 
-                    /*if(gamePieces.get(i).state==PIECE_STATE_NORMAL)
-                        cap.setColorFilter(null);
-                    else if(gamePieces.get(i).state==PIECE_STATE_FADING)
-                        cap.setColorFilter(null);
-                    else*/
-
                     if(gamePieces.get(i).state==PIECE_STATE_TAPPED)
                     {
-                        capGlow.setBounds(x-7, y-7, x+pieceWidth+7, y+pieceWidth+7);
-                        capGlow.draw(canvas);
-                        //canvas.drawRect(x, y, x+pieceWidth, y+pieceWidth, tp);
+                        canvas.drawBitmap(capGlow, (int)(x-(6*scaleFactor)), (int)(y-(6*scaleFactor)), null);
                     }
                     else if(gamePieces.get(i).state==PIECE_STATE_HIGHLIGHTED)
                     {
-                        cap.setColorFilter(Color.BLUE, PorterDuff.Mode.MULTIPLY);
+                        //cap.setColorFilter(Color.BLUE, PorterDuff.Mode.MULTIPLY);
                     }
 
-                    cap.setAlpha(gamePieces.get(i).opacity);
+                    capPaint.setAlpha(gamePieces.get(i).opacity);
 
-                    cap.setBounds(x+3, y+3, x+pieceWidth-3, y+pieceWidth-3);
-                    cap.draw(canvas);
-
-                    /*itemsThisRow++;
-                    if(itemsThisRow==itemsPerRow)
-                    {
-                        curRow++;
-                        itemsThisRow=0;
-                    } */
+                    canvas.drawBitmap(gamePieces.get(i).cap.image, x, y, capPaint);
                 }
             }
-
-            //x=(pieceWidth)*(i%itemsPerRow);//+(pieceWidth/2);
-            //y=(pieceWidth)*curRow;
 
             canvas.drawText(String.valueOf(currentScore), display.getWidth()/2, scorePosition, text);
             canvas.drawText(String.valueOf(currentScore), display.getWidth()/2, scorePosition, textStroke);
@@ -1536,8 +1540,6 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
             {
                 multiplierGfx[multiplier].draw(canvas);
             }
-            //canvas.drawText(String.valueOf(multiplier)+"X", 50, 50, text);
-            //canvas.drawText(String.valueOf(multiplier)+"X", 50, 50, textStroke);
 
             for(int z=0; z<currentOverlays.size(); z++)
             {

@@ -12,7 +12,7 @@
                android:scaleType="fitCenter"
             />
     
-    <TextView android:text="My Scoreboard"
+    <TextView android:text="My Leaderboard"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_below="@id/scoreboardHeader"
@@ -73,7 +73,7 @@
                 />
 
             <TextView android:layout_below="@id/scoreboardMyScoreRank"
-                      android:text="Biggest Combo"
+                      android:text="Best Combo"
                       android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
                       android:textSize="12sp"
@@ -103,7 +103,7 @@
 
             <TextView android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
-                      android:text="Everybody"
+                      android:text="Everyone"
                       android:layout_alignTop="@id/capsetsHeaderLeftSelector"
                       android:textColor="@android:color/white"
                       android:padding="5dp"

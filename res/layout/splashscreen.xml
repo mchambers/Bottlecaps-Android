@@ -31,16 +31,6 @@
                android:onClick="onMenuButtonClick"
                android:src="@drawable/buttonmenu"/>
 
-    <ImageButton android:id="@+id/splashMuteButton"
-                 android:layout_width="wrap_content"
-                 android:layout_height="wrap_content"
-                 android:layout_toLeftOf="@id/splashMenuButton"
-                 android:layout_alignTop="@id/splashMenuButton"
-                 android:layout_marginRight="5dp"
-                 android:background="@android:color/transparent"
-                 android:onClick="toggleAudio"
-                 android:src="@drawable/soundon" />
-
     <RelativeLayout android:id="@+id/splashButtons"
                   android:layout_width="wrap_content"
                   android:layout_marginLeft="20dp"
@@ -76,5 +66,14 @@
 
     </RelativeLayout>
 
+    <ImageButton android:id="@+id/splashMuteButton"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:layout_alignLeft="@id/splashButtons"
+                 android:layout_alignTop="@id/splashMenuButton"
+                 android:layout_marginRight="5dp"
+                 android:background="@android:color/transparent"
+                 android:onClick="toggleAudio"
+                 android:src="@drawable/soundon" />
 
 </RelativeLayout>

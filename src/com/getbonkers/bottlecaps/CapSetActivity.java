@@ -124,6 +124,11 @@ public class CapSetActivity extends FragmentActivity implements CapManagerLoadin
                 TextView cap2AvailabilityTV=(TextView)v.findViewById(R.id.capPagerCap2Availability);
                 TextView cap1RarityTV=(TextView)v.findViewById(R.id.capPagerCap1Rarity);
                 TextView cap2RarityTV=(TextView)v.findViewById(R.id.capPagerCap2Rarity);
+                
+                //cap1AvailabilityTV.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/Pacifico.ttf"));
+                //cap2AvailabilityTV.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/Pacifico.ttf"));
+                cap1RarityTV.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/Pacifico.ttf"));
+                cap2RarityTV.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/Pacifico.ttf"));
 
                 cap1Image.setImageUrl(getCapUrl(capID1, db.capIsCollected(capID1)));
                 cap2Image.setImageUrl(getCapUrl(capID2, db.capIsCollected(capID2)));
@@ -132,12 +137,12 @@ public class CapSetActivity extends FragmentActivity implements CapManagerLoadin
                 cap2RarityTV.setText(rarityToString(cap2Rarity));
 
                 if(cap1Rarity==1)
-                    cap1AvailabilityTV.setText("Unlimited\nin circulation");
+                    cap1AvailabilityTV.setText("Unlimited");
                 else
                     cap1AvailabilityTV.setText(NumberFormat.getInstance().format(cap1Availability)+"\nin circulation");
                 
                 if(cap2Rarity==1)
-                    cap2AvailabilityTV.setText("Unlimited\nin circulation");
+                    cap2AvailabilityTV.setText("Unlimited");
                 else
                     cap2AvailabilityTV.setText(NumberFormat.getInstance().format(cap2Availability)+"\nin circulation");
 

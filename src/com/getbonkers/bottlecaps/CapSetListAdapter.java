@@ -101,7 +101,16 @@ public class CapSetListAdapter extends ArrayAdapter<JSONObject> {
                                 }
                             });
 
-                            setIcons.setAdapter(new CapMiniGalleryAdapter(context, capObjects));
+                            CapMiniGalleryAdapter iconAdapter=new CapMiniGalleryAdapter(context, capObjects);
+                            setIcons.setAdapter(iconAdapter);
+
+                            try {
+                                setIcons.setSelection(1);
+                            } catch(Exception e)
+                            {
+
+                            }
+
                             //Log.d("CapSetListAdapter", item.toString());
                         } catch (JSONException e) {
                             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.

@@ -150,6 +150,7 @@ public class GameResultsActivity extends Activity implements AsyncNetworkDelegat
         }
 
         player.postScore(scoreInt);
+        player.invokeScorePostDialog(scoreInt);
         scorePosted=true;
     }
 

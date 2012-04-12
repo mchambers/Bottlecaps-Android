@@ -6,7 +6,9 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.util.JsonWriter;
 import android.util.Log;
+import com.facebook.android.DialogError;
 import com.facebook.android.Facebook;
+import com.facebook.android.FacebookError;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import org.json.JSONArray;
@@ -351,6 +353,31 @@ public class Player {
             edit.putInt("biggestcombo", biggestCombo);
             edit.commit();
         }
+    }
+
+    public void invokeScorePostDialog(long score)
+    {
+        facebook.dialog(_context, "feed", new Facebook.DialogListener() {
+            @Override
+            public void onComplete(Bundle values) {
+                //To change body of implemented methods use File | Settings | File Templates.
+            }
+
+            @Override
+            public void onFacebookError(FacebookError e) {
+                //To change body of implemented methods use File | Settings | File Templates.
+            }
+
+            @Override
+            public void onError(DialogError e) {
+                //To change body of implemented methods use File | Settings | File Templates.
+            }
+
+            @Override
+            public void onCancel() {
+                //To change body of implemented methods use File | Settings | File Templates.
+            }
+        });
     }
 
     public void postScore(long score)

@@ -163,8 +163,9 @@ public final class R {
         public static final int timerbluelayer=0x7f020091;
         public static final int timerbluelayerold=0x7f020092;
         public static final int timerpause=0x7f020093;
-        public static final int timerpauselayerold=0x7f020094;
-        public static final int timerpauselayeroverold=0x7f020095;
+        public static final int timerpausefix=0x7f020094;
+        public static final int timerpauselayerold=0x7f020095;
+        public static final int timerpauselayeroverold=0x7f020096;
     }
     public static final class id {
         public static final int boostsAmounts=0x7f080002;

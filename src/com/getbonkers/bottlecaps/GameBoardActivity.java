@@ -1126,7 +1126,7 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
             pointsStroke.setColor(Color.BLACK);
             pointsStroke.setStyle(Paint.Style.STROKE);
 
-            //timerCover=new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.timerpauselayer));
+            timerCover=new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.timerpausefix));
             timerBlue=new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.timerbluelayer));
             timerBg=new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.timerbg));
 
@@ -1163,6 +1163,10 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
             }
 
             //timerCover.setBounds(timerRect);
+            //int pauseBtnWidth=timerCover.getBitmap().getWidth();
+            //int pauseBtnHeight=timerCover.getBitmap().getHeight();
+
+            timerCover.setBounds(timerRect);
             timerBlue.setBounds(timerRect.left+6, timerRect.top+5, timerRect.right-6, timerRect.bottom-5);
 
             scorePosition=(float)(50*scaleFactor);
@@ -1494,7 +1498,7 @@ public class GameBoardActivity extends Activity implements CapManager.CapManager
             timerBg.draw(canvas);
             timerBlue.draw(canvas);
             timerShape.draw(canvas);
-            //timerCover.draw(canvas);
+            timerCover.draw(canvas);
 
             // draw the game board.
             int x=0;
